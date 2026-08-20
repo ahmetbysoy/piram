@@ -12,3 +12,8 @@
 - [x] Cross-venue price feed for statistical arbitrage
 - [x] 1-minute buy/sell flow metric
 - [x] Remove template leftovers (unused theme package, example tests)
+- [x] USDT notional katmanlama (fiyat × adet)
+- [x] Adaptif eşik + histerezis
+- [x] Toplama/boşaltma anlatısı
+- [x] Gerçek timeframe pencereleri (WindowLedger)
+- [x] Likidasyon akışı (forceOrder)

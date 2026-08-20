@@ -32,9 +32,20 @@
 - [x] `VenueStrip` UI — cross-venue spread, 1M flow, per-venue price chips
 - [x] Cleanup: removed template leftovers (unused ui/theme package, Example tests, stale screenshot)
 
-## Phase 6: Next (Backlog)
+## Phase 6: Notional & Anlatı Katmanı (Completed — piramit portu)
+- [x] `SignalConfig` — merkezi motor eşikleri
+- [x] USDT notional katmanlama (`Order.value = fiyat × adet`; eşik aralığı 100 USDT → 1M USDT)
+- [x] `AdaptiveEdges` — coin'in notional dağılımından yüzdelik eşik (histerezisli)
+- [x] `DivergenceEngine` — toplama/boşaltma anlatısı + `FlowNarrative` satırı
+- [x] `WindowLedger` — 1sn dilimli defter; timeframe (1DK/5DK/15DK/Açılış) gerçek pencere
+- [x] Likidasyon akışı — fapi `!forceOrder@arr` + `LiquidationBanner` + haptik
+
+## Phase 7: Next (Backlog)
+- [ ] Açık pozisyon (OI) + `oiState` ("OI yoksa yalan yok") — divergence dipnotu
+- [ ] Radar ekranı (tüm piyasa taraması, `!miniTicker@arr`)
+- [ ] Sinyal günlüğü + isabet oranı (Room tabanlı journal)
+- [ ] tickSize'a göre fiyat formatı + aranabilir sembol listesi (tohum fallback)
 - [ ] 24h ticker stats (high/low/volume/change) per venue
 - [ ] Aggregated order book heatmap + depth imbalance chart
 - [ ] Trade replay & offline backtest harness
 - [ ] Push-notification whale/burst alerts
-- [ ] Per-strategy backtest metrics and parameter tuning UI

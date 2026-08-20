@@ -7,6 +7,17 @@
 >
 > `piram` kodu iki yönlü okundu; aşağıdaki tespitler mevcut implementasyona dayanır.
 
+## ✅ Uygulama Durumu (2026-08-21)
+
+| P1 maddesi | Durum |
+|---|---|
+| Notional (USDT) katmanlama | ✅ UYGULANDI (`MicroBucket`/`Manager`/`LayerAggregate` + `SignalConfig`) |
+| Adaptif eşik + histerezis + sizeScale | ✅ UYGULANDI (`AdaptiveEdges` + ViewModel reconfigure) |
+| WindowLedger + gerçek timeframe | ✅ UYGULANDI (`WindowLedger` + VenueStrip WIN hücresi) |
+| Toplama/boşaltma + OI dipnotu | 🔶 Kısmen — `DivergenceEngine` + `FlowNarrative` var; **OI henüz yok** |
+| Likidasyon akışı (forceOrder) | ✅ UYGULANDI (`BinanceLiquidationClient` + `LiquidationBanner`) |
+| **Kalan (Phase 7)** | OI + oiState, Radar, sinyal günlüğü, tickSize format, 24s istatistik |
+
 ---
 
 ## 0. Tek Cümlelik Özet
