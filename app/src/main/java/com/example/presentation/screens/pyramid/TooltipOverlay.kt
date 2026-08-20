@@ -155,13 +155,13 @@ fun TooltipOverlay(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "BUY: ${\"%.1f\".format(buyPct)}% (${MathUtils.formatUsd(layer.buyNotional)})",
+                        "BUY: ${"%.1f".format(buyPct)}% (${MathUtils.formatUsd(layer.buyNotional)})",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = BuyGreen
                     )
                     Text(
-                        "SELL: ${\"%.1f\".format(sellPct)}% (${MathUtils.formatUsd(layer.sellNotional)})",
+                        "SELL: ${"%.1f".format(sellPct)}% (${MathUtils.formatUsd(layer.sellNotional)})",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = SellRed
