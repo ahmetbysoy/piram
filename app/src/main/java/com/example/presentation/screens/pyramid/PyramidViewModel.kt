@@ -8,7 +8,10 @@ import com.example.data.local.db.AppDatabase
 import com.example.data.local.prefs.UserPreferencesRepository
 import com.example.data.repository.MarketDataRepository
 import com.example.data.repository.MarketDataRepositoryImpl
+import com.example.domain.engine.AdaptiveEdges
 import com.example.domain.engine.DepthAggregator
+import com.example.domain.engine.DivergenceEngine
+import com.example.domain.engine.DivergenceKind
 import com.example.domain.engine.OneMinuteVolumeTracker
 import com.example.domain.engine.SignalConfig
 import com.example.domain.engine.bucket.MicroBucketManager
@@ -67,6 +70,8 @@ data class PyramidUiState(
     val vwap: Double = 0.0,
     val whaleNotional: Double = 0.0,
     val retailNotional: Double = 0.0,
+    val divergenceYazi: String = "",
+    val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -94,6 +99,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val recentWhales = ConcurrentLinkedDeque<Order>()
     private val venuePrices = ConcurrentHashMap<String, Double>()
     private val minuteVolume = OneMinuteVolumeTracker()
+    private val recentNotionals = ConcurrentLinkedDeque<Double>()
+    private var sessionOpenPrice = 0.0
+    private var lastAdaptRun = 0L
+    private var adaptLo: Double = SignalConfig.MIN_NOTIONAL
+    private var adaptHi: Double = SignalConfig.MAX_NOTIONAL
 
     private var tradeStreamJob: Job? = null
     private var depthStreamJob: Job? = null
@@ -141,6 +151,9 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         recentWhales.clear()
         venuePrices.clear()
         minuteVolume.clear()
+        recentNotionals.clear()
+        sessionOpenPrice = 0.0
+        lastAdaptRun = 0L
 
         // Stream real-time trades
         tradeStreamJob = viewModelScope.launch(Dispatchers.IO) {
@@ -152,6 +165,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
                 recentPrices.addLast(processedOrder.price)
                 while (recentPrices.size > 100) recentPrices.pollFirst()
+
+                recentNotionals.addLast(processedOrder.value)
+                while (recentNotionals.size > 800) recentNotionals.pollFirst()
+                if (sessionOpenPrice == 0.0) sessionOpenPrice = processedOrder.price
 
                 // Cross-venue last price + rolling 1-minute volume flow
                 venuePrices[processedOrder.exchange] = processedOrder.price
@@ -210,6 +227,24 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 val now = System.currentTimeMillis()
                 var consensus = _uiState.value.consensus
 
+                // Adaptif eşik: coin'in notional dağılımına göre katman aralıklarını yenile (histerezisli)
+                if (recentNotionals.size >= SignalConfig.ADAPT_MIN_TRADES && now - lastAdaptRun >= 5000L) {
+                    lastAdaptRun = now
+                    AdaptiveEdges.adaptiveRange(recentNotionals.toList())?.let { (lo, hi) ->
+                        val loChange = kotlin.math.abs(lo - adaptLo) / adaptLo
+                        val hiChange = kotlin.math.abs(hi - adaptHi) / adaptHi
+                        if (loChange > SignalConfig.HYSTERESIS || hiChange > SignalConfig.HYSTERESIS) {
+                            adaptLo = lo
+                            adaptHi = hi
+                            bucketManager.reconfigureThresholds(lo, hi)
+                        }
+                    }
+                }
+
+                // Toplama / boşaltma anlatısı (büyükler vs küçükler + fiyat)
+                val changePct = if (sessionOpenPrice > 0) (currentPrice - sessionOpenPrice) / sessionOpenPrice * 100.0 else 0.0
+                val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = null)
+
                 // Run 20 Strategies every 250ms
                 if (now - lastStrategyRunTime >= SignalConfig.STRATEGY_RUN_MS && priceList.size >= SignalConfig.MIN_PRICES_FOR_STRATEGY) {
                     lastStrategyRunTime = now
@@ -242,6 +277,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     vwap = vwap,
                     whaleNotional = whaleVol,
                     retailNotional = retailVol,
+                    divergenceYazi = divergence.yazi,
+                    divergenceKind = divergence.kind,
                     buyVolume1m = buyVolume1m,
                     sellVolume1m = sellVolume1m,
                     venuePrices = venuePrices.toMap()

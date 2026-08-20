@@ -10,6 +10,8 @@
 
 ### Added
 - `SignalConfig` — tüm motor eşikleri tek yerde (adaptif eşik, sönüm, loop, divergence sabitleri hazır).
+- `DivergenceEngine` — toplama/boşaltma anlatısı (büyükler vs küçükler + fiyat `tanh`), `FlowNarrative` satırı.
+- `AdaptiveEdges` — coin'in notional dağılımından yüzdelik eşik aralığı (histerezisli, 40+ trade sonrası).
 
 ## [1.1.0] - Multi-Venue Depth & Cross-Exchange Aggregation
 

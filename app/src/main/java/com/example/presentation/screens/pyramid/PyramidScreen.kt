@@ -73,6 +73,12 @@ fun PyramidScreen(
 
             Spacer(modifier = Modifier.height(6.dp))
 
+            // Toplama / boşaltma anlatısı
+            FlowNarrative(
+                divergenceYazi = uiState.divergenceYazi,
+                divergenceKind = uiState.divergenceKind
+            )
+
             // Cross-venue spread, 1M flow & per-venue prices
             VenueStrip(
                 venuePrices = uiState.venuePrices,

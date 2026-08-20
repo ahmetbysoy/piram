@@ -8,16 +8,29 @@ import com.example.domain.model.Order
 /**
  * Notional (USDT) mikro-katman yöneticisi.
  * Eşikler logaritmik; varsayılan aralık [MIN_NOTIONAL, MAX_NOTIONAL] = 100 .. 1M USDT.
+ * Adaptif modda `reconfigureThresholds` ile coin'in kendi dağılımına uyarlanır.
  */
 class MicroBucketManager(
     val numLayers: Int = SignalConfig.DEFAULT_LAYERS,
-    minNotional: Double = SignalConfig.MIN_NOTIONAL,
-    maxNotional: Double = SignalConfig.MAX_NOTIONAL
+    private var minNotional: Double = SignalConfig.MIN_NOTIONAL,
+    private var maxNotional: Double = SignalConfig.MAX_NOTIONAL
 ) {
     private var thresholds: DoubleArray = MathUtils.createLogarithmicThresholds(minNotional, maxNotional, numLayers)
-    private val buckets: Array<MicroBucket>
+    private var buckets: Array<MicroBucket> = emptyArray()
 
     init {
+        rebuildBuckets()
+    }
+
+    /** Eşik aralığını değiştirir ve katmanları yeniden kurar (adaptif eşik). */
+    fun reconfigureThresholds(minNotional: Double, maxNotional: Double) {
+        this.minNotional = minNotional
+        this.maxNotional = maxNotional
+        rebuildBuckets()
+    }
+
+    private fun rebuildBuckets() {
+        thresholds = MathUtils.createLogarithmicThresholds(minNotional, maxNotional, numLayers)
         buckets = Array(numLayers) { i ->
             val minV = thresholds[i]
             val maxV = thresholds[i + 1]
@@ -29,10 +42,6 @@ class MicroBucketManager(
             }
             MicroBucket(i, minV, maxV, label)
         }
-    }
-
-    fun reconfigureThresholds(minNotional: Double, maxNotional: Double) {
-        thresholds = MathUtils.createLogarithmicThresholds(minNotional, maxNotional, numLayers)
     }
 
     /** Gelen siparişi notional (USDT) değerine göre katmana atar; whale bayrağını işler. */
