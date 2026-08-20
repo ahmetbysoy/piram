@@ -1,0 +1,63 @@
+name: Build APK
+
+# Otomatik APK derleme iş akışı (yalnızca Debug).
+#
+# Ne zaman çalışır?
+#   - main branch'ine her push yapıldığında
+#   - main'e açılan her pull request'te
+#   - Actions sekmesinden "Run workflow" ile manuel olarak
+#
+# Ne üretir?
+#   - app-debug APK -> Her zaman. Sır (secret) gerektirmez, cihaza kurulabilir.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & upload debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # app/build.gradle.kts içindeki debugConfig imzalama yapılandırması
+      # kökte bir debug.keystore bekler; yoksa burada oluşturuyoruz.
+      - name: Create debug keystore (if missing)
+        run: |
+          if [ ! -f debug.keystore ]; then
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
