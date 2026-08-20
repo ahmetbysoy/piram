@@ -1,0 +1,6 @@
+{
+  "name": "HFT Pyramid",
+  "description": "High Frequency Trading Order Flow & Microstructure Pyramid Analyzer with live multi-exchange WebSocket feeds, mathematical order book engines, and 20 quantitative strategies.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

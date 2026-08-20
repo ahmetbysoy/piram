@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Pyramid Apex / Top Layer (Whale Tier) -->
+    <path
+        android:pathData="M54,28 L63,40 L45,40 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="45"
+                android:startY="28"
+                android:endX="63"
+                android:endY="40"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFFF" />
+                <item android:offset="1.0" android:color="#FF6584" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Tier 2 (High Flow) -->
+    <path
+        android:pathData="M43,43 L65,43 L69,53 L39,53 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="39"
+                android:startY="43"
+                android:endX="69"
+                android:endY="53"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF6584" />
+                <item android:offset="1.0" android:color="#D8B4FE" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Tier 3 (Medium Volume) -->
+    <path
+        android:pathData="M37,56 L71,56 L76,66 L32,66 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="32"
+                android:startY="56"
+                android:endX="76"
+                android:endY="66"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#D8B4FE" />
+                <item android:offset="1.0" android:color="#8B5CF6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Tier 4 Base (Micro-Orders / Retail) -->
+    <path
+        android:pathData="M30,69 L78,69 L84,80 L24,80 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="24"
+                android:startY="69"
+                android:endX="84"
+                android:endY="80"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#8B5CF6" />
+                <item android:offset="1.0" android:color="#3B82F6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Center Pulse Line & Depth Indicator Nodes -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:pathData="M54,24 L54,84" />
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M54,50m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <path
+        android:fillColor="#FF2A6D"
+        android:pathData="M54,63m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+</vector>

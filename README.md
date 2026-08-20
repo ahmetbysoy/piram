@@ -1,11 +1,19 @@
-<div align="center">
+# HFT Pyramid Terminal
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+An institutional-grade High-Frequency Trading (HFT) and Market Microstructure visualizer for Android, built with Kotlin, Jetpack Compose Canvas, Room SQLite, DataStore, and multi-venue WebSocket streaming.
 
-  <h1>Built with AI Studio</h2>
+## Highlights
+- **Mathematical Order Flow Aggregation**: MicroBuckets dynamically bin live trades into logarithmic tiers.
+- **20 Quantitative Strategies**: Trend, Momentum, Order Flow Imbalance, Volatility, and Statistical Arbitrage models running live consensus scoring.
+- **Multi-Exchange Ingestion**: Direct WebSocket streams from Binance, Bybit, OKX, Kraken, and KuCoin.
+- **Jitter-Free 60 FPS Canvas Rendering**: Smooth exponential decay and display lerp for fluid visual tracking.
+- **Whale Footprint Alerts**: Real-time ticker tape and tactile haptic pulses on institutional trades.
+- **Local Persistence**: Room SQLite storage for continuous trade history and offline analysis.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+## Tech Stack
+- Kotlin & Jetpack Compose
+- Room Database & SQLite
+- AndroidX DataStore Preferences
+- OkHttp WebSocket Streaming
+- Moshi JSON Serialization
+- Material Design 3 (Pastel Cyberpunk Theme)
