@@ -22,3 +22,19 @@
 - [x] Tooltip overlay for layer-by-layer inspection
 - [x] Strategy management and configuration screens
 - [x] Multi-sensory haptic pulse feedback
+
+## Phase 5: Multi-Venue Depth & Cross-Exchange Aggregation (Completed)
+- [x] Real order book `depth()` streams for Bybit, OKX, Kraken, KuCoin (replaced empty stubs)
+- [x] KuCoin public WebSocket bullet-token handshake (trades + depth)
+- [x] `DepthAggregator` — consolidated multi-venue L2 book (best-first, capped)
+- [x] Live cross-venue last-price feed wired into `exchangePrices` (activates Statistical Arbitrage)
+- [x] `OneMinuteVolumeTracker` — rolling 60s buy/sell volume for the 1M FLOW metric
+- [x] `VenueStrip` UI — cross-venue spread, 1M flow, per-venue price chips
+- [x] Cleanup: removed template leftovers (unused ui/theme package, Example tests, stale screenshot)
+
+## Phase 6: Next (Backlog)
+- [ ] 24h ticker stats (high/low/volume/change) per venue
+- [ ] Aggregated order book heatmap + depth imbalance chart
+- [ ] Trade replay & offline backtest harness
+- [ ] Push-notification whale/burst alerts
+- [ ] Per-strategy backtest metrics and parameter tuning UI

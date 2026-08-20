@@ -12,3 +12,4 @@
 | Step 6 | Presentation UI | Canvas Pyramid, TickerTape, Tooltip, Stats, 3 Screens | COMPLETED |
 | Step 7 | Testing & Quality | Unit tests for MicroBucket, BurstDetector, StrategyEngine | COMPLETED |
 | Step 8 | Documentation | Architecture, Data Flow, API, Walkthrough, Roadmap, Tasks | COMPLETED |
+| Step 9 | Multi-Venue Depth | Real depth() for Bybit/OKX/Kraken/KuCoin, KuCoin token handshake, DepthAggregator, cross-venue prices, 1M flow tracker, VenueStrip UI, template cleanup | COMPLETED |

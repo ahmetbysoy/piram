@@ -39,6 +39,7 @@ class BybitWsClient(
 
     private val reconnectPolicy = WsReconnectPolicy()
     private var activeWs: WebSocket? = null
+    private var activeDepthWs: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun trades(symbol: String): Flow<Order> = callbackFlow {
@@ -135,13 +136,76 @@ class BybitWsClient(
     }
 
     override fun depth(symbol: String): Flow<Depth> = callbackFlow {
-        // Bybit OrderBook level flow
-        awaitClose {}
+        val cleanSymbol = symbol.uppercase().replace("-", "").replace("/", "")
+        var isClosing = false
+
+        fun connectDepthWs() {
+            if (!isActive || isClosing) return
+            val request = Request.Builder().url("wss://stream.bybit.com/v5/public/spot").build()
+
+            val listener = object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    val subMsg = JSONObject().apply {
+                        put("op", "subscribe")
+                        put("args", org.json.JSONArray().apply { put("orderbook.50.$cleanSymbol") })
+                    }
+                    webSocket.send(subMsg.toString())
+                }
+
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    try {
+                        val json = JSONObject(text)
+                        val topic = json.optString("topic", "")
+                        if (topic.startsWith("orderbook")) {
+                            val data = json.optJSONObject("data") ?: return
+                            val bids = parseLevels(data.optJSONArray("b"))
+                            val asks = parseLevels(data.optJSONArray("a"))
+                            if (bids.isNotEmpty() && asks.isNotEmpty()) {
+                                trySend(Depth(bids, asks, exchangeName, System.currentTimeMillis()))
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    if (isClosing) return
+                    scope.launch {
+                        delay(3000)
+                        if (isActive && !isClosing) connectDepthWs()
+                    }
+                }
+            }
+
+            reconnectPolicy.cleanClose(activeDepthWs)
+            activeDepthWs = client.newWebSocket(request, listener)
+        }
+
+        connectDepthWs()
+
+        awaitClose {
+            isClosing = true
+            reconnectPolicy.cleanClose(activeDepthWs)
+            activeDepthWs = null
+        }
     }
 
     override fun disconnect() {
         reconnectPolicy.cleanClose(activeWs)
+        reconnectPolicy.cleanClose(activeDepthWs)
         activeWs = null
+        activeDepthWs = null
         _connectionState.value = ConnectionState.Disconnected
+    }
+
+    private fun parseLevels(arr: org.json.JSONArray?): List<DepthLevel> {
+        if (arr == null) return emptyList()
+        val levels = ArrayList<DepthLevel>()
+        for (i in 0 until arr.length()) {
+            val item = arr.optJSONArray(i) ?: continue
+            val p = item.optString(0, "0").toDoubleOrNull() ?: 0.0
+            val v = item.optString(1, "0").toDoubleOrNull() ?: 0.0
+            if (p > 0 && v > 0) levels.add(DepthLevel(p, v))
+        }
+        return levels
     }
 }

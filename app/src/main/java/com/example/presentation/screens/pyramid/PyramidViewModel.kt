@@ -8,6 +8,8 @@ import com.example.data.local.db.AppDatabase
 import com.example.data.local.prefs.UserPreferencesRepository
 import com.example.data.repository.MarketDataRepository
 import com.example.data.repository.MarketDataRepositoryImpl
+import com.example.domain.engine.DepthAggregator
+import com.example.domain.engine.OneMinuteVolumeTracker
 import com.example.domain.engine.bucket.MicroBucketManager
 import com.example.domain.engine.burst.BurstDetector
 import com.example.domain.engine.strategy.StrategyEngine
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedDeque
 
 data class PyramidUiState(
@@ -54,6 +57,10 @@ data class PyramidUiState(
         neutralCount = 20
     ),
     val depth: Depth? = null,
+    val venueDepths: List<Depth> = emptyList(),
+    val venuePrices: Map<String, Double> = emptyMap(),
+    val buyVolume1m: Double = 0.0,
+    val sellVolume1m: Double = 0.0,
     val exchangeStatuses: List<ExchangeStatus> = emptyList(),
     val orderFlowImbalance: Double = 0.0,
     val vwap: Double = 0.0,
@@ -80,6 +87,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val recentTrades = ConcurrentLinkedDeque<Order>()
     private val recentPrices = ConcurrentLinkedDeque<Double>()
     private val recentWhales = ConcurrentLinkedDeque<Order>()
+    private val venuePrices = ConcurrentHashMap<String, Double>()
+    private val minuteVolume = OneMinuteVolumeTracker()
 
     private var tradeStreamJob: Job? = null
     private var depthStreamJob: Job? = null
@@ -125,6 +134,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         recentTrades.clear()
         recentPrices.clear()
         recentWhales.clear()
+        venuePrices.clear()
+        minuteVolume.clear()
 
         // Stream real-time trades
         tradeStreamJob = viewModelScope.launch(Dispatchers.IO) {
@@ -136,6 +147,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
                 recentPrices.addLast(processedOrder.price)
                 while (recentPrices.size > 100) recentPrices.pollFirst()
+
+                // Cross-venue last price + rolling 1-minute volume flow
+                venuePrices[processedOrder.exchange] = processedOrder.price
+                minuteVolume.record(processedOrder.side, processedOrder.volume)
 
                 if (processedOrder.isWhale) {
                     recentWhales.addFirst(processedOrder)
@@ -150,10 +165,14 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
-        // Stream depth
+        // Stream depth from every enabled venue and aggregate into one book
         depthStreamJob = viewModelScope.launch(Dispatchers.IO) {
-            repository.subscribeDepth(symbol).collect { depth ->
-                _uiState.value = _uiState.value.copy(depth = depth)
+            repository.subscribeDepth(symbol, enabledExchanges).collect { depths ->
+                val aggregated = DepthAggregator.aggregate(depths)
+                _uiState.value = _uiState.value.copy(
+                    depth = aggregated,
+                    venueDepths = depths
+                )
             }
         }
     }
@@ -173,6 +192,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 val layers = bucketManager.getAggregatedLayers()
                 val whaleVol = bucketManager.getWhaleVolume()
                 val retailVol = bucketManager.getRetailVolume()
+                val buyVolume1m = minuteVolume.buyVolume()
+                val sellVolume1m = minuteVolume.sellVolume()
                 val activeBursts = burstDetector.getActiveBursts()
                 val tradeList = recentTrades.toList()
                 val priceList = recentPrices.toList()
@@ -196,7 +217,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                         depth = _uiState.value.depth,
                         bursts = activeBursts,
                         orderFlowImbalance = ofi,
+                        buyVolume1m = buyVolume1m,
+                        sellVolume1m = sellVolume1m,
                         vwap = vwap,
+                        exchangePrices = venuePrices.toMap(),
                         timestamp = now
                     )
                     val (_, computedConsensus) = strategyEngine.executeAll(snapshot)
@@ -212,7 +236,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     orderFlowImbalance = ofi,
                     vwap = vwap,
                     whaleVolume = whaleVol,
-                    retailVolume = retailVol
+                    retailVolume = retailVol,
+                    buyVolume1m = buyVolume1m,
+                    sellVolume1m = sellVolume1m,
+                    venuePrices = venuePrices.toMap()
                 )
             }
         }

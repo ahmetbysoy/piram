@@ -71,6 +71,16 @@ fun PyramidScreen(
                 symbol = uiState.symbol
             )
 
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Cross-venue spread, 1M flow & per-venue prices
+            VenueStrip(
+                venuePrices = uiState.venuePrices,
+                venueDepths = uiState.venueDepths,
+                buyVolume1m = uiState.buyVolume1m,
+                sellVolume1m = uiState.sellVolume1m
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // Whale Ticker Tape

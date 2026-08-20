@@ -2,6 +2,7 @@ package com.example.data.remote.ws
 
 import com.example.domain.model.ConnectionState
 import com.example.domain.model.Depth
+import com.example.domain.model.DepthLevel
 import com.example.domain.model.Order
 import com.example.domain.model.OrderSide
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +39,7 @@ class OkxWsClient(
 
     private val reconnectPolicy = WsReconnectPolicy()
     private var activeWs: WebSocket? = null
+    private var activeDepthWs: WebSocket? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun trades(symbol: String): Flow<Order> = callbackFlow {
@@ -144,12 +146,89 @@ class OkxWsClient(
     }
 
     override fun depth(symbol: String): Flow<Depth> = callbackFlow {
-        awaitClose {}
+        // Format BTCUSDT -> BTC-USDT (OKX instrument id)
+        val clean = symbol.uppercase().replace("/", "")
+        val okxInstId = if (!clean.contains("-") && clean.endsWith("USDT")) {
+            val base = clean.substring(0, clean.length - 4)
+            "$base-USDT"
+        } else {
+            clean
+        }
+
+        var isClosing = false
+
+        fun connectDepthWs() {
+            if (!isActive || isClosing) return
+            val request = Request.Builder().url("wss://ws.okx.com:8443/ws/v5/public").build()
+
+            val listener = object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    val subMsg = JSONObject().apply {
+                        put("op", "subscribe")
+                        put("args", org.json.JSONArray().apply {
+                            put(JSONObject().apply {
+                                put("channel", "books50-l2-tbt")
+                                put("instId", okxInstId)
+                            })
+                        })
+                    }
+                    webSocket.send(subMsg.toString())
+                }
+
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    try {
+                        val json = JSONObject(text)
+                        val dataArr = json.optJSONArray("data")
+                        if (dataArr != null && dataArr.length() > 0) {
+                            val item = dataArr.getJSONObject(0)
+                            val bids = parseLevels(item.optJSONArray("bids"))
+                            val asks = parseLevels(item.optJSONArray("asks"))
+                            if (bids.isNotEmpty() && asks.isNotEmpty()) {
+                                trySend(Depth(bids, asks, exchangeName, System.currentTimeMillis()))
+                            }
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    if (isClosing) return
+                    scope.launch {
+                        delay(3000)
+                        if (isActive && !isClosing) connectDepthWs()
+                    }
+                }
+            }
+
+            reconnectPolicy.cleanClose(activeDepthWs)
+            activeDepthWs = client.newWebSocket(request, listener)
+        }
+
+        connectDepthWs()
+
+        awaitClose {
+            isClosing = true
+            reconnectPolicy.cleanClose(activeDepthWs)
+            activeDepthWs = null
+        }
     }
 
     override fun disconnect() {
         reconnectPolicy.cleanClose(activeWs)
+        reconnectPolicy.cleanClose(activeDepthWs)
         activeWs = null
+        activeDepthWs = null
         _connectionState.value = ConnectionState.Disconnected
+    }
+
+    private fun parseLevels(arr: org.json.JSONArray?): List<DepthLevel> {
+        if (arr == null) return emptyList()
+        val levels = ArrayList<DepthLevel>()
+        for (i in 0 until arr.length()) {
+            val item = arr.optJSONArray(i) ?: continue
+            val p = item.optString(0, "0").toDoubleOrNull() ?: 0.0
+            val v = item.optString(1, "0").toDoubleOrNull() ?: 0.0
+            if (p > 0 && v > 0) levels.add(DepthLevel(p, v))
+        }
+        return levels
     }
 }

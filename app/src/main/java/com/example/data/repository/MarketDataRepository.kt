@@ -23,11 +23,16 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 
 interface MarketDataRepository {
     val exchangeStatuses: StateFlow<List<ExchangeStatus>>
     fun subscribeTrades(symbol: String, enabledExchanges: Set<String>): Flow<Order>
-    fun subscribeDepth(symbol: String): Flow<Depth>
+    /**
+     * Emits the latest depth snapshot of every enabled exchange as a list.
+     * The consumer is responsible for aggregating (see [com.example.domain.engine.DepthAggregator]).
+     */
+    fun subscribeDepth(symbol: String, enabledExchanges: Set<String>): Flow<List<Depth>>
     fun getRecentDbTrades(symbol: String, limit: Int = 100): Flow<List<Order>>
     fun disconnectAll()
 }
@@ -107,8 +112,23 @@ class MarketDataRepositoryImpl(
         }
     }
 
-    override fun subscribeDepth(symbol: String): Flow<Depth> {
-        return binanceClient.depth(symbol)
+    override fun subscribeDepth(symbol: String, enabledExchanges: Set<String>): Flow<List<Depth>> = channelFlow {
+        val activeClients = clients.filter { enabledExchanges.contains(it.exchangeName) }
+        val effectiveClients = if (activeClients.isEmpty()) listOf(binanceClient) else activeClients
+
+        // Keep the most recent book per venue; re-emit the full set on every update.
+        val latest = ConcurrentHashMap<String, Depth>()
+
+        val flows = effectiveClients.map { client ->
+            client.depth(symbol).map { depth ->
+                latest[client.exchangeName] = depth
+                latest.values.toList()
+            }
+        }
+
+        flows.merge().collect { depths ->
+            send(depths)
+        }
     }
 
     override fun getRecentDbTrades(symbol: String, limit: Int): Flow<List<Order>> {

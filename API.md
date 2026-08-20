@@ -8,16 +8,27 @@
 
 ### 2. Bybit v5 Public Spot Stream
 - **Endpoint**: `wss://stream.bybit.com/v5/public/spot`
-- **Subscription**: `{"op": "subscribe", "args": ["publicTrade.{SYMBOL}"]}`
+- **Trades**: `{"op": "subscribe", "args": ["publicTrade.{SYMBOL}"]}`
+- **Order Book (50 Levels)**: `{"op": "subscribe", "args": ["orderbook.50.{SYMBOL}"]}`
 
 ### 3. OKX v5 Public Stream
 - **Endpoint**: `wss://ws.okx.com:8443/ws/v5/public`
-- **Subscription**: `{"op": "subscribe", "args": [{"channel": "trades", "instId": "{BASE}-{QUOTE}"}]}`
+- **Trades**: `{"op": "subscribe", "args": [{"channel": "trades", "instId": "{BASE}-{QUOTE}"}]}`
+- **Order Book (50 Levels)**: `{"op": "subscribe", "args": [{"channel": "books50-l2-tbt", "instId": "{BASE}-{QUOTE}"}]}`
 
 ### 4. Kraken Public Stream
-- **Endpoint**: `wss://ws.kraken.com`
-- **Subscription**: `{"event": "subscribe", "pair": ["{PAIR}"], "subscription": {"name": "trade"}}`
+- **Trades (v1)**: `wss://ws.kraken.com` → `{"event": "subscribe", "pair": ["{PAIR}"], "subscription": {"name": "trade"}}`
+- **Order Book (v2, 25 Levels)**: `wss://ws.kraken.com/v2` → `{"method": "subscribe", "params": {"channel": "book", "symbol": ["{PAIR}"], "depth": 25}}`
 
 ### 5. KuCoin Public Stream
-- **Endpoint**: `wss://ws-api-spot.kucoin.com/?connectId={timestamp}`
-- **Subscription**: `{"id": 1, "type": "subscribe", "topic": "/market/match:{SYMBOL}", "privateChannel": false, "response": true}`
+- **Token**: `POST https://api.kucoin.com/api/v1/bullet-public` → `data.token`
+- **Endpoint**: `wss://ws-api-spot.kucoin.com/?token={token}&connectId={timestamp}`
+- **Trades**: `{"type": "subscribe", "topic": "/market/match:{SYMBOL}", ...}`
+- **Order Book (20 Levels)**: `{"type": "subscribe", "topic": "/spotMarket/level2Depth20:{SYMBOL}", ...}`
+
+## Aggregation
+
+The five per-venue depth streams are merged into a single consolidated book by
+`DepthAggregator` (bids best-first, asks best-first, capped at 50 levels per side),
+which feeds the microstructure strategies and the UI. Cross-venue last trade prices
+flow into `MarketSnapshot.exchangePrices` and power the Statistical Arbitrage strategy.
