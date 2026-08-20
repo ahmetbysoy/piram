@@ -47,6 +47,9 @@ fun VenueStrip(
     venueDepths: List<Depth>,
     buyVolume1m: Double,
     sellVolume1m: Double,
+    timeframeBuyNotional: Double,
+    timeframeSellNotional: Double,
+    timeframe: String,
     modifier: Modifier = Modifier
 ) {
     val prices = venuePrices.values.filter { it > 0 }
@@ -86,6 +89,25 @@ fun VenueStrip(
             label = "BOOKS",
             value = "${venueDepths.size}/${venuePrices.size.coerceAtLeast(1)}",
             valueColor = NeonCyan
+        )
+
+        // Seçili timeframe için pencere neti (USDT)
+        val winNet = timeframeBuyNotional - timeframeSellNotional
+        val winLabel = when (timeframe) {
+            "1M" -> "1DK"
+            "5M" -> "5DK"
+            "15M" -> "15DK"
+            "ALL" -> "AÇILIŞ"
+            else -> timeframe
+        }
+        StripCell(
+            label = winLabel,
+            value = "${if (winNet > 0) "+" else ""}${MathUtils.formatUsd(kotlin.math.abs(winNet))}",
+            valueColor = when {
+                winNet > 0 -> BuyGreen
+                winNet < 0 -> SellRed
+                else -> TextSecondary
+            }
         )
 
         // Per-venue last trade price chips

@@ -84,7 +84,10 @@ fun PyramidScreen(
                 venuePrices = uiState.venuePrices,
                 venueDepths = uiState.venueDepths,
                 buyVolume1m = uiState.buyVolume1m,
-                sellVolume1m = uiState.sellVolume1m
+                sellVolume1m = uiState.sellVolume1m,
+                timeframeBuyNotional = uiState.timeframeBuyNotional,
+                timeframeSellNotional = uiState.timeframeSellNotional,
+                timeframe = uiState.timeframe
             )
 
             Spacer(modifier = Modifier.height(8.dp))

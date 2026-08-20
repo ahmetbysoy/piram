@@ -14,6 +14,7 @@ import com.example.domain.engine.DivergenceEngine
 import com.example.domain.engine.DivergenceKind
 import com.example.domain.engine.OneMinuteVolumeTracker
 import com.example.domain.engine.SignalConfig
+import com.example.domain.engine.WindowLedger
 import com.example.domain.engine.bucket.MicroBucketManager
 import com.example.domain.engine.burst.BurstDetector
 import com.example.domain.engine.strategy.StrategyEngine
@@ -72,6 +73,8 @@ data class PyramidUiState(
     val retailNotional: Double = 0.0,
     val divergenceYazi: String = "",
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
+    val timeframeBuyNotional: Double = 0.0,
+    val timeframeSellNotional: Double = 0.0,
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -100,6 +103,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val venuePrices = ConcurrentHashMap<String, Double>()
     private val minuteVolume = OneMinuteVolumeTracker()
     private val recentNotionals = ConcurrentLinkedDeque<Double>()
+    private val windowLedger = WindowLedger()
     private var sessionOpenPrice = 0.0
     private var lastAdaptRun = 0L
     private var adaptLo: Double = SignalConfig.MIN_NOTIONAL
@@ -152,6 +156,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         venuePrices.clear()
         minuteVolume.clear()
         recentNotionals.clear()
+        windowLedger.reset()
         sessionOpenPrice = 0.0
         lastAdaptRun = 0L
 
@@ -169,6 +174,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 recentNotionals.addLast(processedOrder.value)
                 while (recentNotionals.size > 800) recentNotionals.pollFirst()
                 if (sessionOpenPrice == 0.0) sessionOpenPrice = processedOrder.price
+
+                windowLedger.ingest(processedOrder)
 
                 // Cross-venue last price + rolling 1-minute volume flow
                 venuePrices[processedOrder.exchange] = processedOrder.price
@@ -245,6 +252,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 val changePct = if (sessionOpenPrice > 0) (currentPrice - sessionOpenPrice) / sessionOpenPrice * 100.0 else 0.0
                 val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = null)
 
+                // Seçili timeframe'e göre pencere toplamı (WindowLedger)
+                windowLedger.pruneKeep(now)
+                val winSec = windowSeconds(_uiState.value.timeframe)
+                val winSum = if (winSec != null) windowLedger.sumWindow(winSec, now) else windowLedger.sessionSum()
+
                 // Run 20 Strategies every 250ms
                 if (now - lastStrategyRunTime >= SignalConfig.STRATEGY_RUN_MS && priceList.size >= SignalConfig.MIN_PRICES_FOR_STRATEGY) {
                     lastStrategyRunTime = now
@@ -279,6 +291,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     retailNotional = retailVol,
                     divergenceYazi = divergence.yazi,
                     divergenceKind = divergence.kind,
+                    timeframeBuyNotional = winSum.buyNotional,
+                    timeframeSellNotional = winSum.sellNotional,
                     buyVolume1m = buyVolume1m,
                     sellVolume1m = sellVolume1m,
                     venuePrices = venuePrices.toMap()
@@ -296,6 +310,14 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             preferencesRepository.updateTimeframe(timeframe)
         }
+    }
+
+    /** Timeframe etiketini pencere saniyesine çevirir; null → oturum (ALL). */
+    private fun windowSeconds(timeframe: String): Long? = when (timeframe) {
+        "1M" -> 60L
+        "5M" -> 300L
+        "15M" -> 900L
+        else -> null // "ALL" → oturum boyu
     }
 
     override fun onCleared() {
