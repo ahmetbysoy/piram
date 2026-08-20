@@ -98,6 +98,11 @@ fun PyramidScreen(
                 onOrderClick = { /* could inspect whale order */ }
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // Likidasyon bandı
+            LiquidationBanner(liquidation = uiState.lastLiquidation)
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // Central Interactive MicroBucket Pyramid Canvas

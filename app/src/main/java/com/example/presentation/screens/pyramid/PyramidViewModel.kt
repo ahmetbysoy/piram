@@ -24,6 +24,7 @@ import com.example.domain.model.ConsensusResult
 import com.example.domain.model.Depth
 import com.example.domain.model.ExchangeStatus
 import com.example.domain.model.LayerAggregate
+import com.example.domain.model.Liquidation
 import com.example.domain.model.MarketSnapshot
 import com.example.domain.model.Order
 import com.example.domain.model.OrderSide
@@ -75,6 +76,7 @@ data class PyramidUiState(
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframeBuyNotional: Double = 0.0,
     val timeframeSellNotional: Double = 0.0,
+    val lastLiquidation: Liquidation? = null,
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -111,6 +113,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
     private var tradeStreamJob: Job? = null
     private var depthStreamJob: Job? = null
+    private var liquidationStreamJob: Job? = null
     private var tickerAnimationJob: Job? = null
     private var currentSymbol = "BTCUSDT"
     private var decayFactor = 0.15f
@@ -141,7 +144,21 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
             }
         }
 
+        startLiquidationStream()
         startEngineLoop()
+    }
+
+    /** Binance futures likidasyon akışı (global; aktif sembole göre filtreler). */
+    private fun startLiquidationStream() {
+        liquidationStreamJob?.cancel()
+        liquidationStreamJob = viewModelScope.launch(Dispatchers.IO) {
+            repository.subscribeLiquidations().collect { liq ->
+                if (liq.symbol == _uiState.value.symbol) {
+                    _uiState.value = _uiState.value.copy(lastLiquidation = liq)
+                    hapticController.triggerBurstAlert(_uiState.value.isHapticEnabled)
+                }
+            }
+        }
     }
 
     private fun startStreaming(symbol: String, enabledExchanges: Set<String>) {
@@ -324,6 +341,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         super.onCleared()
         tradeStreamJob?.cancel()
         depthStreamJob?.cancel()
+        liquidationStreamJob?.cancel()
         tickerAnimationJob?.cancel()
         repository.disconnectAll()
     }

@@ -14,6 +14,8 @@
 - `AdaptiveEdges` — coin'in notional dağılımından yüzdelik eşik aralığı (histerezisli, 40+ trade sonrası).
 - `WindowLedger` — 1 saniyelik dilimli pencere defteri; timeframe (1DK/5DK/15DK/Açılış) artık gerçekten
   pencere hesaplıyor (`VenueStrip` içinde "WIN" hücresi olarak görünür).
+- Likidasyon akışı — Binance USD-M `!forceOrder@arr` (futures) üzerinden `Liquidation` modeli,
+  `LiquidationBanner` bandı + haptik uyarı.
 
 ## [1.1.0] - Multi-Venue Depth & Cross-Exchange Aggregation
 

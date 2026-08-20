@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.local.db.AppDatabase
 import com.example.data.local.db.TradeEntity
+import com.example.data.remote.ws.BinanceLiquidationClient
 import com.example.data.remote.ws.BinanceWsClient
 import com.example.data.remote.ws.BybitWsClient
 import com.example.data.remote.ws.ExchangeWebSocketClient
@@ -11,6 +12,7 @@ import com.example.data.remote.ws.OkxWsClient
 import com.example.domain.model.ConnectionState
 import com.example.domain.model.Depth
 import com.example.domain.model.ExchangeStatus
+import com.example.domain.model.Liquidation
 import com.example.domain.model.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +35,7 @@ interface MarketDataRepository {
      * The consumer is responsible for aggregating (see [com.example.domain.engine.DepthAggregator]).
      */
     fun subscribeDepth(symbol: String, enabledExchanges: Set<String>): Flow<List<Depth>>
+    fun subscribeLiquidations(): Flow<Liquidation>
     fun getRecentDbTrades(symbol: String, limit: Int = 100): Flow<List<Order>>
     fun disconnectAll()
 }
@@ -47,6 +50,7 @@ class MarketDataRepositoryImpl(
     private val okxClient = OkxWsClient()
     private val krakenClient = KrakenWsClient()
     private val kuCoinClient = KuCoinWsClient()
+    private val liquidationClient = BinanceLiquidationClient()
 
     private val clients = listOf(
         binanceClient,
@@ -131,6 +135,10 @@ class MarketDataRepositoryImpl(
         }
     }
 
+    override fun subscribeLiquidations(): Flow<Liquidation> {
+        return liquidationClient.liquidations()
+    }
+
     override fun getRecentDbTrades(symbol: String, limit: Int): Flow<List<Order>> {
         return database.tradeDao().getRecentTrades(symbol, limit).map { entities ->
             entities.map { it.toDomain() }
@@ -139,5 +147,6 @@ class MarketDataRepositoryImpl(
 
     override fun disconnectAll() {
         clients.forEach { it.disconnect() }
+        liquidationClient.disconnect()
     }
 }
