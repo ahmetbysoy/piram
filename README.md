@@ -10,6 +10,11 @@ An institutional-grade High-Frequency Trading (HFT) and Market Microstructure vi
 - **Whale Footprint Alerts**: Real-time ticker tape and tactile haptic pulses on institutional trades.
 - **Local Persistence**: Room SQLite storage for continuous trade history and offline analysis.
 
+## Docs
+
+- [PORT_NOTLARI](docs/PORT_NOTLARI.md) — `piramit` (web) projesinden Android'e taşınacak her şey
+- [ARCHITECTURE](ARCHITECTURE.md) · [DATA_FLOW](DATA_FLOW.md) · [API](API.md) · [WALKTHROUGH](WALKTHROUGH.md)
+
 ## Tech Stack
 - Kotlin & Jetpack Compose
 - Room Database & SQLite
