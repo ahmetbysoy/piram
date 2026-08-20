@@ -95,7 +95,7 @@ fun PyramidCanvas(
             )
 
             // Calculate max volume for sqrt normalization
-            val maxVol = max(0.001, layers.maxOfOrNull { it.displayVolume } ?: 1.0)
+            val maxVol = max(0.001, layers.maxOfOrNull { it.displayNotional } ?: 1.0)
             val sqrtMaxVol = sqrt(maxVol)
 
             // Draw each layer from top (Apex/Whale) to bottom (Base/Retail)
@@ -107,7 +107,7 @@ fun PyramidCanvas(
                 val isSelected = selectedLayerIndex == idx
 
                 val baseColor = LayerColors.getOrElse(idx % LayerColors.size) { PurplePastel }
-                val layerSqrt = sqrt(max(0.0, layer.displayVolume))
+                val layerSqrt = sqrt(max(0.0, layer.displayNotional))
                 val volumeFraction = (layerSqrt / sqrtMaxVol).toFloat().coerceIn(0.04f, 1.0f)
 
                 val maxHalfWidth = (width * 0.44f)
@@ -189,7 +189,7 @@ fun PyramidCanvas(
                 )
 
                 // Draw Volume text (Right Edge)
-                val volStr = MathUtils.formatVolume(layer.currentVolume)
+                val volStr = MathUtils.formatUsd(layer.notional)
                 val volStyle = TextStyle(
                     color = if (layer.isWhaleTier) WhaleGold else TextPrimary,
                     fontSize = 10.sp,

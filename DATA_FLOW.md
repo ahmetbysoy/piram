@@ -5,19 +5,20 @@
 2. Raw JSON string is parsed into strongly-typed `Order` domain model with high-precision timestamp, price, volume, and side.
 3. Order is asynchronously queued for Room SQLite database storage.
 
-## 2. MicroBucket Layer Assignment
-- Layer threshold boundaries are dynamically mapped using natural logarithm scaling:
-  $$\text{threshold}(k) = \text{minVolume} \cdot e^{k \cdot \text{scale}}$$
-- Volume is credited to layer $k$ based on whether the order volume falls within $[\text{threshold}(k), \text{threshold}(k+1)]$.
-- Apex tier ($k = N-1$) is flagged as `isWhaleTier`.
+## 2. MicroBucket Layer Assignment (USDT Notional)
+- Katman eşikleri doğal logaritma ölçeklemesiyle kurulur (varsayılan aralık 100 USDT → 1M USDT):
+  $$\text{threshold}(k) = \text{minNotional} \cdot e^{k \cdot \text{scale}}$$
+- Sipariş **adeti değil**, `Order.value = fiyat × adet` (USDT notional) katman $k$'ya yazılır;
+  `value ∈ [threshold(k), threshold(k+1)]` aralığına göre atanır.
+- Apex tier ($k = N-1$) `isWhaleTier` olarak işaretlenir; üst 2 katman (Shark + Whale) "kurumsal" sayılır.
 
 ## 3. Dynamic Decay and Jitter-Free Canvas Smoothing
-- At each render cycle ($dt = 80\text{ms}$):
-  $$\text{currentVolume}(t + dt) = \text{currentVolume}(t) \cdot e^{-\lambda \cdot dt}$$
-- Display lerping prevents visual jumping:
-  $$\text{displayVolume}(t + dt) = \text{displayVolume}(t) + \alpha \cdot (\text{currentVolume}(t) - \text{displayVolume}(t))$$
-- Bar horizontal scaling applies square root normalization:
-  $$\text{widthFraction} = \frac{\sqrt{\text{displayVolume}}}{\sqrt{\text{maxVolume}}}$$
+- Her render döngüsünde ($dt = 80\text{ms}$):
+  $$\text{notional}(t + dt) = \text{notional}(t) \cdot e^{-\lambda \cdot dt}$$
+- Display lerp görsel sıçramayı önler:
+  $$\text{displayNotional}(t + dt) = \text{displayNotional}(t) + \alpha \cdot (\text{notional}(t) - \text{displayNotional}(t))$$
+- Bar yatay ölçekleme karekök normalizasyonu kullanır:
+  $$\text{widthFraction} = \frac{\sqrt{\text{displayNotional}}}{\sqrt{\text{maxNotional}}}$$
 
 ## 4. Quantitative Consensus Engine
 - Every 250ms, a `MarketSnapshot` is assembled from live state.

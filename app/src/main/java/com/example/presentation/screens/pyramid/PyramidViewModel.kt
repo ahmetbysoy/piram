@@ -10,6 +10,7 @@ import com.example.data.repository.MarketDataRepository
 import com.example.data.repository.MarketDataRepositoryImpl
 import com.example.domain.engine.DepthAggregator
 import com.example.domain.engine.OneMinuteVolumeTracker
+import com.example.domain.engine.SignalConfig
 import com.example.domain.engine.bucket.MicroBucketManager
 import com.example.domain.engine.burst.BurstDetector
 import com.example.domain.engine.strategy.StrategyEngine
@@ -64,8 +65,8 @@ data class PyramidUiState(
     val exchangeStatuses: List<ExchangeStatus> = emptyList(),
     val orderFlowImbalance: Double = 0.0,
     val vwap: Double = 0.0,
-    val whaleVolume: Double = 0.0,
-    val retailVolume: Double = 0.0,
+    val whaleNotional: Double = 0.0,
+    val retailNotional: Double = 0.0,
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -78,7 +79,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     val strategyEngine = StrategyEngine()
     private val hapticController = HapticController(application)
 
-    private val bucketManager = MicroBucketManager(numLayers = 8, minVolume = 0.001, maxVolume = 25.0)
+    private val bucketManager = MicroBucketManager(
+        numLayers = SignalConfig.DEFAULT_LAYERS,
+        minNotional = SignalConfig.MIN_NOTIONAL,
+        maxNotional = SignalConfig.MAX_NOTIONAL
+    )
     private val burstDetector = BurstDetector(windowMs = 1500L, minOrderCount = 3, minVolumeSpike = 0.3)
 
     private val _uiState = MutableStateFlow(PyramidUiState())
@@ -150,7 +155,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
                 // Cross-venue last price + rolling 1-minute volume flow
                 venuePrices[processedOrder.exchange] = processedOrder.price
-                minuteVolume.record(processedOrder.side, processedOrder.volume)
+                minuteVolume.record(processedOrder.side, processedOrder.value)
 
                 if (processedOrder.isWhale) {
                     recentWhales.addFirst(processedOrder)
@@ -183,15 +188,15 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
             var lastStrategyRunTime = 0L
 
             while (isActive) {
-                delay(80) // ~12 fps state update loop for smooth Canvas animation
+                delay(SignalConfig.ENGINE_TICK_MS) // ~12 fps state update loop for smooth Canvas animation
 
                 // Smooth exponential decay & display lerp
                 bucketManager.decayAll(decayRate = decayFactor, dtSeconds = 0.08f)
-                bucketManager.updateDisplay(smoothingFactor = 0.22f)
+                bucketManager.updateDisplay(smoothingFactor = SignalConfig.DISPLAY_SMOOTHING)
 
                 val layers = bucketManager.getAggregatedLayers()
-                val whaleVol = bucketManager.getWhaleVolume()
-                val retailVol = bucketManager.getRetailVolume()
+                val whaleVol = bucketManager.getWhaleNotional()
+                val retailVol = bucketManager.getRetailNotional()
                 val buyVolume1m = minuteVolume.buyVolume()
                 val sellVolume1m = minuteVolume.sellVolume()
                 val activeBursts = burstDetector.getActiveBursts()
@@ -206,7 +211,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 var consensus = _uiState.value.consensus
 
                 // Run 20 Strategies every 250ms
-                if (now - lastStrategyRunTime >= 250L && priceList.size >= 5) {
+                if (now - lastStrategyRunTime >= SignalConfig.STRATEGY_RUN_MS && priceList.size >= SignalConfig.MIN_PRICES_FOR_STRATEGY) {
                     lastStrategyRunTime = now
                     val snapshot = MarketSnapshot(
                         symbol = currentSymbol,
@@ -235,8 +240,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     consensus = consensus,
                     orderFlowImbalance = ofi,
                     vwap = vwap,
-                    whaleVolume = whaleVol,
-                    retailVolume = retailVol,
+                    whaleNotional = whaleVol,
+                    retailNotional = retailVol,
                     buyVolume1m = buyVolume1m,
                     sellVolume1m = sellVolume1m,
                     venuePrices = venuePrices.toMap()

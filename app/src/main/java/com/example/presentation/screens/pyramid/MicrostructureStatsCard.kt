@@ -51,8 +51,8 @@ fun MicrostructureStatsCard(
     orderFlowImbalance: Double,
     vwap: Double,
     depth: Depth?,
-    whaleVolume: Double,
-    retailVolume: Double,
+    whaleNotional: Double,
+    retailNotional: Double,
     burstCount: Int,
     modifier: Modifier = Modifier
 ) {
@@ -88,13 +88,13 @@ fun MicrostructureStatsCard(
         )
 
         // Metric 3: Whale vs Retail
-        val totalRatio = whaleVolume + retailVolume
-        val whalePct = if (totalRatio > 0) (whaleVolume / totalRatio) * 100.0 else 0.0
+        val totalRatio = whaleNotional + retailNotional
+        val whalePct = if (totalRatio > 0) (whaleNotional / totalRatio) * 100.0 else 0.0
         StatColumn(
             label = "INSTITUTIONAL",
             value = "${"%.0f".format(whalePct)}%",
             valueColor = WhaleGold,
-            subLabel = "${MathUtils.formatVolume(whaleVolume)} VOL"
+            subLabel = "${MathUtils.formatUsd(whaleNotional)} USDT"
         )
 
         // Metric 4: Spread / Bursts

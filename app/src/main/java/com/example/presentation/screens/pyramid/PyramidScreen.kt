@@ -112,8 +112,8 @@ fun PyramidScreen(
                 orderFlowImbalance = uiState.orderFlowImbalance,
                 vwap = uiState.vwap,
                 depth = uiState.depth,
-                whaleVolume = uiState.whaleVolume,
-                retailVolume = uiState.retailVolume,
+                whaleNotional = uiState.whaleNotional,
+                retailNotional = uiState.retailNotional,
                 burstCount = uiState.activeBursts.size
             )
         }

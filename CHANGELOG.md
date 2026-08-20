@@ -1,5 +1,16 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.2.0] - Notional (USDT) Layer Engine
+
+### Changed
+- Katmanlama artık **USDT notional** (`fiyat × adet`) üzerinden; adet (qty) kullanılmıyor.
+  `MicroBucket` / `MicroBucketManager` / `LayerAggregate` alanları notional'a geçirildi.
+- Varsayılan eşik aralığı 0.001–25 adet yerine **100 USDT → 1M USDT** (coin bağımsız).
+- 1 dakikalık akış (1M FLOW) artık notional üzerinden toplanıyor.
+
+### Added
+- `SignalConfig` — tüm motor eşikleri tek yerde (adaptif eşik, sönüm, loop, divergence sabitleri hazır).
+
 ## [1.1.0] - Multi-Venue Depth & Cross-Exchange Aggregation
 
 ### Added

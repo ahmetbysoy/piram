@@ -11,12 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -31,17 +29,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.core.theme.BgDark
 import com.example.core.theme.BorderDark
 import com.example.core.theme.BuyGreen
 import com.example.core.theme.CardDark
 import com.example.core.theme.LayerColors
-import com.example.core.theme.NeonCyan
-import com.example.core.theme.NeonPink
-import com.example.core.theme.PinkPastel
 import com.example.core.theme.PurplePastel
 import com.example.core.theme.SellRed
-import com.example.core.theme.SurfaceDark
 import com.example.core.theme.TextMuted
 import com.example.core.theme.TextPrimary
 import com.example.core.theme.TextSecondary
@@ -56,8 +49,8 @@ fun TooltipOverlay(
     modifier: Modifier = Modifier
 ) {
     val layerColor = LayerColors.getOrElse(layer.layerIndex % LayerColors.size) { PurplePastel }
-    val totalVol = layer.buyVolume + layer.sellVolume
-    val buyPct = if (totalVol > 0) (layer.buyVolume / totalVol) * 100.0 else 50.0
+    val totalNotional = layer.buyNotional + layer.sellNotional
+    val buyPct = if (totalNotional > 0) (layer.buyNotional / totalNotional) * 100.0 else 50.0
     val sellPct = 100.0 - buyPct
 
     Box(
@@ -125,15 +118,15 @@ fun TooltipOverlay(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Volume breakdown
+            // Notional breakdown (USDT)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
-                    Text("Total Layer Volume", fontSize = 11.sp, color = TextMuted)
+                    Text("Total Layer Notional", fontSize = 11.sp, color = TextMuted)
                     Text(
-                        MathUtils.formatVolume(layer.currentVolume),
+                        MathUtils.formatUsd(layer.notional),
                         fontSize = 15.sp,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
@@ -162,13 +155,13 @@ fun TooltipOverlay(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        "BUY: ${"%.1f".format(buyPct)}% (${MathUtils.formatVolume(layer.buyVolume)})",
+                        "BUY: ${\"%.1f\".format(buyPct)}% (${MathUtils.formatUsd(layer.buyNotional)})",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = BuyGreen
                     )
                     Text(
-                        "SELL: ${"%.1f".format(sellPct)}% (${MathUtils.formatVolume(layer.sellVolume)})",
+                        "SELL: ${\"%.1f\".format(sellPct)}% (${MathUtils.formatUsd(layer.sellNotional)})",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = SellRed
@@ -193,7 +186,7 @@ fun TooltipOverlay(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Threshold: ${MathUtils.formatVolume(layer.minVolume)} - ${MathUtils.formatVolume(layer.maxVolume)}",
+                    text = "Threshold: ${MathUtils.formatUsd(layer.minNotional)} - ${MathUtils.formatUsd(layer.maxNotional)}",
                     fontSize = 10.sp,
                     color = TextMuted
                 )

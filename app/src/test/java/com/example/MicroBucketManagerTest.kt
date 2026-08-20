@@ -4,15 +4,17 @@ import com.example.domain.engine.bucket.MicroBucketManager
 import com.example.domain.model.Order
 import com.example.domain.model.OrderSide
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MicroBucketManagerTest {
 
     @Test
-    fun testLogarithmicLayerDistribution() {
-        val manager = MicroBucketManager(numLayers = 8, minVolume = 0.001, maxVolume = 25.0)
+    fun testLogarithmicNotionalDistribution() {
+        val manager = MicroBucketManager(numLayers = 8, minNotional = 100.0, maxNotional = 1_000_000.0)
 
+        // 0.0005 BTC @ 60000 = 30 USDT → en alt katman (toz)
         val smallOrder = Order(
             id = "1",
             side = OrderSide.BUY,
@@ -22,8 +24,9 @@ class MicroBucketManagerTest {
         )
         val processedSmall = manager.processOrder(smallOrder)
         assertEquals(0, processedSmall.layerIndex)
-        assertEquals(false, processedSmall.isWhale)
+        assertFalse(processedSmall.isWhale)
 
+        // 30 BTC @ 60000 = 1.8M USDT → en üst katman (whale)
         val largeOrder = Order(
             id = "2",
             side = OrderSide.SELL,
@@ -33,13 +36,14 @@ class MicroBucketManagerTest {
         )
         val processedLarge = manager.processOrder(largeOrder)
         assertEquals(7, processedLarge.layerIndex)
-        assertEquals(true, processedLarge.isWhale)
+        assertTrue(processedLarge.isWhale)
     }
 
     @Test
-    fun testVolumeDecayAndAggregation() {
-        val manager = MicroBucketManager(numLayers = 8, minVolume = 0.001, maxVolume = 25.0)
+    fun testNotionalDecayAndAggregation() {
+        val manager = MicroBucketManager(numLayers = 8, minNotional = 100.0, maxNotional = 1_000_000.0)
 
+        // 5 BTC @ 65000 = 325K USDT
         val order = Order(
             id = "10",
             side = OrderSide.BUY,
@@ -51,12 +55,12 @@ class MicroBucketManagerTest {
 
         val beforeDecay = manager.getAggregatedLayers()
         val targetLayer = beforeDecay.find { it.layerIndex == processed.layerIndex }
-        assertTrue((targetLayer?.currentVolume ?: 0.0) > 0.0)
+        assertTrue((targetLayer?.notional ?: 0.0) > 0.0)
 
         // Apply decay
         manager.decayAll(decayRate = 0.5f, dtSeconds = 1.0f)
         val afterDecay = manager.getAggregatedLayers()
         val targetLayerAfter = afterDecay.find { it.layerIndex == processed.layerIndex }
-        assertTrue((targetLayerAfter?.currentVolume ?: 0.0) < (targetLayer?.currentVolume ?: 0.0))
+        assertTrue((targetLayerAfter?.notional ?: 0.0) < (targetLayer?.notional ?: 0.0))
     }
 }

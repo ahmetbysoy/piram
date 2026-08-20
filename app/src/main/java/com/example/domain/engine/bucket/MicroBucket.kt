@@ -4,59 +4,62 @@ import com.example.core.util.MathUtils
 import com.example.domain.model.LayerAggregate
 import com.example.domain.model.Order
 import com.example.domain.model.OrderSide
-import kotlin.math.max
 
+/**
+ * Tek notional (USDT) katmanı. Sipariş **adeti** değil, `Order.value` (fiyat × adet) toplanır.
+ */
 class MicroBucket(
     val index: Int,
-    val minVolume: Double,
-    val maxVolume: Double,
+    val minNotional: Double,
+    val maxNotional: Double,
     val label: String
 ) {
-    var currentVolume: Double = 0.0
+    var currentNotional: Double = 0.0
         private set
-    var buyVolume: Double = 0.0
+    var buyNotional: Double = 0.0
         private set
-    var sellVolume: Double = 0.0
+    var sellNotional: Double = 0.0
         private set
     var orderCount: Int = 0
         private set
-    var displayVolume: Double = 0.0
+    var displayNotional: Double = 0.0
         private set
     var lastUpdated: Long = System.currentTimeMillis()
         private set
 
     fun addOrder(order: Order) {
-        currentVolume += order.volume
+        val value = order.value
+        currentNotional += value
         if (order.side == OrderSide.BUY) {
-            buyVolume += order.volume
+            buyNotional += value
         } else {
-            sellVolume += order.volume
+            sellNotional += value
         }
         orderCount++
         lastUpdated = System.currentTimeMillis()
     }
 
     fun decay(decayRate: Float, dtSeconds: Float) {
-        currentVolume = MathUtils.exponentialDecayDouble(currentVolume, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
-        buyVolume = MathUtils.exponentialDecayDouble(buyVolume, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
-        sellVolume = MathUtils.exponentialDecayDouble(sellVolume, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
+        currentNotional = MathUtils.exponentialDecayDouble(currentNotional, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
+        buyNotional = MathUtils.exponentialDecayDouble(buyNotional, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
+        sellNotional = MathUtils.exponentialDecayDouble(sellNotional, 0.0, decayRate.toDouble(), dtSeconds.toDouble())
     }
 
     fun updateDisplay(smoothingFactor: Float = 0.18f) {
-        displayVolume = MathUtils.lerpDouble(displayVolume, currentVolume, smoothingFactor.toDouble())
+        displayNotional = MathUtils.lerpDouble(displayNotional, currentNotional, smoothingFactor.toDouble())
     }
 
     fun toAggregate(isWhaleTier: Boolean): LayerAggregate {
-        val total = buyVolume + sellVolume
-        val ratio = if (total > 0) (buyVolume / total).toFloat() else 0.5f
+        val total = buyNotional + sellNotional
+        val ratio = if (total > 0) (buyNotional / total).toFloat() else 0.5f
         return LayerAggregate(
             layerIndex = index,
-            minVolume = minVolume,
-            maxVolume = maxVolume,
-            currentVolume = currentVolume,
-            displayVolume = displayVolume,
-            buyVolume = buyVolume,
-            sellVolume = sellVolume,
+            minNotional = minNotional,
+            maxNotional = maxNotional,
+            notional = currentNotional,
+            displayNotional = displayNotional,
+            buyNotional = buyNotional,
+            sellNotional = sellNotional,
             orderCount = orderCount,
             buyRatio = ratio,
             isWhaleTier = isWhaleTier,
@@ -65,10 +68,10 @@ class MicroBucket(
     }
 
     fun reset() {
-        currentVolume = 0.0
-        buyVolume = 0.0
-        sellVolume = 0.0
+        currentNotional = 0.0
+        buyNotional = 0.0
+        sellNotional = 0.0
         orderCount = 0
-        displayVolume = 0.0
+        displayNotional = 0.0
     }
 }
