@@ -170,12 +170,23 @@ jobs:
         run: |
           DEBUG='{"variant":"debug","task":"assembleDebug","emoji":"🐛","label":"Debug"}'
           RELEASE='{"variant":"release","task":"assembleRelease","emoji":"💎","label":"Release"}'
+          # Release yalnızca imza secret'ları AYARLIYSA matrix'e dahil edilir.
+          # Secret'lar yoksa release atlanır (build kırmızı yanmaz, sadece Debug üretilir).
+          HAS_RELEASE='${{ secrets.KEYSTORE_BASE64 != '' && secrets.KEYSTORE_PASSWORD != '' && secrets.KEY_PASSWORD != '' }}'
           case "${{ inputs.build_type }}" in
             debug)   MATRIX="[${DEBUG}]" ;;
             release) MATRIX="[${RELEASE}]" ;;
-            *)       MATRIX="[${DEBUG},${RELEASE}]" ;;
+            *)
+              if [ "$HAS_RELEASE" = "true" ]; then
+                MATRIX="[${DEBUG},${RELEASE}]"
+              else
+                MATRIX="[${DEBUG}]"
+                echo "⚠️ Release secret'ları (KEYSTORE_BASE64 / KEYSTORE_PASSWORD / KEY_PASSWORD) ayarlı değil → sadece Debug üretilecek."
+              fi
+              ;;
           esac
           echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
+          echo "has_release=${HAS_RELEASE}" >> "$GITHUB_OUTPUT"
           echo "🏭 Bant planı: ${MATRIX}"
 
       - name: 🎲 Günün kod adı & geliştirici falı
@@ -219,7 +230,11 @@ jobs:
             echo "| 🏭 Varyant | 🔧 Task |"
             echo "|---|---|"
             echo "| 🐛 Debug | assembleDebug |"
-            echo "| 💎 Release | assembleRelease |"
+            if [ "${{ steps.plan.outputs.has_release }}" = "true" ]; then
+              echo "| 💎 Release | assembleRelease |"
+            else
+              echo "| 💎 Release | ⚠️ secret yok, atlandı |"
+            fi
             echo ""
             echo "> ${{ steps.motivation.outputs.quote }}"
           } >> "$GITHUB_STEP_SUMMARY"
