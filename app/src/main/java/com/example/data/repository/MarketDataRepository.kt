@@ -2,7 +2,9 @@ package com.example.data.repository
 
 import com.example.data.local.db.AppDatabase
 import com.example.data.local.db.TradeEntity
+import com.example.data.remote.rest.OpenInterestClient
 import com.example.data.remote.ws.BinanceLiquidationClient
+import com.example.data.remote.ws.BinanceMiniTickerClient
 import com.example.data.remote.ws.BinanceWsClient
 import com.example.data.remote.ws.BybitWsClient
 import com.example.data.remote.ws.ExchangeWebSocketClient
@@ -13,6 +15,8 @@ import com.example.domain.model.ConnectionState
 import com.example.domain.model.Depth
 import com.example.domain.model.ExchangeStatus
 import com.example.domain.model.Liquidation
+import com.example.domain.model.MiniTickerRow
+import com.example.domain.model.OiSnap
 import com.example.domain.model.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +40,8 @@ interface MarketDataRepository {
      */
     fun subscribeDepth(symbol: String, enabledExchanges: Set<String>): Flow<List<Depth>>
     fun subscribeLiquidations(): Flow<Liquidation>
+    fun subscribeMiniTickers(): Flow<List<MiniTickerRow>>
+    fun fetchOpenInterest(symbol: String): OiSnap?
     fun getRecentDbTrades(symbol: String, limit: Int = 100): Flow<List<Order>>
     fun disconnectAll()
 }
@@ -51,6 +57,8 @@ class MarketDataRepositoryImpl(
     private val krakenClient = KrakenWsClient()
     private val kuCoinClient = KuCoinWsClient()
     private val liquidationClient = BinanceLiquidationClient()
+    private val miniTickerClient = BinanceMiniTickerClient()
+    private val openInterestClient = OpenInterestClient()
 
     private val clients = listOf(
         binanceClient,
@@ -139,6 +147,14 @@ class MarketDataRepositoryImpl(
         return liquidationClient.liquidations()
     }
 
+    override fun subscribeMiniTickers(): Flow<List<MiniTickerRow>> {
+        return miniTickerClient.miniTickers()
+    }
+
+    override fun fetchOpenInterest(symbol: String): OiSnap? {
+        return openInterestClient.fetch(symbol)
+    }
+
     override fun getRecentDbTrades(symbol: String, limit: Int): Flow<List<Order>> {
         return database.tradeDao().getRecentTrades(symbol, limit).map { entities ->
             entities.map { it.toDomain() }
@@ -148,5 +164,6 @@ class MarketDataRepositoryImpl(
     override fun disconnectAll() {
         clients.forEach { it.disconnect() }
         liquidationClient.disconnect()
+        miniTickerClient.disconnect()
     }
 }

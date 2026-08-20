@@ -31,6 +31,8 @@ import com.example.core.theme.TextSecondary
 import com.example.core.theme.WhaleGold
 import com.example.core.util.MathUtils
 import com.example.domain.model.Depth
+import com.example.domain.model.OiState
+import com.example.domain.model.formatOi
 
 /**
  * Compact cross-venue market data strip.
@@ -50,6 +52,9 @@ fun VenueStrip(
     timeframeBuyNotional: Double,
     timeframeSellNotional: Double,
     timeframe: String,
+    oiUsdt: Double?,
+    oiDelta: Double?,
+    oiState: OiState,
     modifier: Modifier = Modifier
 ) {
     val prices = venuePrices.values.filter { it > 0 }
@@ -89,6 +94,30 @@ fun VenueStrip(
             label = "BOOKS",
             value = "${venueDepths.size}/${venuePrices.size.coerceAtLeast(1)}",
             valueColor = NeonCyan
+        )
+
+        // OI (açık pozisyon) — "OI yoksa yalan yok"
+        val oiValue = when {
+            oiState == OiState.BEKLIYOR -> "…"
+            oiUsdt == null -> "yok"
+            else -> {
+                val arrow = when {
+                    oiDelta == null -> ""
+                    oiDelta > 0 -> " ↑"
+                    oiDelta < 0 -> " ↓"
+                    else -> ""
+                }
+                formatOi(oiUsdt) + arrow + if (oiState == OiState.ESKI) " (eski)" else ""
+            }
+        }
+        StripCell(
+            label = "OI",
+            value = oiValue,
+            valueColor = when (oiState) {
+                OiState.OK -> NeonCyan
+                OiState.ESKI -> WhaleGold
+                else -> TextMuted
+            }
         )
 
         // Seçili timeframe için pencere neti (USDT)

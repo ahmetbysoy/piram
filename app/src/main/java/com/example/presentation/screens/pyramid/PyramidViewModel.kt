@@ -26,6 +26,9 @@ import com.example.domain.model.ExchangeStatus
 import com.example.domain.model.LayerAggregate
 import com.example.domain.model.Liquidation
 import com.example.domain.model.MarketSnapshot
+import com.example.domain.model.OiSnap
+import com.example.domain.model.OiState
+import com.example.domain.model.OpenInterestParser
 import com.example.domain.model.Order
 import com.example.domain.model.OrderSide
 import com.example.domain.model.SignalType
@@ -77,6 +80,9 @@ data class PyramidUiState(
     val timeframeBuyNotional: Double = 0.0,
     val timeframeSellNotional: Double = 0.0,
     val lastLiquidation: Liquidation? = null,
+    val oiUsdt: Double? = null,
+    val oiDelta: Double? = null,
+    val oiState: OiState = OiState.BEKLIYOR,
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -114,7 +120,9 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private var tradeStreamJob: Job? = null
     private var depthStreamJob: Job? = null
     private var liquidationStreamJob: Job? = null
+    private var oiPollingJob: Job? = null
     private var tickerAnimationJob: Job? = null
+    private var prevOi: OiSnap? = null
     private var currentSymbol = "BTCUSDT"
     private var decayFactor = 0.15f
 
@@ -148,6 +156,38 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         startEngineLoop()
     }
 
+    /** Açık pozisyon (OI) periyodik sorgusu — durum makinesi: bekliyor / ok / yok / eski. */
+    private fun startOiPolling(symbol: String) {
+        oiPollingJob?.cancel()
+        prevOi = null
+        _uiState.value = _uiState.value.copy(
+            oiUsdt = null,
+            oiDelta = null,
+            oiState = OiState.BEKLIYOR
+        )
+        oiPollingJob = viewModelScope.launch(Dispatchers.IO) {
+            while (isActive) {
+                val snap = repository.fetchOpenInterest(symbol)
+                val price = _uiState.value.currentPrice
+                if (snap != null && snap.symbol.equals(symbol, ignoreCase = true)) {
+                    val prev = prevOi
+                    val delta = if (prev != null && prev.symbol == snap.symbol) snap.oi - prev.oi else null
+                    prevOi = snap
+                    _uiState.value = _uiState.value.copy(
+                        oiUsdt = OpenInterestParser.oiToUsdt(snap.oi, price),
+                        oiDelta = delta,
+                        oiState = OiState.OK
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        oiState = if (_uiState.value.oiUsdt != null) OiState.ESKI else OiState.YOK
+                    )
+                }
+                delay(10_000L)
+            }
+        }
+    }
+
     /** Binance futures likidasyon akışı (global; aktif sembole göre filtreler). */
     private fun startLiquidationStream() {
         liquidationStreamJob?.cancel()
@@ -164,6 +204,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private fun startStreaming(symbol: String, enabledExchanges: Set<String>) {
         tradeStreamJob?.cancel()
         depthStreamJob?.cancel()
+
+        startOiPolling(symbol)
 
         bucketManager.reset()
         burstDetector.clear()
@@ -267,7 +309,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
                 // Toplama / boşaltma anlatısı (büyükler vs küçükler + fiyat)
                 val changePct = if (sessionOpenPrice > 0) (currentPrice - sessionOpenPrice) / sessionOpenPrice * 100.0 else 0.0
-                val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = null)
+                val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = _uiState.value.oiDelta)
 
                 // Seçili timeframe'e göre pencere toplamı (WindowLedger)
                 windowLedger.pruneKeep(now)
@@ -342,6 +384,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         tradeStreamJob?.cancel()
         depthStreamJob?.cancel()
         liquidationStreamJob?.cancel()
+        oiPollingJob?.cancel()
         tickerAnimationJob?.cancel()
         repository.disconnectAll()
     }

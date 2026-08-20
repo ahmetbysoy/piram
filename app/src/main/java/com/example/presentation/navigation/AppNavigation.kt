@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CandlestickChart
 import androidx.compose.material.icons.filled.ChangeHistory
 import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.Radar
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
@@ -42,6 +43,8 @@ import com.example.core.theme.TextMuted
 import com.example.core.theme.TextPrimary
 import com.example.presentation.screens.pyramid.PyramidScreen
 import com.example.presentation.screens.pyramid.PyramidViewModel
+import com.example.presentation.screens.radar.RadarScreen
+import com.example.presentation.screens.radar.RadarViewModel
 import com.example.presentation.screens.settings.SettingsScreen
 import com.example.presentation.screens.settings.SettingsViewModel
 import com.example.presentation.screens.strategies.StrategiesScreen
@@ -50,6 +53,7 @@ import com.example.presentation.screens.strategies.StrategiesViewModel
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Pyramid : Screen("pyramid", "Pyramid", Icons.Default.ChangeHistory)
     object Strategies : Screen("strategies", "Strategies", Icons.Default.Insights)
+    object Radar : Screen("radar", "Radar", Icons.Default.Radar)
     object Settings : Screen("settings", "Settings", Icons.Default.Tune)
 }
 
@@ -61,6 +65,7 @@ fun AppNavigation(
     val items = listOf(
         Screen.Pyramid,
         Screen.Strategies,
+        Screen.Radar,
         Screen.Settings
     )
 
@@ -135,6 +140,16 @@ fun AppNavigation(
                     )
                 }
                 StrategiesScreen(viewModel = strategiesViewModel)
+            }
+            composable(Screen.Radar.route) {
+                val radarViewModel = androidx.lifecycle.viewmodel.compose.viewModel {
+                    RadarViewModel(
+                        application = pyramidViewModel.getApplication(),
+                        repository = pyramidViewModel.repository,
+                        preferencesRepository = pyramidViewModel.preferencesRepository
+                    )
+                }
+                RadarScreen(viewModel = radarViewModel)
             }
             composable(Screen.Settings.route) {
                 val settingsViewModel = androidx.lifecycle.viewmodel.compose.viewModel {
