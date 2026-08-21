@@ -56,6 +56,7 @@ import com.example.core.theme.TextPrimary
 import com.example.core.theme.TextSecondary
 import com.example.core.theme.WhaleGold
 import com.example.domain.engine.MarketMood
+import com.example.domain.engine.strategy.SignalExplainer
 import com.example.domain.engine.strategy.StrategyCategory
 import com.example.domain.model.SignalType
 import kotlin.math.abs
@@ -469,7 +470,7 @@ private fun StrategyCard(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = result.reasoning,
+                            text = SignalExplainer.explain(result),
                             fontSize = 11.sp,
                             fontFamily = FontFamily.Monospace,
                             color = TextSecondary,

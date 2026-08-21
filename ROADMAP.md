@@ -103,7 +103,9 @@
 ## Phase 22: Push Bildirimler (Completed)
 - [x] NotificationHelper + POST_NOTIFICATIONS + runtime izin + Settings toggle + whale/burst bildirim
 
-## Phase 23: Next (Backlog)
-- [ ] correlationMatrix (#8) · explainSignal (#9)
+## Phase 23: explainSignal + Redundancy (Completed — 15 öneri tamam)
+- [x] SignalExplainer (#9) + StrategyCorrelation (#8, redundancy cezası)
+
+## Phase 24: Next (Backlog)
 - [ ] 24h ticker stats · Trade replay/backtest
 - [ ] Düşük öncelik: #12 ses, #14 animasyon

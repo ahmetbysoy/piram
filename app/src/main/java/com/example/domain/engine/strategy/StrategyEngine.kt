@@ -5,9 +5,14 @@ import com.example.domain.model.MarketSnapshot
 import com.example.domain.model.SignalType
 import com.example.domain.model.StrategyResult
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedDeque
 import kotlin.math.abs
 
 class StrategyEngine {
+
+    private companion object {
+        const val DIR_HISTORY_SIZE = 60
+    }
 
     val strategies: List<Strategy> = listOf(
         TrendFollowingStrategy(),
@@ -43,6 +48,9 @@ class StrategyEngine {
 
     /** #21: strateji performans izleyici + adaptif ağırlıklandırma. */
     private val performance = StrategyPerformanceTracker()
+
+    /** #8: strateji yön oy geçmişi (redundancy tespiti için). */
+    private val directionHistory = ConcurrentHashMap<String, ConcurrentLinkedDeque<Int>>()
 
     fun isStrategyEnabled(id: String): Boolean = enabledMap[id] ?: true
 
@@ -93,6 +101,10 @@ class StrategyEngine {
         // Süresi dolan tahminleri sonuçlandır (win-rate güncel kalsın)
         performance.resolve(snapshot.currentPrice, snapshot.timestamp)
 
+        // #8: redundancy cezası için yön geçmişi anlık görüntüsü (döngü öncesi)
+        val historySnap = HashMap<String, List<Int>>(directionHistory.size)
+        directionHistory.forEach { (k, v) -> historySnap[k] = v.toList() }
+
         for (strategy in strategies) {
             val isEnabled = isStrategyEnabled(strategy.id)
             if (!isEnabled) continue
@@ -106,11 +118,20 @@ class StrategyEngine {
                 SignalType.STRONG_SELL, SignalType.SELL -> -1
                 SignalType.NEUTRAL -> 0
             }
+
+            // #8: yön oyunu kaydet (redundancy tespiti)
+            val hist = directionHistory.getOrPut(strategy.id) { ConcurrentLinkedDeque() }
+            hist.addLast(direction)
+            while (hist.size > DIR_HISTORY_SIZE) hist.pollFirst()
+
             if (direction != 0 && performance.shouldRecord(result.score)) {
                 performance.record(strategy.id, bullish = direction > 0, price = snapshot.currentPrice, at = snapshot.timestamp)
             }
 
-            val weight = result.confidence.coerceIn(0.1, 1.0) * performance.weight(strategy.id) * categoryWeight(strategy.category)
+            val weight = result.confidence.coerceIn(0.1, 1.0) *
+                    performance.weight(strategy.id) *
+                    categoryWeight(strategy.category) *
+                    StrategyCorrelation.penalty(historySnap, strategy.id)
             weightedSum += result.score * weight
             totalWeight += weight
 

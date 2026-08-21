@@ -35,3 +35,4 @@
 - [x] FundingRateSqueeze (#2) + ExchangeLeadLag (#5)
 - [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
 - [x] Push bildirim (whale/burst + izin + Settings toggle)
+- [x] SignalExplainer (#9) + StrategyCorrelation (#8) — 15 önerinin tamamı bitti

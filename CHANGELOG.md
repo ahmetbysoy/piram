@@ -1,5 +1,14 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.18.0] - explainSignal + Redundancy Cezası (15 öneri tamam)
+
+### Added
+- `SignalExplainer` (#9) — strateji sonucunu insan diline çevirir ("ALIŞ (%65) · EMA9: ..., VWAP: ...");
+  StrategiesScreen kartları artık Türkçe açıklama gösterir.
+- `StrategyCorrelation` (#8) — strateji yön oy geçmişinden benzerlik tespiti; sürekli aynı yönde
+  oylayan benzer stratejilere otomatik ağırlık cezası (0.7). `StrategyEngine` yön geçmişi tutar
+  ve ağırlığa redundancy çarpanı ekler.
+
 ## [1.17.0] - Push Bildirimleri
 
 ### Added

@@ -60,14 +60,16 @@
 | 5 ExchangeLeadLagStrategy | ✅ YAPILDI (venueTimes lider tespiti + lead-lag yönü) |
 | 6 conflictResolver | ✅ YAPILDI (kategori ağırlığı: MICRO 1.3 / ARB 1.1 / TREND 0.9 + conflict bayrağı) |
 | 7 multiTimeframeConsensus | ✅ YAPILDI (60sn vs oturum çapraz zaman cümlesi) |
-| 8 strategyCorrelationMatrix | ⬜ Backlog |
-| 9 explainSignal | ⬜ Backlog |
+| 8 strategyCorrelationMatrix | ✅ YAPILDI (yön oy geçmişi + redundancy cezası 0.7) |
+| 9 explainSignal | ✅ YAPILDI (SignalExplainer — "ALIŞ (%65) · gerekçe") |
 | 10 NextCandlePredictionGame | ✅ YAPILDI (1dk tahmin + doğruluk sayacı) |
 | 11 PainScoreNarrator (#16) | ✅ YAPILDI (LiquidationTracker side'lı + PainScore) |
 | 12 CalmBeforeStormBadge (#18) | ✅ YAPILDI (sıkışma + kitap dengesizliği) |
 | 13 PersonalityHistory | ✅ YAPILDI (günlük "ÇILGIN×3" özeti) |
 | 14 icebergDetector | ✅ YAPILDI (dolup-boşalan seviye tespiti) |
 | 15 absorptionIndex | ✅ YAPILDI (LiquidityHunt'a emilim katmanı) |
+
+> ✅ 15 önerinin tamamı uygulandı (2026-08-21).
 
 ## Öncelik Sırası (uygulanacak)
 
