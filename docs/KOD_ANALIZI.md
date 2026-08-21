@@ -98,3 +98,17 @@
 | V6 | Sinyale göre sıralama yok (20 eşit kart, hiyerarşi yok) | ✅ YAPILDI ("GÜÇLÜ ÜSTTE" sıralama chip'i, varsayılan açık) |
 | V7 | Kategori chip sayaçları her recomposition'da yeniden sayılıyor | ✅ YAPILDI (VM'de `categoryCounts` precompute) |
 | V8 | Win-rate rozeti aniden Row'a ekleniyor (yatay kayma) | ✅ YAPILDI (her zaman rezerve, "—" boş durumda) |
+
+## UI/UX İncelemesi (tur 4 — zıplama kalıntıları + strateji tab hiyerarşisi)
+
+| # | Tespit | Durum |
+|---|---|---|
+| W1 | `ConsensusHeader` "Top Bull/Top Bear" satırı uzun isimde sarıp kart yüksekliğini değiştiriyor | ✅ YAPILDI (sabit 14dp + maxLines=1 + ellipsis + weight) |
+| W2 | `MoodStrip` `"🔥 $streak.current seri"` — `.toString()` basıyor (string template bug) | ✅ YAPILDI (`${streak.current}`) |
+| W3 | `SignalJournalCard` animateContentSize ile "nefes alıyor" | ✅ YAPILDI (her zaman 3 satır + placeholder, animasyon kaldırıldı) |
+| W4 | `StrategyCard` switch kapatınca içerik kaybolup kart %60 küçülüyor | ✅ YAPILDI (alpha fade 0.25, yükseklik sabit) |
+| W5 | Sıralama düğmesi kategori chip'iyle aynı görünümde (kafa karışıklığı) | ✅ YAPILDI (ayrı "⇅ GÜÇLÜ" toggle) |
+| W6 | Kategori renk kodlaması yok (hepsi mor) | ✅ YAPILDI (TREND=camgöbeği, MOMENTUM=sarı, MICRO=pembe, VOL=mor, ARB=altın) |
+| W7 | Güçlü sinyal kartı görsel olarak ayırt edilmiyor | ✅ YAPILDI (|score|≥0.45 → renkli border 1.5dp + aksan çizgisi) |
+| W8 | Düz liste, gruplama/sticky header yok | ✅ YAPILDI (kategori stickyHeader + ▲/▼ sayaç) |
+| W9 | Ana ekranla görsel dil kopuk (emoji yok) | ✅ YAPILDI (header'a MarketMood emojisi) |

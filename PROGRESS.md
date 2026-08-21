@@ -20,6 +20,8 @@
 - **Layout Zıplama**: 100% (sabit yükseklik rezervi, 4fps throttle, animateContentSize, sinyal sıralama)
 - **Ruh Hali Şeridi**: 100% (MarketMood + StreakStats + StoryGenerator + MoodStrip)
 - **Teknik Borç**: 100% (SignalThresholds DRY + DepthAggregator birleştirme + DivergenceEngine topFrom fix)
+- **Strateji Tab Hiyerarşisi**: 100% (kategori renkleri + sticky header + sinyal glow + sıralama ayrımı)
+- **Zıplama Kalıntıları**: 100% (ConsensusHeader/MoodStrip/SignalJournalCard/StrategyCard fix)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

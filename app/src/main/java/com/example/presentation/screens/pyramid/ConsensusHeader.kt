@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.theme.BgDark
@@ -183,20 +184,29 @@ fun ConsensusHeader(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Top strategy hints
+            // Top strategy hints — sabit yükseklik + tek satır (kart yüksekliği zıplamaz)
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(14.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = if (consensus.topBullishStrategy != null) "Top Bull: ${consensus.topBullishStrategy}" else "Confidence: ${"%.0f".format(consensus.confidence * 100)}%",
                     fontSize = 10.sp,
-                    color = TextSecondary
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (consensus.topBearishStrategy != null) "Top Bear: ${consensus.topBearishStrategy}" else "${consensus.activeStrategiesCount}/20 Active",
                     fontSize = 10.sp,
-                    color = TextSecondary
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }

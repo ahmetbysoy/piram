@@ -77,6 +77,10 @@
 - [x] DepthAggregator gerçek seviye birleştirme (consolidated book)
 - [x] DivergenceEngine numLayers-bağımlı topFrom/bottomTo
 
-## Phase 16: Next (Backlog)
+## Phase 16: Zıplama Kalıntıları + Strateji Tab Hiyerarşisi (Completed)
+- [x] ConsensusHeader satır fix + MoodStrip string bug + SignalJournalCard sabit 3 satır
+- [x] StrategyCard alpha fade + sıralama toggle ayrımı + kategori renkleri + sticky header + emoji
+
+## Phase 17: Next (Backlog)
 - [ ] Eğlenceli katman kalanı (#12 ses, #14 animasyon, #16 pain, #17 rekt, #19 skorbord, #20 kişilik)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim

@@ -1,5 +1,23 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.11.0] - Zıplama Kalıntıları + Strateji Tab Hiyerarşisi
+
+### Fixed
+- `ConsensusHeader` — "Top Bull/Top Bear" satırı uzun isimde sarıp kart yüksekliğini değiştiriyordu;
+  sabit 14dp + `maxLines=1` + ellipsis.
+- `MoodStrip` — `"🔥 $streak.current seri"` string template bug'ı (`toString()` basıyordu) → `${streak.current}`.
+- `SignalJournalCard` — her zaman 3 satır + placeholder (animasyon kaldırıldı), yükseklik gerçekten sabit.
+- `StrategyCard` — switch kapatınca içerik kaybolup kart çöküyordu; artık `alpha 0.25` ile soluklaşır,
+  yükseklik sabit kalır.
+
+### Added (Strateji tab görsel hiyerarşi)
+- Sıralama düğmesi ayrı "⇅ GÜÇLÜ" toggle (kategori chip'lerinden ayrıldı).
+- Kategori renk kodlaması: TREND=camgöbeği, MOMENTUM=sarı, MICROSTRUCTURE=pembe,
+  VOLATILITY=mor, ARBITRAGE=altın — badge + kart üstü aksan çizgisi.
+- Güçlü sinyal (|score|≥0.45) kartlara renkli kalın border.
+- Kategori bazlı sticky header'lar + ▲/▼ sayaçları.
+- Header'a MarketMood emoji rozeti (ana ekranla görsel tutarlılık).
+
 ## [1.10.0] - Teknik Borç Temizliği (DRY + Doğruluk)
 
 ### Added

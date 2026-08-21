@@ -95,7 +95,7 @@ fun MoodStrip(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "🔥 $streak.current seri",
+                        text = "🔥 ${streak.current} seri",
                         fontSize = 10.sp,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,
