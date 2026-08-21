@@ -54,12 +54,13 @@ fun ConsensusHeader(
     currentPrice: Double,
     symbol: String,
     priceDecimals: Int = -1,
+    consensusUnstable: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val (badgeBg, badgeBorder, badgeText, signalLabel) = when (consensus.overallSignal) {
-        SignalType.STRONG_BUY -> Quad(BuyGreen.copy(alpha = 0.2f), BuyGreen, BuyGreen, "STRONG BUY")
+        SignalType.STRONG_BUY -> Quad(BuyGreen.copy(alpha = 0.2f), BuyGreen, BuyGreen, "🚀 STRONG BUY")
         SignalType.BUY -> Quad(BuyGreen.copy(alpha = 0.12f), BuyGreen.copy(alpha = 0.6f), BuyGreen, "BUY")
-        SignalType.STRONG_SELL -> Quad(SellRed.copy(alpha = 0.2f), SellRed, SellRed, "STRONG SELL")
+        SignalType.STRONG_SELL -> Quad(SellRed.copy(alpha = 0.2f), SellRed, SellRed, "🐻 STRONG SELL")
         SignalType.SELL -> Quad(SellRed.copy(alpha = 0.12f), SellRed.copy(alpha = 0.6f), SellRed, "SELL")
         SignalType.NEUTRAL -> Quad(SurfaceDark, BorderDark, TextSecondary, "NEUTRAL")
     }
@@ -142,6 +143,14 @@ fun ConsensusHeader(
                         if (consensus.conflict) {
                             Text(
                                 text = "⚠️ KARIŞIK",
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = badgeText.copy(alpha = 0.9f)
+                            )
+                        }
+                        if (consensusUnstable) {
+                            Text(
+                                text = "🎢 KARARSIZ",
                                 fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = badgeText.copy(alpha = 0.9f)

@@ -39,7 +39,12 @@ class StrategyEngine {
         RoundNumberMagnetStrategy(),
         LiquidationCascadeStrategy(),
         FundingRateSqueezeStrategy(),
-        ExchangeLeadLagStrategy()
+        ExchangeLeadLagStrategy(),
+        WickRejectionStrategy(),
+        OIDivergenceStrategy(),
+        TapeReadingSpeedStrategy(),
+        VwapReversionStrategy(),
+        FibonacciConfluenceStrategy()
     )
 
     private val enabledMap = ConcurrentHashMap<String, Boolean>().apply {
@@ -74,6 +79,17 @@ class StrategyEngine {
     }
 
     fun clearPerformance() = performance.clear()
+
+    /**
+     * #26 strategyDecayScore — son N oyun hepsi NÖTR ise strateji "pasif"
+     * (uzun süredir sinyal üretmiyor). UI soluklaştırmak için kullanılır.
+     */
+    fun isPassive(id: String, lookback: Int = 20): Boolean {
+        val hist = directionHistory[id] ?: return false
+        if (hist.size < lookback) return false
+        val recent = hist.toList().takeLast(lookback)
+        return recent.all { it == 0 }
+    }
 
     /**
      * #6 conflictResolver — kategori bazlı ağırlık: Microstructure "şimdiki an" odaklı,

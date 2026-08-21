@@ -23,7 +23,8 @@ data class StrategyItemUiState(
     val isEnabled: Boolean,
     val result: StrategyResult,
     val winRate: Double? = null,   // null = yeterli örnek yok
-    val resolved: Int = 0
+    val resolved: Int = 0,
+    val isPassive: Boolean = false // #26: uzun süredir NÖTR
 )
 
 enum class StrategySort { DEFAULT, SIGNAL }
@@ -85,7 +86,8 @@ class StrategiesViewModel(
                         isEnabled = isEnabled,
                         result = result,
                         winRate = if (perf != null && perf.resolved >= 10) perf.winRate else null,
-                        resolved = perf?.resolved ?: 0
+                        resolved = perf?.resolved ?: 0,
+                        isPassive = engine.isPassive(strategy.id)
                     )
                 }
 

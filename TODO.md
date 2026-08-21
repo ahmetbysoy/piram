@@ -38,3 +38,4 @@
 - [x] SignalExplainer (#9) + StrategyCorrelation (#8) — 15 önerinin tamamı bitti
 - [x] 24s ticker istatistikleri (High/Low/Δ%/Hacim)
 - [x] Ses efekti (#12) + güven nabız barı (#14)
+- [x] 5 yeni strateji (#17/#19/#20/#21/#22 → 30) + açık tema + pasif/kararsız rozetleri

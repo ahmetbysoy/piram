@@ -70,7 +70,8 @@ fun PyramidScreen(
                 consensus = uiState.consensus,
                 currentPrice = uiState.currentPrice,
                 symbol = uiState.symbol,
-                priceDecimals = uiState.priceDecimals
+                priceDecimals = uiState.priceDecimals,
+                consensusUnstable = uiState.consensusUnstable
             )
 
             Spacer(modifier = Modifier.height(6.dp))

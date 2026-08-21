@@ -31,6 +31,7 @@
 - **15 Öneri Tamamlandı**: 100% (SignalExplainer #9 + StrategyCorrelation #8 — tüm 15 uygulandı)
 - **24s Ticker**: 100% (Ticker24h + TickerStatsCard + ölü alanlar besleniyor)
 - **Ses + Animasyon**: 100% (SoundController #12 + PulseBar #14 — 15 öneri + eğlence tamamı bitti)
+- **5 Strateji + Tema**: 100% (Wick/OIDiv/TapeSpeed/VwapRev/Fib → 30 strateji, açık tema, pasif/kararsız rozetleri)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

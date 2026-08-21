@@ -113,6 +113,14 @@
 - [x] SoundController (#12) + Settings toggle
 - [x] PulseBar (#14) + ConsensusHeader güven barı
 
-## ✅ PROJE TAMAMLANDI
-Tüm planlanan fazlar tamamlandı. Backtest/replay bilinçli olarak **kapsam dışı** bırakıldı
-(kullanıcı kararı) — ileride istenirse ayrı bir faz olarak tasarlanabilir.
+## Phase 26: 5 Strateji + Açık Tema (Completed)
+- [x] WickRejection (#17) · OIDivergence (#19) · TapeReadingSpeed (#20) · VwapReversion (#21) · Fibonacci (#22) → 30 strateji
+- [x] StrategyEngine.isPassive (#26) + ConsensusVolatility (#27) "KARARSIZ" rozeti
+- [x] Açık pastel tema (Color.kt + Theme.kt çift şema) + 🚀/🐻 emoji rozetleri + chip dolgu
+
+## Phase 27: Next (Backlog — kullanıcı talebine göre)
+- [ ] SpoofingDetector (#16) · SessionOverlap (#18) · CorrelationBreak (#23)
+- [ ] register/unregister (#24) · backtestStrategy (#25) · vetoRule (#28) · adaptiveWeighting genişletme (#29)
+- [ ] bookPressureVelocity (#30) · tradeSizeDistribution (#31) · sweepReplayLog (#32) · CVD (#33) · clustering (#34) · depthImbalanceHistory (#35) · crossVenueLeadIndicator (#36)
+- [ ] replay (#37) · adaptiveBackoff (#38) · perSymbolOverride (#39) · autoTagOutcome (#40) · riskProfile (#41) · healthScore (#42) · export (#43) · multiCoinScanner (#44) · prune (#45)
+- [ ] DailyRektLeaderboard (#48) · MoodHistoryTimeline (#49) · PredictionAccuracyBadge (#50)

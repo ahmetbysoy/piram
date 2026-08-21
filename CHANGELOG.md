@@ -1,5 +1,23 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.21.0] - 5 Yeni Strateji + Açık Tema + Pasif/Kararsız Rozetleri
+
+### Added (strateji — toplam 30)
+- `WickRejectionStrategy` (#17) — gerçek üst/alt wick oranı ile yön reddi.
+- `OIDivergenceStrategy` (#19) — OI+fiyat yönünden yeni pozisyon vs kapanış ayrımı.
+- `TapeReadingSpeedStrategy` (#20) — küçükten büyüğe emir geçiş ivmesi.
+- `VwapReversionStrategy` (#21) — VWAP sapma z-score ile geri dönüş.
+- `FibonacciConfluenceStrategy` (#22) — swing fib seviyeleriyle fiyat çakışması.
+
+### Added (engine)
+- `StrategyEngine.isPassive` (#26) — uzun süredir NÖTR stratejiler UI'da soluklaşır.
+- `ConsensusVolatility` (#27) — son N konsensüs stdDev'i; "🎢 KARARSIZ" rozeti (ConsensusHeader).
+
+### Added (tema)
+- `Color.kt` — açık pastel palet (BgLight, CardLight, BuyMint, SellCoral, koyu mor metin).
+- `Theme.kt` — `isSystemInDarkTheme()` ile gerçek açık/koyu şema seçimi (ölü import canlandı).
+- STRONG_BUY 🚀 / STRONG_SELL 🐻 emoji rozetleri; kategori chip'leri dolgun pastel.
+
 ## [1.20.0] - Final: Ses + Güven Nabız Barı (proje tamamlandı)
 
 ### Added

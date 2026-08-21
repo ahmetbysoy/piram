@@ -34,3 +34,4 @@
 | Step 28 | explainSignal + Redundancy | SignalExplainer (#9) + StrategyCorrelation (#8) + yön geçmişi + ağırlık cezası, ExplainCorrelationTest | COMPLETED |
 | Step 29 | 24s Ticker | Ticker24h + Ticker24hClient + TickerStatsCard + 30sn poll, ölü alanlar besleniyor, Ticker24hParserTest | COMPLETED |
 | Step 30 | Ses + Animasyon | SoundController (#12) + Settings toggle + PulseBar (#14) + ConsensusHeader güven barı | COMPLETED |
+| Step 31 | 5 Strateji + Tema | Wick/OIDiv/TapeSpeed/VwapRev/Fib (30 strateji), isPassive, ConsensusVolatility, açık pastel tema, emoji rozetler | COMPLETED |

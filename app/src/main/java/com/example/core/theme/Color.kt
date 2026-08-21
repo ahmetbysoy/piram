@@ -30,6 +30,19 @@ val TextPrimary = Color(0xFFF1F5F9)
 val TextSecondary = Color(0xFF94A3B8)
 val TextMuted = Color(0xFF64748B)
 
+// --- Açık (Light) Pastel Palet — pembe/mor tema ---
+val BgLight = Color(0xFFFDFBFF)        // lavanta beyazı arka plan
+val CardLight = Color(0xFFFFF5F8)       // beyaza yakın pembe kart
+val SurfaceLight = Color(0xFFFFF0F4)    // açık pembe yüzey
+val BorderLight = Color(0xFFE8DCF0)     // lavanta sınır
+val TextPrimaryLight = Color(0xFF3B2F4A) // koyu mor-gri metin
+val TextSecondaryLight = Color(0xFF6B5B80)
+val TextMutedLight = Color(0xFF9A8BB0)
+
+// Açık zeminde yumuşak BUY/SELL
+val BuyMint = Color(0xFF0FA97A)         // mint yeşil (açık zeminde okunur)
+val SellCoral = Color(0xFFE24B6B)       // mercan pembe (açık zeminde okunur)
+
 // MicroBucket Layer Gradient Spectrum
 val LayerColors = listOf(
     Color(0xFF3B82F6), // Base layer (Retail micro-trades)

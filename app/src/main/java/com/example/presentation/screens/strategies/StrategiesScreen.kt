@@ -290,7 +290,7 @@ private fun CategoryChip(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(10.dp))
-            .background(if (isSelected) accent.copy(alpha = 0.2f) else SurfaceDark)
+            .background(if (isSelected) accent.copy(alpha = 0.35f) else SurfaceDark)
             .border(1.dp, if (isSelected) accent else BorderDark, RoundedCornerShape(10.dp))
             .clickable { onClick() }
             .padding(horizontal = 10.dp, vertical = 6.dp)
@@ -311,9 +311,9 @@ private fun StrategyCard(
 ) {
     val result = item.result
     val (signalColor, signalBg, signalLabel) = when (result.signal) {
-        SignalType.STRONG_BUY -> Triple(BuyGreen, BuyGreen.copy(alpha = 0.2f), "STRONG BUY")
+        SignalType.STRONG_BUY -> Triple(BuyGreen, BuyGreen.copy(alpha = 0.2f), "🚀 STRONG BUY")
         SignalType.BUY -> Triple(BuyGreen, BuyGreen.copy(alpha = 0.12f), "BUY")
-        SignalType.STRONG_SELL -> Triple(SellRed, SellRed.copy(alpha = 0.2f), "STRONG SELL")
+        SignalType.STRONG_SELL -> Triple(SellRed, SellRed.copy(alpha = 0.2f), "🐻 STRONG SELL")
         SignalType.SELL -> Triple(SellRed, SellRed.copy(alpha = 0.12f), "SELL")
         SignalType.NEUTRAL -> Triple(TextSecondary, SurfaceDark, "NEUTRAL")
     }
@@ -334,7 +334,12 @@ private fun StrategyCard(
             .testTag("strategy_card_${item.id}"),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (item.isEnabled) CardDark else CardDark.copy(alpha = 0.6f)
+            // #26 pasif stratejiler hafif soluk
+            containerColor = when {
+                !item.isEnabled -> CardDark.copy(alpha = 0.6f)
+                item.isPassive -> CardDark.copy(alpha = 0.82f)
+                else -> CardDark
+            }
         )
     ) {
         Column {

@@ -15,6 +15,7 @@ import com.example.domain.engine.AdaptiveEdges
 import com.example.domain.engine.DepthAggregator
 import com.example.domain.engine.DivergenceEngine
 import com.example.domain.engine.CalmBeforeStorm
+import com.example.domain.engine.ConsensusVolatility
 import com.example.domain.engine.DivergenceKind
 import com.example.domain.engine.LiquidationTracker
 import com.example.domain.engine.MarketPersonality
@@ -73,10 +74,10 @@ data class PyramidUiState(
         neutralScore = 100.0,
         confidence = 0.5,
         consensusStrength = 0.0,
-        activeStrategiesCount = 25,
+        activeStrategiesCount = 30,
         bullishCount = 0,
         bearishCount = 0,
-        neutralCount = 25
+        neutralCount = 30
     ),
     val depth: Depth? = null,
     val venueDepths: List<Depth> = emptyList(),
@@ -95,6 +96,7 @@ data class PyramidUiState(
     val personalitySummary: String = "",
     val mtfYazi: String = "",
     val nextCandleChip: String = "",
+    val consensusUnstable: Boolean = false,
     val divergenceYazi: String = "",
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframeBuyNotional: Double = 0.0,
@@ -148,6 +150,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val personalityHistory = PersonalityHistory()
     private val candleGame = NextCandleGame()
     private val notificationHelper by lazy { NotificationHelper(getApplication()) }
+    private val consensusHistory = ConcurrentLinkedDeque<Double>()
     private var lastMtfRun = 0L
     private var lastPersonality = ""
     private var lastWhaleNotifAt = 0L
@@ -307,6 +310,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         recentWhales.clear()
         venuePrices.clear()
         venueTimes.clear()
+        consensusHistory.clear()
         minuteVolume.clear()
         recentNotionals.clear()
         windowLedger.reset()
@@ -502,6 +506,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     val (_, computedConsensus) = strategyEngine.executeAll(snapshot)
                     consensus = computedConsensus
 
+                    // #27 konsensüs volatilite bandı: son N skoru tut
+                    consensusHistory.addLast(consensus.consensusStrength)
+                    while (consensusHistory.size > 30) consensusHistory.pollFirst()
+
                     // #7 multi-timeframe: 60sn pencerede ayrı konsensüs (1sn'de bir)
                     if (now - lastMtfRun >= 1000L) {
                         lastMtfRun = now
@@ -535,6 +543,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 }
                 candleGame.resolve(currentPrice, now)
                 val nextCandleChip = candleGame.chip()
+                val consensusUnstable = ConsensusVolatility.band(consensusHistory.toList()).isUnstable
 
                 _uiState.value = _uiState.value.copy(
                     currentPrice = currentPrice,
@@ -553,6 +562,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     personalitySummary = personalitySummary,
                     mtfYazi = mtfYazi,
                     nextCandleChip = nextCandleChip,
+                    consensusUnstable = consensusUnstable,
                     divergenceYazi = divergence.yazi,
                     divergenceKind = divergence.kind,
                     timeframeBuyNotional = winSum.buyNotional,
