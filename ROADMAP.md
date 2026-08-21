@@ -93,7 +93,11 @@
 - [x] conflictResolver (kategori ağırlığı) + AbsorptionIndex + IcebergDetector
 - [x] PainScore + CalmBeforeStorm + PersonalityHistory
 
-## Phase 20: Next (Backlog)
-- [ ] FundingRateSqueeze (#2) · ExchangeLeadLag (#5) · multiTimeframeConsensus (#7)
+## Phase 20: Funding + Lead-Lag (Completed)
+- [x] FundingRateSqueeze (#2) + FundingRateClient
+- [x] ExchangeLeadLag (#5) + venueTimes
+
+## Phase 21: Next (Backlog)
+- [ ] multiTimeframeConsensus (#7) · correlationMatrix (#8) · explainSignal (#9)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
-- [ ] Düşük öncelik: #12 ses, #14 animasyon
+- [ ] Düşük öncelik: #12 ses, #14 animasyon, #10 NextCandleGame

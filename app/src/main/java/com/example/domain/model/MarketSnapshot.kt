@@ -17,7 +17,10 @@ data class MarketSnapshot(
     val sellVolume1m: Double = 0.0,
     val liquidationNotional60s: Double = 0.0,
     val liquidationCount60s: Int = 0,
+    val fundingRate: Double? = null,   // ondalık (0.0001 = %0.01)
+    val oiDelta: Double? = null,
     val vwap: Double = 0.0,
     val exchangePrices: Map<String, Double> = emptyMap(),
+    val venueTimes: Map<String, Long> = emptyMap(),
     val timestamp: Long = System.currentTimeMillis()
 )

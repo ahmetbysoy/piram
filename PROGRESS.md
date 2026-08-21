@@ -25,6 +25,7 @@
 - **Eğlenceli Katman 2**: 100% (MarketPersonality + RektMeter + WhaleRetailBoard/ScoreboardBar)
 - **Görsel İnceleme T5**: 100% (rozet wrap, GÜÇLÜ global sıralama, VenueStrip fade, özet sıralama, boş bucket)
 - **15 Öneri**: 100% (3 strateji + conflictResolver + absorption + iceberg + pain/calm/personality)
+- **Funding + Lead-Lag**: 100% (FundingRateSqueeze #2 + ExchangeLeadLag #5, toplam 25 strateji)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

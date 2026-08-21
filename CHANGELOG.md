@@ -1,5 +1,14 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.15.0] - Funding Rate + Exchange Lead-Lag (toplam 25 strateji)
+
+### Added
+- `FundingRateSqueezeStrategy` (#2) — aşırı funding + OI artışı ile long/short squeeze riski.
+- `ExchangeLeadLagStrategy` (#5) — en son işlem gören borsanın fiyat öncülüğü ile kısa vade yön.
+- `FundingRateClient` + `FundingParser` — fapi `premiumIndex` REST.
+- `MarketSnapshot` — `fundingRate`, `oiDelta`, `venueTimes`; ViewModel OI poll'üne funding eklendi,
+  venue timestamp takibi eklendi.
+
 ## [1.14.0] - 15 Öneri Uygulaması (Strateji + Mikroyapı + Eğlence)
 
 ### Added (yeni stratejiler — toplam 23)

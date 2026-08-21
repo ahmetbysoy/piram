@@ -69,10 +69,10 @@ data class PyramidUiState(
         neutralScore = 100.0,
         confidence = 0.5,
         consensusStrength = 0.0,
-        activeStrategiesCount = 23,
+        activeStrategiesCount = 25,
         bullishCount = 0,
         bearishCount = 0,
-        neutralCount = 23
+        neutralCount = 25
     ),
     val depth: Depth? = null,
     val venueDepths: List<Depth> = emptyList(),
@@ -97,6 +97,7 @@ data class PyramidUiState(
     val oiUsdt: Double? = null,
     val oiDelta: Double? = null,
     val oiState: OiState = OiState.BEKLIYOR,
+    val fundingRate: Double? = null,
     val journal: List<JournalRow> = emptyList(),
     val priceDecimals: Int = -1,   // -1 = otomatik; aksi halde tickSize hanesi
     val timeframe: String = "1M",
@@ -126,6 +127,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val recentPrices = ConcurrentLinkedDeque<Double>()
     private val recentWhales = ConcurrentLinkedDeque<Order>()
     private val venuePrices = ConcurrentHashMap<String, Double>()
+    private val venueTimes = ConcurrentHashMap<String, Long>()
     private val minuteVolume = OneMinuteVolumeTracker()
     private val recentNotionals = ConcurrentLinkedDeque<Double>()
     private val windowLedger = WindowLedger()
@@ -233,6 +235,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                         oiState = if (_uiState.value.oiUsdt != null) OiState.ESKI else OiState.YOK
                     )
                 }
+
+                // Funding rate (squeeze stratejisi için) — OI ile aynı ritimde
+                val funding = repository.fetchFundingRate(symbol)
+                _uiState.value = _uiState.value.copy(fundingRate = funding?.lastFundingRate)
+
                 delay(10_000L)
             }
         }
@@ -264,6 +271,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         recentPrices.clear()
         recentWhales.clear()
         venuePrices.clear()
+        venueTimes.clear()
         minuteVolume.clear()
         recentNotionals.clear()
         windowLedger.reset()
@@ -294,6 +302,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
 
                 // Cross-venue last price + rolling 1-minute volume flow
                 venuePrices[processedOrder.exchange] = processedOrder.price
+                venueTimes[processedOrder.exchange] = processedOrder.timestamp
                 minuteVolume.record(processedOrder.side, processedOrder.value)
 
                 if (processedOrder.isWhale) {
@@ -437,8 +446,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                         sellVolume1m = sellVolume1m,
                         liquidationNotional60s = liqTracker.sum(now),
                         liquidationCount60s = liqTracker.count(now),
+                        fundingRate = _uiState.value.fundingRate,
+                        oiDelta = _uiState.value.oiDelta,
                         vwap = vwap,
                         exchangePrices = venuePrices.toMap(),
+                        venueTimes = venueTimes.toMap(),
                         timestamp = now
                     )
                     val (_, computedConsensus) = strategyEngine.executeAll(snapshot)

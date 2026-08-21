@@ -54,10 +54,10 @@
 | Öneri | Durum |
 |---|---|
 | 1 WhaleFootprintStrategy | ✅ YAPILDI (yeni strateji, isWhale kullanır) |
-| 2 FundingRateSqueezeStrategy | ⬜ Backlog (funding rate REST gerekli) |
+| 2 FundingRateSqueezeStrategy | ✅ YAPILDI (FundingRateClient + premiumIndex + OI Δ ile squeeze) |
 | 3 LiquidationCascadeStrategy | ✅ YAPILDI (MarketSnapshot'a 60sn likidasyon alanları eklendi) |
 | 4 RoundNumberMagnetStrategy | ✅ YAPILDI (psikolojik seviye çekimi) |
-| 5 ExchangeLeadLagStrategy | ⬜ Backlog (venue bazlı zaman damgası gerekli) |
+| 5 ExchangeLeadLagStrategy | ✅ YAPILDI (venueTimes lider tespiti + lead-lag yönü) |
 | 6 conflictResolver | ✅ YAPILDI (kategori ağırlığı: MICRO 1.3 / ARB 1.1 / TREND 0.9 + conflict bayrağı) |
 | 7 multiTimeframeConsensus | ⬜ Backlog |
 | 8 strategyCorrelationMatrix | ⬜ Backlog |

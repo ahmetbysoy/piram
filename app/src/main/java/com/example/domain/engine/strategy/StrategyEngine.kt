@@ -32,7 +32,9 @@ class StrategyEngine {
         BurstArbitrageStrategy(),
         WhaleFootprintStrategy(),
         RoundNumberMagnetStrategy(),
-        LiquidationCascadeStrategy()
+        LiquidationCascadeStrategy(),
+        FundingRateSqueezeStrategy(),
+        ExchangeLeadLagStrategy()
     )
 
     private val enabledMap = ConcurrentHashMap<String, Boolean>().apply {

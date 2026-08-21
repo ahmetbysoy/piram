@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.local.db.AppDatabase
 import com.example.data.local.db.TradeEntity
+import com.example.data.remote.rest.FundingRateClient
 import com.example.data.remote.rest.OpenInterestClient
 import com.example.data.remote.ws.BinanceLiquidationClient
 import com.example.data.remote.ws.BinanceMiniTickerClient
@@ -14,6 +15,7 @@ import com.example.data.remote.ws.OkxWsClient
 import com.example.domain.model.ConnectionState
 import com.example.domain.model.Depth
 import com.example.domain.model.ExchangeStatus
+import com.example.domain.model.FundingSnap
 import com.example.domain.model.Liquidation
 import com.example.domain.model.MiniTickerRow
 import com.example.domain.model.OiSnap
@@ -42,6 +44,7 @@ interface MarketDataRepository {
     fun subscribeLiquidations(): Flow<Liquidation>
     fun subscribeMiniTickers(): Flow<List<MiniTickerRow>>
     fun fetchOpenInterest(symbol: String): OiSnap?
+    fun fetchFundingRate(symbol: String): FundingSnap?
     fun getRecentDbTrades(symbol: String, limit: Int = 100): Flow<List<Order>>
     fun disconnectAll()
 }
@@ -59,6 +62,7 @@ class MarketDataRepositoryImpl(
     private val liquidationClient = BinanceLiquidationClient()
     private val miniTickerClient = BinanceMiniTickerClient()
     private val openInterestClient = OpenInterestClient()
+    private val fundingRateClient = FundingRateClient()
 
     private val clients = listOf(
         binanceClient,
@@ -153,6 +157,10 @@ class MarketDataRepositoryImpl(
 
     override fun fetchOpenInterest(symbol: String): OiSnap? {
         return openInterestClient.fetch(symbol)
+    }
+
+    override fun fetchFundingRate(symbol: String): FundingSnap? {
+        return fundingRateClient.fetch(symbol)
     }
 
     override fun getRecentDbTrades(symbol: String, limit: Int): Flow<List<Order>> {

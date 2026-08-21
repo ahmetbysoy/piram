@@ -95,6 +95,85 @@ class RoundNumberMagnetStrategy : Strategy {
 }
 
 /**
+ * #2 FundingRateSqueezeStrategy — aşırı funding + OI artışı = kalabalık pozisyon → squeeze riski.
+ * Pozitif aşırı funding (long'lar short'lara ödüyor) + OI yükseliyorsa kademeli long çözülme → SELL.
+ * Negatif aşırı funding + OI yükseliyorsa short sıkışması → BUY.
+ */
+class FundingRateSqueezeStrategy : Strategy {
+    override val id = "funding_rate_squeeze"
+    override val name = "Funding Rate Squeeze"
+    override val description = "Aşırı funding + OI artışı ile sıkışma (squeeze) riski"
+    override val category = StrategyCategory.ARBITRAGE
+
+    override fun execute(data: MarketSnapshot): StrategyResult {
+        val fr = data.fundingRate
+        if (fr == null) {
+            return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Funding verisi yok")
+        }
+        val oiDelta = data.oiDelta ?: 0.0
+        val absF = abs(fr)
+        if (absF < 0.0002) {
+            return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Funding normal (${"%.4f".format(fr)})")
+        }
+        val crowdedLong = fr > 0.0002 && oiDelta > 0
+        val crowdedShort = fr < -0.0002 && oiDelta > 0
+        val intensity = (absF / 0.001).coerceIn(0.0, 1.0)
+
+        val score = when {
+            crowdedLong -> -(0.4 + intensity * 0.4)   // long'lar kalabalık → aşağı sıkışma
+            crowdedShort -> (0.4 + intensity * 0.4)   // short'lar kalabalık → yukarı sıkışma
+            else -> 0.0
+        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
+        val reason = "Funding ${"%.4f".format(fr)}, OI Δ ${"%.0f".format(oiDelta)} — " +
+            when {
+                crowdedLong -> "long squeeze riski"
+                crowdedShort -> "short squeeze riski"
+                else -> "belirsiz"
+            }
+        return StrategyResult(
+            id, name, signal, SignalThresholds.confidenceFor(score, 0.55, 0.4), score, reason,
+            mapOf("funding" to fr, "oiDelta" to oiDelta)
+        )
+    }
+}
+
+/**
+ * #5 ExchangeLeadLagStrategy — en son işlem gören (önde giden) borsanın fiyatını diğerlerinin
+ * ortalamasıyla karşılaştırıp lead-lag yönü üretir. `venueTimes` en güncel timestamp'li venue'yu
+ * lider kabul eder; lider diğerlerinin üstündeyse yukarı öncülük → BUY.
+ */
+class ExchangeLeadLagStrategy : Strategy {
+    override val id = "exchange_lead_lag"
+    override val name = "Exchange Lead-Lag"
+    override val description = "Önde giden borsanın fiyat öncülüğü ile kısa vade yön"
+    override val category = StrategyCategory.ARBITRAGE
+
+    override fun execute(data: MarketSnapshot): StrategyResult {
+        val times = data.venueTimes
+        val prices = data.exchangePrices
+        if (times.size < 2 || prices.size < 2) {
+            return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Yetersiz venue verisi")
+        }
+        val leader = times.entries.maxByOrNull { it.value } ?: return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Lider yok")
+        val leaderPrice = prices[leader.key] ?: return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Lider fiyat yok")
+        val others = prices.filterKeys { it != leader.key }.values
+        if (others.isEmpty()) return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Diğer venue yok")
+        val othersMean = others.average()
+        if (othersMean <= 0) return StrategyResult(id, name, SignalType.NEUTRAL, 0.5, 0.0, "Geçersiz fiyat")
+
+        val leadBps = (leaderPrice - othersMean) / othersMean * 10000.0
+        val score = (leadBps / 20.0).coerceIn(-0.7, 0.7)
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
+        val reason = "${leader.key} önde (${"%.1f".format(leadBps)} bps vs ortalama)"
+        return StrategyResult(
+            id, name, signal, SignalThresholds.confidenceFor(score, 0.5, 0.45), score, reason,
+            mapOf("leadBps" to leadBps)
+        )
+    }
+}
+
+/**
  * #3 LiquidationCascadeStrategy — 60 sn'lik likidasyon baskısını (adet + notional)
  * fiyat yönüyle birleştirip kademeli çözülme riskini skorlar.
  * `MarketSnapshot.liquidationNotional60s / liquidationCount60s` kullanır.
