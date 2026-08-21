@@ -21,7 +21,9 @@ data class StrategyItemUiState(
     val description: String,
     val category: StrategyCategory,
     val isEnabled: Boolean,
-    val result: StrategyResult
+    val result: StrategyResult,
+    val winRate: Double? = null,   // null = yeterli örnek yok
+    val resolved: Int = 0
 )
 
 data class StrategiesScreenUiState(
@@ -56,6 +58,7 @@ class StrategiesViewModel(
 
                 val (results, consensus) = engine.executeAll(snapshot)
                 val resultMap = results.associateBy { it.strategyId }
+                val perfMap = engine.performanceStats().associateBy { it.strategyId }
 
                 val items = engine.strategies.map { strategy ->
                     val isEnabled = engine.isStrategyEnabled(strategy.id)
@@ -67,13 +70,16 @@ class StrategiesViewModel(
                         score = 0.0,
                         reasoning = "Standby"
                     )
+                    val perf = perfMap[strategy.id]
                     StrategyItemUiState(
                         id = strategy.id,
                         name = strategy.name,
                         description = strategy.description,
                         category = strategy.category,
                         isEnabled = isEnabled,
-                        result = result
+                        result = result,
+                        winRate = if (perf != null && perf.resolved >= 10) perf.winRate else null,
+                        resolved = perf?.resolved ?: 0
                     )
                 }
 

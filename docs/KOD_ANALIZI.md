@@ -55,9 +55,17 @@
 |---|---|---|---|
 | P1 | BurstDetector O(n) → O(1) amortized | Küçük | ✅ YAPILDI |
 | P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ YAPILDI |
-| P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ⬜ Sıradaki |
-| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | ⬜ |
+| P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ✅ YAPILDI |
+| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | ⬜ Sıradaki |
 | — | DRY: ortak SignalThresholds + confidence | Orta | ⬜ |
+
+### P3 detayı (#21 — uygulandı)
+- `StrategyPerformanceTracker` — saf Kotlin, injectable clock, throttle'lı kayıt (5sn/strateji),
+  60sn sonra fiyatla sonuçlandırma, win-rate + `weight(id)` (0.3..1.2, soğuk başlangıç 1.0).
+- `StrategyEngine.executeAll` — ağırlık artık `confidence × performansAğırlığı`; kötü strateji
+  otomatik zayıflar (U5 — konsensüs oynaklığı — bu şekilde azaltılır).
+- `StrategiesScreen` — her kartta win-rate rozeti `%60(15)` (yeşil/ kırmızı/ "…" soğuk).
+- Not: win-rate oturum içi (in-memory); Room'a kalıcılık backlog. 
 
 ## UI Bug Düzeltmeleri (kod incelemesi turu 2 — 2026-08-21)
 
@@ -67,4 +75,4 @@
 | U2 | `PyramidCanvas.layerHeight` alt sınırı çıplak `16f` piksel (dp değil) → yüksek yoğunlukta etiket çorbası | ✅ YAPILDI (`28.dp.toPx()`) |
 | U3 | Canvas, üstündeki 7-8 sabit kartlı `Column` içinde `weight(1f)` ile sıkışıyor | ✅ YAPILDI (Column `verticalScroll` + canvas `height(280.dp)`) |
 | U4 | INSTITUTIONAL %85→%0 1dk içinde — decay'in doğal sonucu ama yanıltıcı UX (smoothing floor düşünülebilir) | ⬜ Backlog (UX kararı) |
-| U5 | Consensus fiyattan çok oynak (BUY+38→SELL-26, fiyat +%0.04) — #21 StrategyPerformanceTracker ihtiyacını doğruluyor | ⬜ P3 ile birlikte |
+| U5 | Consensus fiyattan çok oynak (BUY+38→SELL-26, fiyat +%0.04) — #21 StrategyPerformanceTracker ihtiyacını doğruluyor | ✅ P3 ile UYGULANDI (performans ağırlığı) |

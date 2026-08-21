@@ -36,6 +36,9 @@ class StrategyEngine {
         strategies.forEach { put(it.id, true) }
     }
 
+    /** #21: strateji performans izleyici + adaptif ağırlıklandırma. */
+    private val performance = StrategyPerformanceTracker()
+
     fun isStrategyEnabled(id: String): Boolean = enabledMap[id] ?: true
 
     fun setStrategyEnabled(id: String, enabled: Boolean) {
@@ -46,6 +49,18 @@ class StrategyEngine {
         val current = isStrategyEnabled(id)
         enabledMap[id] = !current
     }
+
+    /** Strateji bazlı win-rate özeti (UI için). */
+    fun performanceStats(): List<StrategyPerfStats> = strategies.map { s ->
+        StrategyPerfStats(
+            strategyId = s.id,
+            name = s.name,
+            resolved = performance.resolvedCount(s.id),
+            hits = performance.hitCount(s.id)
+        )
+    }
+
+    fun clearPerformance() = performance.clear()
 
     fun executeAll(snapshot: MarketSnapshot): Pair<List<StrategyResult>, ConsensusResult> {
         val results = ArrayList<StrategyResult>(strategies.size)
@@ -58,6 +73,9 @@ class StrategyEngine {
         var topBullish: StrategyResult? = null
         var topBearish: StrategyResult? = null
 
+        // Süresi dolan tahminleri sonuçlandır (win-rate güncel kalsın)
+        performance.resolve(snapshot.currentPrice, snapshot.timestamp)
+
         for (strategy in strategies) {
             val isEnabled = isStrategyEnabled(strategy.id)
             if (!isEnabled) continue
@@ -65,7 +83,17 @@ class StrategyEngine {
             val result = strategy.execute(snapshot)
             results.add(result)
 
-            val weight = result.confidence.coerceIn(0.1, 1.0)
+            // Yönlü sinyali performans izleyiciye kaydet (throttle'lı)
+            val direction = when (result.signal) {
+                SignalType.STRONG_BUY, SignalType.BUY -> 1
+                SignalType.STRONG_SELL, SignalType.SELL -> -1
+                SignalType.NEUTRAL -> 0
+            }
+            if (direction != 0 && performance.shouldRecord(result.score)) {
+                performance.record(strategy.id, bullish = direction > 0, price = snapshot.currentPrice, at = snapshot.timestamp)
+            }
+
+            val weight = result.confidence.coerceIn(0.1, 1.0) * performance.weight(strategy.id)
             weightedSum += result.score * weight
             totalWeight += weight
 

@@ -60,8 +60,11 @@
 - [x] Ölü kod: rsi / bandwidthPct / spreadPct skora entegre edildi; MeanReversion kategori fix
 - [x] docs/KOD_ANALIZI.md — 50 öneri + aksiyon takibi
 
-## Phase 12: Next (Backlog)
-- [ ] StrategyPerformanceTracker (#21) + adaptif ağırlıklandırma
+## Phase 12: Strateji Performans İzleyici (Completed — #21)
+- [x] StrategyPerformanceTracker + adaptif ağırlıklandırma (executeAll)
+- [x] StrategiesScreen win-rate rozeti
+
+## Phase 13: Next (Backlog)
 - [ ] Eğlenceli/anlatı katmanı (#11-20)
 - [ ] DRY: ortak SignalThresholds + confidence sabitleri
 - [ ] DepthAggregator gerçek seviye birleştirme; DivergenceEngine numLayers-bağımlı topFrom

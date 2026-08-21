@@ -12,8 +12,8 @@ android {
     applicationId = "com.aistudio.hftpyramid.ordrfw"
     minSdk = 24
     targetSdk = 36
-    versionCode = 8
-    versionName = "1.6.1"
+    versionCode = 9
+    versionName = "1.7"
   }
 
   signingConfigs {

@@ -1,5 +1,14 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.7.0] - Strateji Performans İzleyici (#21)
+
+### Added
+- `StrategyPerformanceTracker` — her stratejinin yön sinyalini kaydeder, 60 sn sonra fiyatla
+  sonuçlandırıp win-rate üretir (throttle 5 sn/strateji, soğuk başlangıçta nötr ağırlık).
+- `StrategyEngine.executeAll` — konsensüs ağırlığı artık `confidence × performansAğırlığı`;
+  gürültü üreten stratejiler otomatik zayıflar (0.3..1.2 aralığı).
+- `StrategiesScreen` — her strateji kartında win-rate rozeti (`%60(15)`).
+
 ## [1.6.1] - UI Layout Düzeltmeleri
 
 ### Fixed

@@ -269,6 +269,31 @@ private fun StrategyCard(
                         }
                     }
 
+                    // Win-rate rozeti (performans izleyici #21)
+                    if (item.isEnabled && item.resolved > 0) {
+                        val wr = item.winRate
+                        val wrText = if (wr != null) "${"%.0f".format(wr * 100)}%(${item.resolved})" else "…(${item.resolved})"
+                        val wrColor = when {
+                            wr == null -> TextMuted
+                            wr >= 0.5 -> BuyGreen
+                            else -> SellRed
+                        }
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(SurfaceDark)
+                                .padding(horizontal = 6.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = wrText,
+                                fontSize = 9.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                color = wrColor
+                            )
+                        }
+                    }
+
                     Switch(
                         checked = item.isEnabled,
                         onCheckedChange = { onToggle() },

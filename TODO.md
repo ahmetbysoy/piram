@@ -24,3 +24,4 @@
 - [x] tickSize fiyat formatı + aranabilir sembol listesi (tohum fallback)
 - [x] Derinlik ısı haritası + kitap dengesizliği
 - [x] BurstDetector performans fix (O(1)) + ölü kod temizliği
+- [x] Strateji performans izleyici + adaptif ağırlıklandırma (#21)
