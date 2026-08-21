@@ -406,6 +406,32 @@ fun SettingsScreen(
                         modifier = Modifier.testTag("switch_notifications")
                     )
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Ses Efekti Toggle (#12)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text("Whale & Salvo Ses Efekti", fontSize = 13.sp, color = TextPrimary)
+                        Text("Kurumsal emir ve salvo anında kısa bip", fontSize = 10.sp, color = TextMuted)
+                    }
+
+                    Switch(
+                        checked = uiState.preferences.soundEnabled,
+                        onCheckedChange = { viewModel.toggleSound() },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = BgDark,
+                            checkedTrackColor = PurplePastel,
+                            uncheckedThumbColor = TextMuted,
+                            uncheckedTrackColor = SurfaceDark
+                        ),
+                        modifier = Modifier.testTag("switch_sound")
+                    )
+                }
             }
         }
 

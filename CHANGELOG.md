@@ -1,5 +1,12 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.20.0] - Ses Efekti (#12) + Güven Nabız Barı (#14)
+
+### Added
+- `SoundController` (#12) — whale = çift bip, salvo = kısa bip (ToneGenerator, ses dosyası yok).
+- `UserPreferences.soundEnabled` + Settings'te "Whale & Salvo Ses Efekti" toggle.
+- `PulseBar` (#14) — nabız animasyonlu güven ısı çubuğu; ConsensusHeader'a "GÜVEN %" barı eklendi.
+
 ## [1.19.0] - 24 Saatlik Ticker İstatistikleri
 
 ### Added

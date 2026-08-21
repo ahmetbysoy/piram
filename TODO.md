@@ -37,3 +37,4 @@
 - [x] Push bildirim (whale/burst + izin + Settings toggle)
 - [x] SignalExplainer (#9) + StrategyCorrelation (#8) — 15 önerinin tamamı bitti
 - [x] 24s ticker istatistikleri (High/Low/Δ%/Hacim)
+- [x] Ses efekti (#12) + güven nabız barı (#14)

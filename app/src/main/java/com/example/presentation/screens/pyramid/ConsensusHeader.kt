@@ -46,6 +46,7 @@ import com.example.core.theme.TextPrimary
 import com.example.core.theme.TextSecondary
 import com.example.domain.model.ConsensusResult
 import com.example.domain.model.SignalType
+import com.example.presentation.components.PulseBar
 
 @Composable
 fun ConsensusHeader(
@@ -189,6 +190,40 @@ fun ConsensusHeader(
                 color = BuyGreen,
                 trackColor = SellRed
             )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Güven ısı çubuğu (#14) — nabız animasyonlu
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "GÜVEN",
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp,
+                    color = TextMuted
+                )
+                PulseBar(
+                    progress = consensus.confidence.toFloat(),
+                    color = when {
+                        consensus.overallSignal == SignalType.BUY || consensus.overallSignal == SignalType.STRONG_BUY -> BuyGreen
+                        consensus.overallSignal == SignalType.SELL || consensus.overallSignal == SignalType.STRONG_SELL -> SellRed
+                        else -> PurplePastel
+                    },
+                    height = 6.dp,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${"%.0f".format(consensus.confidence * 100)}%",
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary
+                )
+            }
 
             Spacer(modifier = Modifier.height(6.dp))
 

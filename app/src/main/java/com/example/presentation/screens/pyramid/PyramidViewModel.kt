@@ -46,6 +46,7 @@ import com.example.domain.model.SignalType
 import com.example.domain.model.StrategyResult
 import com.example.presentation.components.HapticController
 import com.example.presentation.components.NotificationHelper
+import com.example.presentation.components.SoundController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -111,7 +112,8 @@ data class PyramidUiState(
     val priceDecimals: Int = -1,   // -1 = otomatik; aksi halde tickSize hanesi
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true,
-    val notificationsEnabled: Boolean = false
+    val notificationsEnabled: Boolean = false,
+    val soundEnabled: Boolean = false
 )
 
 class PyramidViewModel(application: Application) : AndroidViewModel(application) {
@@ -122,6 +124,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     val symbolRegistry = SymbolRegistry()
     val strategyEngine = StrategyEngine()
     private val hapticController = HapticController(application)
+    private val soundController = SoundController()
 
     private val bucketManager = MicroBucketManager(
         numLayers = SignalConfig.DEFAULT_LAYERS,
@@ -193,6 +196,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     timeframe = prefs.timeframe,
                     isHapticEnabled = prefs.hapticEnabled,
                     notificationsEnabled = prefs.notificationsEnabled,
+                    soundEnabled = prefs.soundEnabled,
                     priceDecimals = decimals
                 )
 
@@ -342,12 +346,14 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     recentWhales.addFirst(processedOrder)
                     while (recentWhales.size > 25) recentWhales.pollLast()
                     hapticController.triggerWhaleAlert(_uiState.value.isHapticEnabled)
+                    soundController.playWhale(_uiState.value.soundEnabled)
                     maybeNotifyWhale(processedOrder)
                 }
 
                 val burst = burstDetector.processOrder(processedOrder)
                 if (burst != null) {
                     hapticController.triggerBurstAlert(_uiState.value.isHapticEnabled)
+                    soundController.playBurst(_uiState.value.soundEnabled)
                     maybeNotifyBurst(burst)
                 }
             }

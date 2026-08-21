@@ -102,6 +102,13 @@ class SettingsViewModel(
         }
     }
 
+    fun toggleSound() {
+        val current = _uiState.value.preferences.soundEnabled
+        viewModelScope.launch {
+            preferencesRepository.updateSoundEnabled(!current)
+        }
+    }
+
     fun clearDatabase() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isDatabaseClearing = true)

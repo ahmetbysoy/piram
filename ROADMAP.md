@@ -109,6 +109,9 @@
 ## Phase 24: 24 Saatlik Ticker (Completed)
 - [x] Ticker24h + TickerStatsCard + 30sn poll (ölü alanlar canlandı)
 
-## Phase 25: Next (Backlog)
+## Phase 25: Ses + Güven Animasyonu (Completed)
+- [x] SoundController (#12) + Settings toggle
+- [x] PulseBar (#14) + ConsensusHeader güven barı
+
+## Phase 26: Next (Backlog)
 - [ ] Trade replay/backtest
-- [ ] Düşük öncelik: #12 ses, #14 animasyon
