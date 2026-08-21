@@ -58,12 +58,16 @@ class BollingerBandsStrategy : Strategy {
         val width = upper - lower
         val bandwidthPct = if (middle > 0) (width / middle) * 100.0 else 0.0
 
-        val score = when {
+        // Squeeze: dar bant = yaklaşan genişleme → sinyal güçlenir (bandwidth artık skora giriyor)
+        val squeezeBoost = if (bandwidthPct < 2.0) 0.25 else 0.0
+
+        val baseScore = when {
             currentPrice >= upper -> 0.70 // Trend ride breakout
             currentPrice <= lower -> -0.70 // Breakdown
             currentPrice > middle -> ((currentPrice - middle) / (upper - middle)) * 0.5
             else -> -((middle - currentPrice) / (middle - lower)) * 0.5
         }
+        val score = (baseScore + if (baseScore >= 0) squeezeBoost else -squeezeBoost).coerceIn(-1.0, 1.0)
 
         val signal = when {
             score > 0.5 -> SignalType.STRONG_BUY

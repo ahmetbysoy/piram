@@ -13,6 +13,7 @@ An institutional-grade High-Frequency Trading (HFT) and Market Microstructure vi
 ## Docs
 
 - [PORT_NOTLARI](docs/PORT_NOTLARI.md) — `piramit` (web) projesinden Android'e taşınacak her şey
+- [KOD_ANALIZI](docs/KOD_ANALIZI.md) — kod incelemesi + 50 geliştirme önerisi + aksiyon takibi
 - [ARCHITECTURE](ARCHITECTURE.md) · [DATA_FLOW](DATA_FLOW.md) · [API](API.md) · [WALKTHROUGH](WALKTHROUGH.md)
 
 ## Tech Stack

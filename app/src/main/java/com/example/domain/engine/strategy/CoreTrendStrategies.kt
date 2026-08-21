@@ -55,7 +55,7 @@ class MeanReversionStrategy : Strategy {
     override val id = "mean_reversion"
     override val name = "Mean Reversion"
     override val description = "Statistical price deviation from mean with Bollinger envelope"
-    override val category = StrategyCategory.MOMENTUM
+    override val category = StrategyCategory.VOLATILITY
 
     override fun execute(data: MarketSnapshot): StrategyResult {
         val prices = data.recentPrices

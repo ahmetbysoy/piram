@@ -1,5 +1,19 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.6.0] - Performans & Kalite (Kod Analizi P1+P2)
+
+### Fixed
+- `BurstDetector` — her trade'de tam deque'yi 2× filter eden O(n) tarama yerine alış/satış
+  için ayrı pencereler + kayan toplamlar (O(1) amortized).
+- `DivergenceStrategy` — hesaplanıp kullanılmayan `rsi` artık koşula giriyor
+  (bull: RSI < 45, bear: RSI > 55) ve reason'a yazılıyor.
+- `BollingerBandsStrategy` — ölü `bandwidthPct` artık squeeze boost olarak skora giriyor.
+- `MarketMicrostructureStrategy` — ölü `spreadPct` artık likidite faktörü olarak skora giriyor.
+- `MeanReversionStrategy.category` — MOMENTUM → VOLATILITY (yanlış etiket).
+
+### Added
+- `docs/KOD_ANALIZI.md` — kod incelemesi + 50 geliştirme önerisi + aksiyon takibi.
+
 ## [1.5.0] - Derinlik Isı Haritası
 
 ### Added

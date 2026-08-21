@@ -55,7 +55,14 @@
 ## Phase 10: Derinlik Isı Haritası (Completed)
 - [x] Order book heatmap + kitap dengesizliği (`BookProfile` + `DepthHeatmap`)
 
-## Phase 11: Next (Backlog)
-- [ ] 24h ticker stats (high/low/volume/change) per venue
-- [ ] Trade replay & offline backtest harness
-- [ ] Push-notification whale/burst alerts
+## Phase 11: Performans & Kalite (Completed — kod analizi P1+P2)
+- [x] BurstDetector O(n) → O(1) amortized (side pencereler + kayan toplam)
+- [x] Ölü kod: rsi / bandwidthPct / spreadPct skora entegre edildi; MeanReversion kategori fix
+- [x] docs/KOD_ANALIZI.md — 50 öneri + aksiyon takibi
+
+## Phase 12: Next (Backlog)
+- [ ] StrategyPerformanceTracker (#21) + adaptif ağırlıklandırma
+- [ ] Eğlenceli/anlatı katmanı (#11-20)
+- [ ] DRY: ortak SignalThresholds + confidence sabitleri
+- [ ] DepthAggregator gerçek seviye birleştirme; DivergenceEngine numLayers-bağımlı topFrom
+- [ ] 24h ticker stats · Trade replay/backtest · Push bildirim

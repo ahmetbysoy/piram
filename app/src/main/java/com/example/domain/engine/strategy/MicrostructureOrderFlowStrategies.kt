@@ -32,10 +32,10 @@ class DivergenceStrategy : Strategy {
         val rsi = TechnicalIndicators.rsi(prices, 14)
         val flowImbalance = data.orderFlowImbalance
 
-        // Bullish Divergence: Price falling but aggressive buy volume entering / RSI rising
-        val isBullishDiv = priceTrend < 0 && flowImbalance > 0.25
-        // Bearish Divergence: Price rising but aggressive sell volume hitting / RSI falling
-        val isBearishDiv = priceTrend > 0 && flowImbalance < -0.25
+        // Bullish Divergence: fiyat düşüyor ama agresif alım giriyor ve RSI dip bölgesinde
+        val isBullishDiv = priceTrend < 0 && flowImbalance > 0.25 && rsi < 45.0
+        // Bearish Divergence: fiyat yükseliyor ama agresif satış giriyor ve RSI tepe bölgesinde
+        val isBearishDiv = priceTrend > 0 && flowImbalance < -0.25 && rsi > 55.0
 
         val score = when {
             isBullishDiv -> 0.80
@@ -51,9 +51,11 @@ class DivergenceStrategy : Strategy {
             else -> SignalType.NEUTRAL
         }
 
-        val reason = if (isBullishDiv) "BULLISH DELTA DIVERGENCE! Absorbing sell pressure."
-        else if (isBearishDiv) "BEARISH DELTA DIVERGENCE! Distributing at highs."
-        else "Flow and price aligned (Delta: ${"%.2f".format(flowImbalance * 100)}%)"
+        val reason = when {
+            isBullishDiv -> "BULLISH DELTA DIVERGENCE! Absorbing sell pressure (RSI ${"%.0f".format(rsi)})."
+            isBearishDiv -> "BEARISH DELTA DIVERGENCE! Distributing at highs (RSI ${"%.0f".format(rsi)})."
+            else -> "Flow and price aligned (Delta: ${"%.2f".format(flowImbalance * 100)}%, RSI ${"%.0f".format(rsi)})"
+        }
 
         return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("flowImbalance" to flowImbalance, "rsi" to rsi))
     }
@@ -152,7 +154,13 @@ class MarketMicrostructureStrategy : Strategy {
         val topAskVol = depth.asks.take(5).sumOf { it.volume }
         val bookImbalance = if (topBidVol + topAskVol > 0) (topBidVol - topAskVol) / (topBidVol + topAskVol) else 0.0
 
-        val score = (bookImbalance * 1.1).coerceIn(-1.0, 1.0)
+        // Sıkı spread = likidite = sinyale güven; geniş spread = güven azalır (spread artık skora giriyor)
+        val liquidityFactor = when {
+            spreadPct < 1.0 -> 1.15
+            spreadPct < 5.0 -> 1.0
+            else -> 0.85
+        }
+        val score = (bookImbalance * 1.1 * liquidityFactor).coerceIn(-1.0, 1.0)
         val signal = when {
             score > 0.4 -> SignalType.STRONG_BUY
             score > 0.15 -> SignalType.BUY
