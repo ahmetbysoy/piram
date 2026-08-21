@@ -40,9 +40,11 @@
 - [x] `WindowLedger` — 1sn dilimli defter; timeframe (1DK/5DK/15DK/Açılış) gerçek pencere
 - [x] Likidasyon akışı — fapi `!forceOrder@arr` + `LiquidationBanner` + haptik
 
-## Phase 7: Next (Backlog)
-- [ ] Açık pozisyon (OI) + `oiState` ("OI yoksa yalan yok") — divergence dipnotu
-- [ ] Radar ekranı (tüm piyasa taraması, `!miniTicker@arr`)
+## Phase 7: OI & Radar (Completed)
+- [x] Açık pozisyon (OI) + `oiState` ("OI yoksa yalan yok") — divergence dipnotu + VenueStrip OI hücresi
+- [x] Radar ekranı (tüm piyasa taraması, `!miniTicker@arr`, PCT/VOL sıralama, sembol seçimi)
+
+## Phase 8: Next (Backlog)
 - [ ] Sinyal günlüğü + isabet oranı (Room tabanlı journal)
 - [ ] tickSize'a göre fiyat formatı + aranabilir sembol listesi (tohum fallback)
 - [ ] 24h ticker stats (high/low/volume/change) per venue

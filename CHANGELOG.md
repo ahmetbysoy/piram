@@ -1,6 +1,6 @@
 # HFT Pyramid Terminal - Changelog
 
-## [1.2.0] - Notional (USDT) Layer Engine
+## [1.2.0] - Notional Engine, Anlatı, Likidasyon, OI & Radar
 
 ### Changed
 - Katmanlama artık **USDT notional** (`fiyat × adet`) üzerinden; adet (qty) kullanılmıyor.
@@ -9,13 +9,15 @@
 - 1 dakikalık akış (1M FLOW) artık notional üzerinden toplanıyor.
 
 ### Added
-- `SignalConfig` — tüm motor eşikleri tek yerde (adaptif eşik, sönüm, loop, divergence sabitleri hazır).
+- `SignalConfig` — tüm motor eşikleri tek yerde.
 - `DivergenceEngine` — toplama/boşaltma anlatısı (büyükler vs küçükler + fiyat `tanh`), `FlowNarrative` satırı.
-- `AdaptiveEdges` — coin'in notional dağılımından yüzdelik eşik aralığı (histerezisli, 40+ trade sonrası).
-- `WindowLedger` — 1 saniyelik dilimli pencere defteri; timeframe (1DK/5DK/15DK/Açılış) artık gerçekten
-  pencere hesaplıyor (`VenueStrip` içinde "WIN" hücresi olarak görünür).
-- Likidasyon akışı — Binance USD-M `!forceOrder@arr` (futures) üzerinden `Liquidation` modeli,
-  `LiquidationBanner` bandı + haptik uyarı.
+- `AdaptiveEdges` — coin'in notional dağılımından yüzdelik eşik aralığı (histerezisli).
+- `WindowLedger` — 1 saniyelik dilimli pencere defteri; timeframe (1DK/5DK/15DK/Açılış) gerçek pencere.
+- Likidasyon akışı — Binance USD-M `!forceOrder@arr` + `Liquidation` modeli + `LiquidationBanner` + haptik.
+- Açık pozisyon (OI) — fapi `openInterest` REST + `oiState` durum makinesi (bekliyor/ok/yok/eski);
+  divergence cümlesine OI dipnotu, VenueStrip'te "OI" hücresi.
+- Radar ekranı — `!miniTicker@arr` üzerinden tüm USDT perp'lerinin 24s değişim + hacim listesi,
+  PCT/VOL sıralama, satıra basınca sembol değiştirme; Navigation'a 4. sekme.
 
 ## [1.1.0] - Multi-Venue Depth & Cross-Exchange Aggregation
 

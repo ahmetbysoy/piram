@@ -14,9 +14,11 @@
 | Notional (USDT) katmanlama | ✅ UYGULANDI (`MicroBucket`/`Manager`/`LayerAggregate` + `SignalConfig`) |
 | Adaptif eşik + histerezis + sizeScale | ✅ UYGULANDI (`AdaptiveEdges` + ViewModel reconfigure) |
 | WindowLedger + gerçek timeframe | ✅ UYGULANDI (`WindowLedger` + VenueStrip WIN hücresi) |
-| Toplama/boşaltma + OI dipnotu | 🔶 Kısmen — `DivergenceEngine` + `FlowNarrative` var; **OI henüz yok** |
+| Toplama/boşaltma + OI dipnotu | ✅ UYGULANDI (`DivergenceEngine` + `FlowNarrative` + **OI dipnotu**) |
 | Likidasyon akışı (forceOrder) | ✅ UYGULANDI (`BinanceLiquidationClient` + `LiquidationBanner`) |
-| **Kalan (Phase 7)** | OI + oiState, Radar, sinyal günlüğü, tickSize format, 24s istatistik |
+| OI + oiState ("OI yoksa yalan yok") | ✅ UYGULANDI (`OpenInterestClient` + `oiState` + VenueStrip OI hücresi) |
+| Radar ekranı (miniTicker) | ✅ UYGULANDI (`BinanceMiniTickerClient` + `RadarScreen` + 4. sekme) |
+| **Kalan (Phase 8)** | Sinyal günlüğü, tickSize format + sembol arama, 24s istatistik |
 
 ---
 

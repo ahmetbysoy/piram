@@ -9,6 +9,8 @@
 - **Anlatı Katmanı**: 100% (toplama/boşaltma divergence + FlowNarrative)
 - **Timeframes**: 100% (WindowLedger ile gerçek 1DK/5DK/15DK/Açılış pencereleri)
 - **Likidasyon**: 100% (fapi forceOrder akışı + LiquidationBanner)
+- **Açık Pozisyon (OI)**: 100% (fapi openInterest + oiState durum makinesi + divergence dipnotu)
+- **Radar**: 100% (miniTicker taraması + 4. sekme + sembol seçimi)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

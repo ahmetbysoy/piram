@@ -17,3 +17,5 @@
 - [x] Toplama/boşaltma anlatısı
 - [x] Gerçek timeframe pencereleri (WindowLedger)
 - [x] Likidasyon akışı (forceOrder)
+- [x] Açık pozisyon (OI) + oiState durum makinesi
+- [x] Radar ekranı (miniTicker taraması)
