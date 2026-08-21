@@ -23,6 +23,7 @@
 - **Strateji Tab Hiyerarşisi**: 100% (kategori renkleri + sticky header + sinyal glow + sıralama ayrımı)
 - **Zıplama Kalıntıları**: 100% (ConsensusHeader/MoodStrip/SignalJournalCard/StrategyCard fix)
 - **Eğlenceli Katman 2**: 100% (MarketPersonality + RektMeter + WhaleRetailBoard/ScoreboardBar)
+- **Görsel İnceleme T5**: 100% (rozet wrap, GÜÇLÜ global sıralama, VenueStrip fade, özet sıralama, boş bucket)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

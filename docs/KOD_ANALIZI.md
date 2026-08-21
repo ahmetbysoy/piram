@@ -112,3 +112,13 @@
 | W7 | Güçlü sinyal kartı görsel olarak ayırt edilmiyor | ✅ YAPILDI (|score|≥0.45 → renkli border 1.5dp + aksan çizgisi) |
 | W8 | Düz liste, gruplama/sticky header yok | ✅ YAPILDI (kategori stickyHeader + ▲/▼ sayaç) |
 | W9 | Ana ekranla görsel dil kopuk (emoji yok) | ✅ YAPILDI (header'a MarketMood emojisi) |
+
+## UI/UX İncelemesi (tur 5 — kategori rozeti wrap + sıralama mantığı)
+
+| # | Tespit | Durum |
+|---|---|---|
+| X1 | Kategori rozeti (`softWrap` yok) dar alanda harf harf dikey wrap oluyor (TR/EN/D) | ✅ YAPILDI (`softWrap = false` + `item.name` maxLines=1/ellipsis) |
+| X2 | "GÜÇLÜ" sıralama kategori içinde kalıyor, global değil (en güçlü ARB sinyali altta) | ✅ YAPILDI (SIGNAL modda gruplama bypass, düz `items(displayItems)`) |
+| X3 | VenueStrip kaydırılabilir ama ipucu yok (son hücre kesik görünüyor) | ✅ YAPILDI (sağ kenar alpha fade) |
+| X4 | "Kanka özet" kritik yüzde cümlenin sonunda kalıp ellipsis'e takılıyor | ✅ YAPILDI (yüzde + akış cümlenin başına alındı) |
+| X5 | Boş bucket ($0.00) tam yükseklikte dolu çiziliyor | ✅ YAPILDI (boş katman bar + vol metni soluklaştırıldı) |

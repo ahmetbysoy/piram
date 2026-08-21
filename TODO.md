@@ -30,3 +30,4 @@
 - [x] Teknik borç: DRY SignalThresholds + DepthAggregator birleştirme + DivergenceEngine fix
 - [x] Zıplama kalıntıları (ConsensusHeader/MoodStrip/SignalJournalCard/StrategyCard) + strateji tab hiyerarşisi
 - [x] Eğlenceli katman 2 (kişilik + rekt metre + skor tablosu)
+- [x] Görsel inceleme T5 (rozet wrap, global sıralama, fade, özet, boş bucket)

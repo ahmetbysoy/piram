@@ -119,11 +119,15 @@ fun PyramidCanvas(
                 val buyBarWidth = barWidth * buyRatio
                 val sellBarWidth = barWidth * sellRatio
 
+                // Boş katmanlar soluklaşır (yükseklik korunur ama "yarı boş" hissi verir)
+                val isEmpty = layer.displayNotional < 0.0001
+                val alphaMul = if (isEmpty) 0.3f else 1f
+
                 // Draw Buy Bar (Right side of Center)
                 val buyGradient = Brush.horizontalGradient(
                     colors = listOf(
-                        baseColor.copy(alpha = if (isSelected) 0.95f else 0.75f),
-                        BuyGreen.copy(alpha = if (isSelected) 1.0f else 0.85f)
+                        baseColor.copy(alpha = (if (isSelected) 0.95f else 0.75f) * alphaMul),
+                        BuyGreen.copy(alpha = (if (isSelected) 1.0f else 0.85f) * alphaMul)
                     ),
                     startX = centerX,
                     endX = centerX + buyBarWidth
@@ -139,8 +143,8 @@ fun PyramidCanvas(
                 // Draw Sell Bar (Left side of Center)
                 val sellGradient = Brush.horizontalGradient(
                     colors = listOf(
-                        SellRed.copy(alpha = if (isSelected) 1.0f else 0.85f),
-                        baseColor.copy(alpha = if (isSelected) 0.95f else 0.75f)
+                        SellRed.copy(alpha = (if (isSelected) 1.0f else 0.85f) * alphaMul),
+                        baseColor.copy(alpha = (if (isSelected) 0.95f else 0.75f) * alphaMul)
                     ),
                     startX = centerX - sellBarWidth,
                     endX = centerX
@@ -188,10 +192,14 @@ fun PyramidCanvas(
                     style = labelStyle
                 )
 
-                // Draw Volume text (Right Edge)
+                // Draw Volume text (Right Edge) — boş katmanda soluk
                 val volStr = MathUtils.formatUsd(layer.notional)
                 val volStyle = TextStyle(
-                    color = if (layer.isWhaleTier) WhaleGold else TextPrimary,
+                    color = when {
+                        isEmpty -> TextMuted
+                        layer.isWhaleTier -> WhaleGold
+                        else -> TextPrimary
+                    },
                     fontSize = 10.sp,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.SemiBold

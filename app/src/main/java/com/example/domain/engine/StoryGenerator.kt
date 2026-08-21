@@ -19,17 +19,18 @@ object StoryGenerator {
         val ofiPct = ofi * 100.0
 
         val sb = StringBuilder("Kanka özet: ")
+        // Akış + yüzde başta (en kritik bilgi) — tek satırda kesilse bile kaybolmaz
+        sb.append(
+            when {
+                ofiPct > 5.0 -> "+${"%.0f".format(ofiPct)}% ALIŞ yönlü"
+                ofiPct < -5.0 -> "${"%.0f".format(ofiPct)}% SATIŞ yönlü"
+                else -> "dengeli akış"
+            }
+        )
+        sb.append(", ")
         sb.append(
             if (whalePct >= 50.0) "kurumsal ağırlıkta (${"%.0f".format(whalePct)}%)"
             else "perakende ağırlıkta (${"%.0f".format(100.0 - whalePct)}%)"
-        )
-        sb.append(", akış ")
-        sb.append(
-            when {
-                ofiPct > 5.0 -> "ALIŞ yönlü (+${"%.0f".format(ofiPct)}%)"
-                ofiPct < -5.0 -> "SATIŞ yönlü (${"%.0f".format(ofiPct)}%)"
-                else -> "dengeli"
-            }
         )
         if (burstCount > 0) sb.append(", $burstCount salvo aktif")
         sb.append(

@@ -1,5 +1,16 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.13.0] - Görsel İnceleme Tur 5
+
+### Fixed
+- Strateji kartı kategori rozeti dar alanda harf harf dikey wrap oluyordu → `softWrap = false`
+  + strateji adı `maxLines=1`/ellipsis.
+- "GÜÇLÜ" sıralama artık gerçekten global (kategori gruplaması bypass) — en güçlü sinyal
+  kategori fark etmeksizin en üstte.
+- VenueStrip sağ kenara alpha fade (kaydırılabilir olduğu artık belli).
+- "Kanka özet" cümlesinde kritik yüzde/akış bilgisi başa alındı (ellipsis'e takılmıyor).
+- Boş bucket katmanları (notional=0) soluk render (bar + metin) — "yarı boş" hissi.
+
 ## [1.12.0] - Eğlenceli Katman 2 (#17/#19/#20)
 
 ### Added

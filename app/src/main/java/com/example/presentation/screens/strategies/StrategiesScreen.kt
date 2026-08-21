@@ -187,7 +187,10 @@ fun StrategiesScreen(
                 .testTag("strategies_list"),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            if (uiState.selectedCategory == null) {
+            // GÜÇLÜ sıralamada global sıralama geçerli (kategori gruplaması devre dışı):
+            // en güçlü sinyal kategori fark etmeksizin en üstte.
+            val groupByCategory = uiState.selectedCategory == null && uiState.sort != StrategySort.SIGNAL
+            if (groupByCategory) {
                 orderedCategories.forEach { category ->
                     val catItems = grouped[category] ?: return@forEach
                     val bull = catItems.count {
@@ -357,7 +360,9 @@ private fun StrategyCard(
                                 text = item.name,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = if (item.isEnabled) TextPrimary else TextMuted
+                                color = if (item.isEnabled) TextPrimary else TextMuted,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Box(
                                 modifier = Modifier
@@ -370,7 +375,8 @@ private fun StrategyCard(
                                     text = item.category.label.uppercase(),
                                     fontSize = 8.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = accent
+                                    color = accent,
+                                    softWrap = false
                                 )
                             }
                         }

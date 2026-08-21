@@ -84,6 +84,10 @@
 ## Phase 17: Eğlenceli Katman 2 (Completed)
 - [x] MarketPersonality (#20) + RektMeter/LiquidationTracker (#17) + WhaleRetailBoard/ScoreboardBar (#19)
 
-## Phase 18: Next (Backlog)
+## Phase 18: Görsel İnceleme Tur 5 (Completed)
+- [x] Kategori rozeti softWrap + GÜÇLÜ global sıralama + VenueStrip fade
+- [x] Kanka özet bilgi sıralaması + boş bucket soluk render
+
+## Phase 19: Next (Backlog)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
 - [ ] Düşük öncelik: #12 ses, #14 animasyon, #16 pain score
