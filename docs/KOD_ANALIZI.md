@@ -56,8 +56,15 @@
 | P1 | BurstDetector O(n) → O(1) amortized | Küçük | ✅ YAPILDI |
 | P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ YAPILDI |
 | P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ✅ YAPILDI |
-| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | ⬜ Sıradaki |
+| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | 🔶 Kısmen (11/13/15 yapıldı — MoodStrip) |
 | — | DRY: ortak SignalThresholds + confidence | Orta | ⬜ |
+
+### P4 detayı (ilk dilim — yapıldı)
+- `MarketMood` (#11) — konsensüs gücüne göre emoji (😱🐻😐🐂🚀) + etiket (Panik/Ayı/Kararsız/Boğa/FOMO).
+- `StreakStats` (#15) — sinyal günlüğünden art arda doğru seri (current/best/total/winRate), saf.
+- `StoryGenerator` (#13) — "Kanka özet" tek cümlelik Türkçe anlatı (kurumsal/perakende + akış + salvo + VWAP).
+- `MoodStrip` — üçünü tek kompakt kartta birleştirir (PyramidScreen, FlowNarrative altına).
+- Kalan P4 (#12 ses, #14 animasyon, #16 pain, #17 rekt, #18 fırtına rozeti [MoodStrip'te sessizlik rozeti olarak kısmen], #19 skorbord, #20 kişilik): ⬜
 
 ### P3 detayı (#21 — uygulandı)
 - `StrategyPerformanceTracker` — saf Kotlin, injectable clock, throttle'lı kayıt (5sn/strateji),

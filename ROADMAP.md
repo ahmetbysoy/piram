@@ -69,8 +69,11 @@
 - [x] StrategiesViewModel 4fps throttle (.sample) + animateContentSize + maxLines
 - [x] "GÜÇLÜ ÜSTTE" sıralama + dinamik başlık + kategori sayaç precompute
 
-## Phase 14: Next (Backlog)
-- [ ] Eğlenceli/anlatı katmanı (#11-20)
+## Phase 14: Eğlenceli Katman — İlk Dilim (Completed)
+- [x] MarketMood (emoji+etiket) · StreakStats (seri) · StoryGenerator ("kanka özet") · MoodStrip
+
+## Phase 15: Next (Backlog)
+- [ ] Eğlenceli katman kalanı (#12 ses, #14 animasyon, #16 pain, #17 rekt, #19 skorbord, #20 kişilik)
 - [ ] DRY: ortak SignalThresholds + confidence sabitleri
 - [ ] DepthAggregator gerçek seviye birleştirme; DivergenceEngine numLayers-bağımlı topFrom
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim

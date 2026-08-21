@@ -22,3 +22,4 @@
 | Step 16 | UI Layout Fix | DepthHeatmap heightIn(13dp), PyramidCanvas layerHeight 28.dp.toPx, PyramidScreen scroll + canvas 280dp | COMPLETED |
 | Step 17 | Strateji Performansı | StrategyPerformanceTracker (#21) + adaptif ağırlık (executeAll), win-rate rozeti, tracker testleri | COMPLETED |
 | Step 18 | Layout Zıplama | Sabit yükseklik rezervi (3 bileşen), StrategiesViewModel 4fps throttle, animateContentSize, GÜÇLÜ ÜSTTE sıralama, dinamik başlık | COMPLETED |
+| Step 19 | Eğlenceli Katman | MarketMood + StreakStats + StoryGenerator + MoodStrip (#11/13/15), FunLayerTest | COMPLETED |

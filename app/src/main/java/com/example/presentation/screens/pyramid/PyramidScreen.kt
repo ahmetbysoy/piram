@@ -80,6 +80,18 @@ fun PyramidScreen(
                 divergenceKind = uiState.divergenceKind
             )
 
+            // Ruh hali şeridi: emoji + seri + "kanka özeti"
+            MoodStrip(
+                consensusStrength = uiState.consensus.consensusStrength,
+                journal = uiState.journal,
+                whaleNotional = uiState.whaleNotional,
+                retailNotional = uiState.retailNotional,
+                burstCount = uiState.activeBursts.size,
+                orderFlowImbalance = uiState.orderFlowImbalance,
+                currentPrice = uiState.currentPrice,
+                vwap = uiState.vwap
+            )
+
             // Cross-venue spread, 1M flow & per-venue prices
             VenueStrip(
                 venuePrices = uiState.venuePrices,

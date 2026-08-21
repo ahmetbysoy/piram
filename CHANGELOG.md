@@ -1,5 +1,13 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.9.0] - Ruh Hali Şeridi (Eğlenceli Katman #11/13/15)
+
+### Added
+- `MarketMood` — konsensüs gücüne göre emoji (😱🐻😐🐂🚀) + etiket (Panik/Ayı/Kararsız/Boğa/FOMO).
+- `StreakStats` — sinyal günlüğünden art arda doğru tahmin serisi (aktif/en uzun/win-rate).
+- `StoryGenerator` — "Kanka özet" tek cümlelik Türkçe anlatı (kurumsal-perakende + akış + salvo + VWAP).
+- `MoodStrip` — üçünü tek kompakt kartta gösterir (PyramidScreen).
+
 ## [1.8.0] - Layout Zıplama Düzeltmeleri (UX)
 
 ### Fixed
