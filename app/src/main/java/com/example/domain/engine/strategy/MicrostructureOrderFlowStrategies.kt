@@ -43,13 +43,7 @@ class DivergenceStrategy : Strategy {
             else -> (flowImbalance * 0.4).coerceIn(-0.3, 0.3)
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = when {
             isBullishDiv -> "BULLISH DELTA DIVERGENCE! Absorbing sell pressure (RSI ${"%.0f".format(rsi)})."
@@ -57,7 +51,7 @@ class DivergenceStrategy : Strategy {
             else -> "Flow and price aligned (Delta: ${"%.2f".format(flowImbalance * 100)}%, RSI ${"%.0f".format(rsi)})"
         }
 
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("flowImbalance" to flowImbalance, "rsi" to rsi))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("flowImbalance" to flowImbalance, "rsi" to rsi))
     }
 }
 
@@ -90,16 +84,10 @@ class VolatilityBreakoutStrategy : Strategy {
             0.0
         }
 
-        val signal = when {
-            score > 0.55 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.55 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.55, weak = 0.15)
 
         val reason = "Vol Ratio: ${"%.2f".format(volRatio)}x [${if (isExpansion) "EXPLODING VOLATILITY" else "COMPRESSED"}]"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("volRatio" to volRatio))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("volRatio" to volRatio))
     }
 }
 
@@ -120,16 +108,10 @@ class OrderFlowImbalanceStrategy : Strategy {
         val whaleWeight = if (whaleCount > 0) 1.3 else 1.0
 
         val score = (ofi * whaleWeight).coerceIn(-1.0, 1.0)
-        val signal = when {
-            score > 0.45 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.45 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.45, weak = 0.15)
 
         val reason = "OFI Delta: ${"%.2f".format(ofi * 100)}%, Whale Trades: $whaleCount"
-        return StrategyResult(id, name, signal, (0.6 + abs(score) * 0.35).coerceIn(0.0, 1.0), score, reason, mapOf("ofi" to ofi, "whaleCount" to whaleCount.toDouble()))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.6, scale = 0.35), score, reason, mapOf("ofi" to ofi, "whaleCount" to whaleCount.toDouble()))
     }
 }
 
@@ -161,16 +143,10 @@ class MarketMicrostructureStrategy : Strategy {
             else -> 0.85
         }
         val score = (bookImbalance * 1.1 * liquidityFactor).coerceIn(-1.0, 1.0)
-        val signal = when {
-            score > 0.4 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.4 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.4, weak = 0.15)
 
         val reason = "Spread: ${"%.2f".format(spreadPct)} bps, L2 Imbalance: ${"%.1f".format(bookImbalance * 100)}%"
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("spreadBps" to spreadPct, "bookImbalance" to bookImbalance))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("spreadBps" to spreadPct, "bookImbalance" to bookImbalance))
     }
 }
 
@@ -207,18 +183,12 @@ class LiquidityHuntStrategy : Strategy {
             else -> 0.0
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = if (isLowSweep) "LIQUIDITY SWEPT AT LOWS! Massive absorption."
         else if (isHighSweep) "LIQUIDITY SWEPT AT HIGHS! Aggressive dump."
         else "No sweep detected in current range."
 
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("isLowSweep" to (if (isLowSweep) 1.0 else 0.0)))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("isLowSweep" to (if (isLowSweep) 1.0 else 0.0)))
     }
 }

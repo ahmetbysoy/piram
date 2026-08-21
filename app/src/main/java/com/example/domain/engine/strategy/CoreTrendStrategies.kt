@@ -79,16 +79,10 @@ class MeanReversionStrategy : Strategy {
             else -> -(percentB - 0.5) * 0.5
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = "Band %B: ${"%.2f".format(percentB * 100)}%, Z-Score: ${"%.2f".format(zScore)}"
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("percentB" to percentB, "zScore" to zScore))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("percentB" to percentB, "zScore" to zScore))
     }
 }
 
@@ -113,16 +107,10 @@ class MomentumStrategy : Strategy {
         val weightedRoc = rocShort * 0.6 + rocMed * 0.4
 
         val score = (weightedRoc / 0.8).coerceIn(-1.0, 1.0)
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "ROC(5): ${"%.3f".format(rocShort)}%, ROC(10): ${"%.3f".format(rocMed)}%"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("rocShort" to rocShort, "rocMed" to rocMed))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("rocShort" to rocShort, "rocMed" to rocMed))
     }
 }
 
@@ -154,16 +142,10 @@ class VolumeSpikeStrategy : Strategy {
             flowDelta * 0.25
         }
 
-        val signal = when {
-            score > 0.55 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.55 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.55, weak = 0.15)
 
         val reason = if (isSpike) "SPIKE DETECTED! Z: ${"%.2f".format(zScore)}, Delta: ${"%.2f".format(flowDelta * 100)}%" else "Normal volume. Z: ${"%.2f".format(zScore)}"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("volumeZ" to zScore, "imbalance" to flowDelta))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("volumeZ" to zScore, "imbalance" to flowDelta))
     }
 }
 
@@ -192,15 +174,9 @@ class RsiStrategy : Strategy {
             else -> -((rsiVal - 50.0) / 25.0) * 0.2
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = "RSI(14): ${"%.1f".format(rsiVal)} [${if (rsiVal > 70) "OVERBOUGHT" else if (rsiVal < 30) "OVERSOLD" else "BALANCED"}]"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("rsi" to rsiVal))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("rsi" to rsiVal))
     }
 }

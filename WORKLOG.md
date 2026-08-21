@@ -23,3 +23,4 @@
 | Step 17 | Strateji Performansı | StrategyPerformanceTracker (#21) + adaptif ağırlık (executeAll), win-rate rozeti, tracker testleri | COMPLETED |
 | Step 18 | Layout Zıplama | Sabit yükseklik rezervi (3 bileşen), StrategiesViewModel 4fps throttle, animateContentSize, GÜÇLÜ ÜSTTE sıralama, dinamik başlık | COMPLETED |
 | Step 19 | Eğlenceli Katman | MarketMood + StreakStats + StoryGenerator + MoodStrip (#11/13/15), FunLayerTest | COMPLETED |
+| Step 20 | Teknik Borç | SignalThresholds DRY (18 sinyal + 19 güven), DepthAggregator seviye birleştirme, DivergenceEngine numLayers fix, testler | COMPLETED |

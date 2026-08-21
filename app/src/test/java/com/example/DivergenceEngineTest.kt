@@ -69,4 +69,23 @@ class DivergenceEngineTest {
         val sig = DivergenceEngine.evaluate(layers, priceChangePct = -5.0, oiDelta = null)
         assertEquals(DivergenceKind.YOK, sig.kind)
     }
+
+    @Test
+    fun `numLayers degisince indeksler turetilir (10 katman)`() {
+        // 10 katman: whale 8-9, retail 0-3 (bottomTo = 10*2/5 = 4)
+        val layers = listOf(
+            layer(0, 0.0, 500.0),
+            layer(1, 0.0, 400.0),
+            layer(2, 0.0, 300.0),
+            layer(3, 0.0, 200.0),
+            layer(4, 0.0, 0.0),
+            layer(5, 0.0, 0.0),
+            layer(6, 0.0, 0.0),
+            layer(7, 0.0, 0.0),
+            layer(8, 800.0, 0.0),
+            layer(9, 1200.0, 0.0)
+        )
+        val sig = DivergenceEngine.evaluate(layers, priceChangePct = -1.0, oiDelta = null, numLayers = 10)
+        assertEquals(DivergenceKind.TOPLAMA, sig.kind)
+    }
 }

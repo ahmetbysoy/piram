@@ -11,11 +11,11 @@
 | 3 | `BollingerBandsStrategy.bandwidthPct` skora girmiyor (squeeze sinyali yok) | ✅ DÜZELTİLDİ (squeeze boost) |
 | 4 | `MarketMicrostructureStrategy.spreadPct` skora girmiyor (spread compression yok) | ✅ DÜZELTİLDİ (liquidity factor) |
 | 5 | `MeanReversionStrategy.category = MOMENTUM` (yanlış etiket) | ✅ DÜZELTİLDİ (VOLATILITY) |
-| 6 | Skor eşikleri (0.15/0.45/0.55…) her stratejide kopyalanmış (DRY) | ⬜ Backlog |
-| 7 | Confidence hesapları `base + |score|*k` keyfi sabitler | ⬜ Backlog |
+| 6 | Skor eşikleri (0.15/0.45/0.55…) her stratejide kopyalanmış (DRY) | ✅ DÜZELTİLDİ (SignalThresholds.signalFor) |
+| 7 | Confidence hesapları `base + |score|*k` keyfi sabitler | ✅ DÜZELTİLDİ (SignalThresholds.confidenceFor) |
 | 8 | Stratejiler performans izlemiyor (win-rate/Sharpe yok), adaptif ağırlık yok | ⬜ Backlog (P3) |
-| 9 | `DepthAggregator` aynı fiyat seviyesini birleştirmiyor (concat, gerçek aggregate değil) | ⬜ Backlog |
-| 10 | `DivergenceEngine` topFrom=6/bottomTo=3 sabit — numLayers'a bağlı olmalı | ⬜ Backlog |
+| 9 | `DepthAggregator` aynı fiyat seviyesini birleştirmiyor (concat, gerçek aggregate değil) | ✅ DÜZELTİLDİ |
+| 10 | `DivergenceEngine` topFrom=6/bottomTo=3 sabit — numLayers'a bağlı olmalı | ✅ DÜZELTİLDİ |
 | 11 | `AdaptiveEdges.percentile` interpolasyonsuz | ⬜ Backlog |
 | 12 | `WindowLedger.sumWindow` O(n) tarama | ⬜ Backlog (prefix-sum) |
 | 13 | `StrategyEngine.strategies` val (runtime plugin yok) | ⬜ Backlog |
@@ -57,7 +57,9 @@
 | P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ YAPILDI |
 | P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ✅ YAPILDI |
 | P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | 🔶 Kısmen (11/13/15 yapıldı — MoodStrip) |
-| — | DRY: ortak SignalThresholds + confidence | Orta | ⬜ |
+| — | DRY: ortak SignalThresholds + confidence | Orta | ✅ YAPILDI (SignalThresholds; 18 sinyal + 19 güven tek noktada) |
+| — | DepthAggregator aynı seviye birleştirme | Küçük | ✅ YAPILDI (mergeLevels) |
+| — | DivergenceEngine topFrom sabit | Küçük | ✅ YAPILDI (numLayers-bağımlı) |
 
 ### P4 detayı (ilk dilim — yapıldı)
 - `MarketMood` (#11) — konsensüs gücüne göre emoji (😱🐻😐🐂🚀) + etiket (Panik/Ayı/Kararsız/Boğa/FOMO).

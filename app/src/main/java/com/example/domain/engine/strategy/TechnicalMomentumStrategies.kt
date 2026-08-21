@@ -33,7 +33,7 @@ class MacdStrategy : Strategy {
         }
 
         val reason = "MACD: ${"%.3f".format(macdLine)}, Signal: ${"%.3f".format(signalLine)}, Hist: ${"%.3f".format(histogram)}"
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("macd" to macdLine, "signal" to signalLine, "hist" to histogram))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("macd" to macdLine, "signal" to signalLine, "hist" to histogram))
     }
 }
 
@@ -69,16 +69,10 @@ class BollingerBandsStrategy : Strategy {
         }
         val score = (baseScore + if (baseScore >= 0) squeezeBoost else -squeezeBoost).coerceIn(-1.0, 1.0)
 
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "Upper: ${"%.2f".format(upper)}, Lower: ${"%.2f".format(lower)}, BW: ${"%.2f".format(bandwidthPct)}%"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("upper" to upper, "lower" to lower, "bandwidth" to bandwidthPct))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("upper" to upper, "lower" to lower, "bandwidth" to bandwidthPct))
     }
 }
 
@@ -118,16 +112,10 @@ class SupportResistanceStrategy : Strategy {
             else -> (distToLow - distToHigh) * 0.4
         }
 
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "Res: ${"%.2f".format(high)}, Supp: ${"%.2f".format(low)}, Pos: ${"%.1f".format(distToLow * 100)}%"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("high" to high, "low" to low))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("high" to high, "low" to low))
     }
 }
 
@@ -161,19 +149,13 @@ class BreakoutStrategy : Strategy {
             else -> 0.0
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = if (isHighBreak) "BREAKOUT HIGH! Price > ${"%.2f".format(donchianHigh)}"
         else if (isLowBreak) "BREAKDOWN LOW! Price < ${"%.2f".format(donchianLow)}"
         else "Inside channel [${"%.2f".format(donchianLow)} - ${"%.2f".format(donchianHigh)}]"
 
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("dHigh" to donchianHigh, "dLow" to donchianLow))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("dHigh" to donchianHigh, "dLow" to donchianLow))
     }
 }
 
@@ -203,15 +185,9 @@ class VolumeProfileStrategy : Strategy {
             else -> (pocDelta * 200.0).coerceIn(-0.4, 0.4)
         }
 
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "POC: ${"%.2f".format(poc)}, Distance: ${"%.3f".format(pocDelta * 100)}%"
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("poc" to poc, "pocDelta" to pocDelta))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("poc" to poc, "pocDelta" to pocDelta))
     }
 }

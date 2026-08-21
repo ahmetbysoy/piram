@@ -1,5 +1,17 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.10.0] - Teknik Borç Temizliği (DRY + Doğruluk)
+
+### Added
+- `SignalThresholds` — 20 stratejide kopyalanmış sinyal eşikleri ve güven formülü tek noktada
+  (`signalFor(score, strong, weak)` + `confidenceFor(score, base, scale)`); davranış korundu.
+
+### Fixed
+- `DepthAggregator` — aynı fiyat seviyesindeki farklı borsa hacimleri artık birleştiriliyor
+  (gerçek consolidated book; önceki hâli üst üste bindirilmiş listeydi).
+- `DivergenceEngine` — `topFrom=6/bottomTo=3` sabit indeksleri `numLayers`'tan türetiliyor
+  (top = üst 2 katman, bottom = alt ~%40); katman sayısı değişse de çalışır.
+
 ## [1.9.0] - Ruh Hali Şeridi (Eğlenceli Katman #11/13/15)
 
 ### Added

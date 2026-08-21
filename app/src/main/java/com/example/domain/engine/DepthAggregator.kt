@@ -25,13 +25,12 @@ object DepthAggregator {
         val valid = depths.filter { it.bids.isNotEmpty() && it.asks.isNotEmpty() }
         if (valid.isEmpty()) return null
 
-        val bids = valid
-            .flatMap { it.bids }
+        // Aynı fiyat seviyesindeki farklı borsa hacimleri birleştirilir (gerçek consolidated book).
+        val bids = mergeLevels(valid.flatMap { it.bids })
             .sortedByDescending { it.price }
             .take(MAX_LEVELS)
 
-        val asks = valid
-            .flatMap { it.asks }
+        val asks = mergeLevels(valid.flatMap { it.asks })
             .sortedBy { it.price }
             .take(MAX_LEVELS)
 
@@ -46,4 +45,18 @@ object DepthAggregator {
     fun bestBid(depth: Depth?): DepthLevel? = depth?.bids?.firstOrNull()
 
     fun bestAsk(depth: Depth?): DepthLevel? = depth?.asks?.firstOrNull()
+
+    /**
+     * Aynı fiyat seviyesindeki hacimleri toplar.
+     * Fiyatlar string'den parse edildiği için borsalar arası hassas fark olabilir;
+     * 8 ondalık haneye yuvarlanarak anahtar yapılır.
+     */
+    private fun mergeLevels(levels: List<DepthLevel>): List<DepthLevel> {
+        val map = LinkedHashMap<Double, Double>()
+        for (level in levels) {
+            val key = Math.round(level.price * 1e8) / 1e8
+            map[key] = (map[key] ?: 0.0) + level.volume
+        }
+        return map.map { (price, volume) -> DepthLevel(price, volume) }
+    }
 }

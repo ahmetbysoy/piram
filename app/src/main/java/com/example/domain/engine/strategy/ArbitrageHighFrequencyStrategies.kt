@@ -35,16 +35,10 @@ class StatisticalArbitrageStrategy : Strategy {
             else -> 0.0
         }
 
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "Cross-venue Spread: ${"%.1f".format(spreadBps)} bps across ${prices.size} exchanges"
-        return StrategyResult(id, name, signal, (0.55 + abs(score) * 0.4).coerceIn(0.0, 1.0), score, reason, mapOf("spreadBps" to spreadBps, "venues" to prices.size.toDouble()))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("spreadBps" to spreadBps, "venues" to prices.size.toDouble()))
     }
 }
 
@@ -74,16 +68,10 @@ class TimeBasedMomentumStrategy : Strategy {
         val isHighFrequency = tradesPerSec > 15.0
         val score = if (isHighFrequency) (buyDominance * 1.1).coerceIn(-1.0, 1.0) else buyDominance * 0.4
 
-        val signal = when {
-            score > 0.5 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.5 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.5, weak = 0.15)
 
         val reason = "Arrival Velocity: ${"%.1f".format(tradesPerSec)} trades/sec [${if (isHighFrequency) "HFT BURST" else "STEADY"}]"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("tradesPerSec" to tradesPerSec))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("tradesPerSec" to tradesPerSec))
     }
 }
 
@@ -120,16 +108,10 @@ class OrderBookPressureStrategy : Strategy {
         val pressure = if (total > 0) (weightedBid - weightedAsk) / total else 0.0
 
         val score = (pressure * 1.2).coerceIn(-1.0, 1.0)
-        val signal = when {
-            score > 0.45 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.45 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.45, weak = 0.15)
 
         val reason = "Bid Pressure: ${"%.1f".format(weightedBid)}, Ask Pressure: ${"%.1f".format(weightedAsk)}"
-        return StrategyResult(id, name, signal, (0.6 + abs(score) * 0.35).coerceIn(0.0, 1.0), score, reason, mapOf("pressure" to pressure))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.6, scale = 0.35), score, reason, mapOf("pressure" to pressure))
     }
 }
 
@@ -162,16 +144,10 @@ class PriceActionStrategy : Strategy {
         val closeLocation = (current - minP) / range // 0.0 = bottom wick, 1.0 = top
         val score = ((closeLocation - 0.5) * 1.8).coerceIn(-1.0, 1.0)
 
-        val signal = when {
-            score > 0.55 -> SignalType.STRONG_BUY
-            score > 0.15 -> SignalType.BUY
-            score < -0.55 -> SignalType.STRONG_SELL
-            score < -0.15 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.55, weak = 0.15)
 
         val reason = "Range: ${"%.2f".format(range)}, Relative Close: ${"%.1f".format(closeLocation * 100)}%"
-        return StrategyResult(id, name, signal, (0.5 + abs(score) * 0.45).coerceIn(0.0, 1.0), score, reason, mapOf("closeLoc" to closeLocation))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.5, scale = 0.45), score, reason, mapOf("closeLoc" to closeLocation))
     }
 }
 
@@ -202,15 +178,9 @@ class BurstArbitrageStrategy : Strategy {
             -(intensity / 10.0).coerceIn(0.3, 0.95)
         }
 
-        val signal = when {
-            score > 0.6 -> SignalType.STRONG_BUY
-            score > 0.2 -> SignalType.BUY
-            score < -0.6 -> SignalType.STRONG_SELL
-            score < -0.2 -> SignalType.SELL
-            else -> SignalType.NEUTRAL
-        }
+        val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
         val reason = "Active ${latestBurst.side} Burst! Orders: ${latestBurst.orderCount}, Intensity: ${"%.1f".format(intensity)}"
-        return StrategyResult(id, name, signal, (0.65 + abs(score) * 0.3).coerceIn(0.0, 1.0), score, reason, mapOf("burstIntensity" to intensity, "burstVol" to latestBurst.totalVolume))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.65, scale = 0.3), score, reason, mapOf("burstIntensity" to intensity, "burstVol" to latestBurst.totalVolume))
     }
 }

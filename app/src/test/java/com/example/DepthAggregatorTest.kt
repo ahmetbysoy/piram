@@ -71,4 +71,26 @@ class DepthAggregatorTest {
         assertEquals(DepthAggregator.MAX_LEVELS, agg.bids.size)
         assertEquals(DepthAggregator.MAX_LEVELS, agg.asks.size)
     }
+
+    @Test
+    fun `ayni fiyat seviyeleri birlestirilir (gercek consolidated book)`() {
+        val a = depth(listOf(100.0 to 2.0), listOf(101.0 to 1.0), "A")
+        val b = depth(listOf(100.0 to 3.0), listOf(101.0 to 4.0), "B")
+        val agg = DepthAggregator.aggregate(listOf(a, b))!!
+        // Aynı fiyat → tek seviye, hacim toplamı
+        assertEquals(1, agg.bids.size)
+        assertEquals(1, agg.asks.size)
+        assertEquals(100.0, agg.bids[0].price, 1e-9)
+        assertEquals(5.0, agg.bids[0].volume, 1e-9)
+        assertEquals(5.0, agg.asks[0].volume, 1e-9)
+    }
+
+    @Test
+    fun `farkli fiyatlar birlestirilmez`() {
+        val a = depth(listOf(100.0 to 2.0), listOf(101.0 to 1.0), "A")
+        val b = depth(listOf(99.0 to 3.0), listOf(102.0 to 4.0), "B")
+        val agg = DepthAggregator.aggregate(listOf(a, b))!!
+        assertEquals(2, agg.bids.size)
+        assertEquals(2, agg.asks.size)
+    }
 }

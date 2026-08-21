@@ -27,3 +27,4 @@
 - [x] Strateji performans izleyici + adaptif ağırlıklandırma (#21)
 - [x] Layout zıplama düzeltmeleri (sabit yükseklik + throttle + animateContentSize + sıralama)
 - [x] Ruh hali şeridi (emoji + seri + kanka özeti)
+- [x] Teknik borç: DRY SignalThresholds + DepthAggregator birleştirme + DivergenceEngine fix

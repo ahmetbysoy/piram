@@ -23,13 +23,17 @@ object DivergenceEngine {
         layers: List<LayerAggregate>,
         priceChangePct: Double,
         oiDelta: Double? = null,
-        topFrom: Int = 6,
-        bottomTo: Int = 3,
+        numLayers: Int = SignalConfig.DEFAULT_LAYERS,
         minNotional: Double = SignalConfig.DIV_MIN_NOTIONAL,
         pxTau: Double = SignalConfig.PX_TAU,
         divScore: Double = SignalConfig.DIV_SCORE
     ): DivergenceSignal {
         if (layers.isEmpty()) return DivergenceSignal(DivergenceKind.YOK, 0.0, "")
+
+        // Katman sayısına göre türetilir (sabit indeks yok):
+        // top = üst 2 katman (whale + shark), bottom = alt ~%40 (retail).
+        val topFrom = (numLayers - 2).coerceAtLeast(1)
+        val bottomTo = (numLayers * 2 / 5).coerceAtLeast(1)
 
         val top = layers.filter { it.layerIndex >= topFrom }
         val bot = layers.filter { it.layerIndex < bottomTo }
