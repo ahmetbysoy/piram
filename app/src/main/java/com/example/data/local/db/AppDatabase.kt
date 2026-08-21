@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [TradeEntity::class],
-    version = 1,
+    entities = [TradeEntity::class, JournalEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun tradeDao(): TradeDao
+    abstract fun journalDao(): JournalDao
 
     companion object {
         @Volatile

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.util.MathUtils
 import com.example.data.local.db.AppDatabase
+import com.example.data.local.db.JournalEntity
 import com.example.data.local.prefs.UserPreferencesRepository
 import com.example.data.repository.MarketDataRepository
 import com.example.data.repository.MarketDataRepositoryImpl
@@ -23,6 +24,7 @@ import com.example.domain.model.BurstCluster
 import com.example.domain.model.ConsensusResult
 import com.example.domain.model.Depth
 import com.example.domain.model.ExchangeStatus
+import com.example.domain.model.JournalRow
 import com.example.domain.model.LayerAggregate
 import com.example.domain.model.Liquidation
 import com.example.domain.model.MarketSnapshot
@@ -83,6 +85,7 @@ data class PyramidUiState(
     val oiUsdt: Double? = null,
     val oiDelta: Double? = null,
     val oiState: OiState = OiState.BEKLIYOR,
+    val journal: List<JournalRow> = emptyList(),
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -123,6 +126,9 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private var oiPollingJob: Job? = null
     private var tickerAnimationJob: Job? = null
     private var prevOi: OiSnap? = null
+    private var lastJournalKind: DivergenceKind = DivergenceKind.YOK
+    private var lastJournalAt = 0L
+    private var lastJournalMark = 0L
     private var currentSymbol = "BTCUSDT"
     private var decayFactor = 0.15f
 
@@ -149,6 +155,24 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 if (symbolChanged || tradeStreamJob == null) {
                     startStreaming(prefs.activeSymbol, prefs.enabledExchanges)
                 }
+            }
+        }
+
+        // Collect journal (sinyal günlüğü) — Room Flow
+        viewModelScope.launch {
+            db.journalDao().getRecent(12).collect { entities ->
+                _uiState.value = _uiState.value.copy(
+                    journal = entities.map {
+                        JournalRow(
+                            kind = it.kind,
+                            price = it.price,
+                            at = it.at,
+                            later5 = it.later5,
+                            later15 = it.later15,
+                            later60 = it.later60
+                        )
+                    }
+                )
             }
         }
 
@@ -218,6 +242,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         windowLedger.reset()
         sessionOpenPrice = 0.0
         lastAdaptRun = 0L
+        lastJournalKind = DivergenceKind.YOK
+        lastJournalAt = 0L
 
         // Stream real-time trades
         tradeStreamJob = viewModelScope.launch(Dispatchers.IO) {
@@ -310,6 +336,38 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 // Toplama / boşaltma anlatısı (büyükler vs küçükler + fiyat)
                 val changePct = if (sessionOpenPrice > 0) (currentPrice - sessionOpenPrice) / sessionOpenPrice * 100.0 else 0.0
                 val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = _uiState.value.oiDelta)
+
+                // Sinyal günlüğü: toplama/boşaltma kaydet (60sn spam koruması)
+                if (divergence.kind != DivergenceKind.YOK &&
+                    divergence.kind != lastJournalKind &&
+                    now - lastJournalAt >= 60_000L &&
+                    currentPrice > 0
+                ) {
+                    lastJournalKind = divergence.kind
+                    lastJournalAt = now
+                    val entry = JournalEntity(
+                        id = now,
+                        symbol = currentSymbol,
+                        kind = divergence.kind.name,
+                        price = currentPrice,
+                        at = now
+                    )
+                    viewModelScope.launch(Dispatchers.IO) {
+                        runCatching { db.journalDao().insert(entry) }
+                    }
+                }
+
+                // later5/15/60 işaretleme (her 5 sn)
+                if (now - lastJournalMark >= 5_000L) {
+                    lastJournalMark = now
+                    viewModelScope.launch(Dispatchers.IO) {
+                        runCatching {
+                            db.journalDao().markLater5(now, currentPrice)
+                            db.journalDao().markLater15(now, currentPrice)
+                            db.journalDao().markLater60(now, currentPrice)
+                        }
+                    }
+                }
 
                 // Seçili timeframe'e göre pencere toplamı (WindowLedger)
                 windowLedger.pruneKeep(now)

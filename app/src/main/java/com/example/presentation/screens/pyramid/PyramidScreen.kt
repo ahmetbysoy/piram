@@ -106,6 +106,9 @@ fun PyramidScreen(
             // Likidasyon bandı
             LiquidationBanner(liquidation = uiState.lastLiquidation)
 
+            // Sinyal günlüğü (toplama/boşaltma + isabet)
+            SignalJournalCard(journal = uiState.journal)
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // Central Interactive MicroBucket Pyramid Canvas
