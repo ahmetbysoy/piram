@@ -1,5 +1,26 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.14.0] - 15 Öneri Uygulaması (Strateji + Mikroyapı + Eğlence)
+
+### Added (yeni stratejiler — toplam 23)
+- `WhaleFootprintStrategy` — ortalama trade'in katları büyüklüğündeki kurumsal giriş izleri.
+- `RoundNumberMagnetStrategy` — psikolojik yuvarlak seviyelere çekim etkisi.
+- `LiquidationCascadeStrategy` — 60sn likidasyon baskısı + fiyat yönü ile kademeli çözülme riski.
+
+### Added (engine)
+- `StrategyEngine` kategori ağırlığı (#6): MICROSTRUCTURE 1.3 / ARBITRAGE 1.1 / TREND 0.9.
+- `ConsensusResult.conflict` — güçlü fikir ayrılığında "⚠️ KARIŞIK" rozeti (ConsensusHeader).
+- `MarketSnapshot.liquidationNotional60s / liquidationCount60s` beslemesi.
+
+### Added (mikroyapı)
+- `AbsorptionIndex` (#15) — yüksek hacim + dar aralık = emilim; LiquidityHunt'a entegre.
+- `IcebergDetector` (#14) — dolup-boşalan gizli büyük emir tespiti.
+
+### Added (eğlence)
+- `PainScore` (#16) — "long'lar/short'lar acı çekiyor" anlatısı (LiquidationTracker side'lı).
+- `CalmBeforeStorm` (#18) — sıkışma + kitap dengesizliği → "🌪️ Fırtına öncesi sessizlik".
+- `PersonalityHistory` (#13) — kişilik değişim günlüğü ("📅 ÇILGIN×3" çipi).
+
 ## [1.13.0] - Görsel İnceleme Tur 5
 
 ### Fixed

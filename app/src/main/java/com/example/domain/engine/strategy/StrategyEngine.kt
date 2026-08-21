@@ -29,7 +29,10 @@ class StrategyEngine {
         TimeBasedMomentumStrategy(),
         OrderBookPressureStrategy(),
         PriceActionStrategy(),
-        BurstArbitrageStrategy()
+        BurstArbitrageStrategy(),
+        WhaleFootprintStrategy(),
+        RoundNumberMagnetStrategy(),
+        LiquidationCascadeStrategy()
     )
 
     private val enabledMap = ConcurrentHashMap<String, Boolean>().apply {
@@ -62,6 +65,18 @@ class StrategyEngine {
 
     fun clearPerformance() = performance.clear()
 
+    /**
+     * #6 conflictResolver — kategori bazlı ağırlık: Microstructure "şimdiki an" odaklı,
+     * çelişkide öncelikli; Trend daha yavaş, hafif indirimli.
+     */
+    private fun categoryWeight(category: StrategyCategory): Double = when (category) {
+        StrategyCategory.MICROSTRUCTURE -> 1.3
+        StrategyCategory.ARBITRAGE -> 1.1
+        StrategyCategory.MOMENTUM -> 1.0
+        StrategyCategory.VOLATILITY -> 1.0
+        StrategyCategory.TREND -> 0.9
+    }
+
     fun executeAll(snapshot: MarketSnapshot): Pair<List<StrategyResult>, ConsensusResult> {
         val results = ArrayList<StrategyResult>(strategies.size)
         var weightedSum = 0.0
@@ -93,7 +108,7 @@ class StrategyEngine {
                 performance.record(strategy.id, bullish = direction > 0, price = snapshot.currentPrice, at = snapshot.timestamp)
             }
 
-            val weight = result.confidence.coerceIn(0.1, 1.0) * performance.weight(strategy.id)
+            val weight = result.confidence.coerceIn(0.1, 1.0) * performance.weight(strategy.id) * categoryWeight(strategy.category)
             weightedSum += result.score * weight
             totalWeight += weight
 
@@ -132,6 +147,9 @@ class StrategyEngine {
         val sellScore = 100.0 - buyScore
         val neutralScore = if (activeCount > 0) (neutralCount.toDouble() / activeCount.toDouble()) * 100.0 else 0.0
 
+        // #6: güçlü fikir ayrılığı → karışık piyasa uyarısı
+        val conflict = bullishCount > 0 && bearishCount > 0 && abs(normalizedScore) < 0.15
+
         val consensus = ConsensusResult(
             overallSignal = overallSignal,
             buyScore = buyScore,
@@ -144,7 +162,8 @@ class StrategyEngine {
             bearishCount = bearishCount,
             neutralCount = neutralCount,
             topBullishStrategy = topBullish?.name,
-            topBearishStrategy = topBearish?.name
+            topBearishStrategy = topBearish?.name,
+            conflict = conflict
         )
 
         return Pair(results, consensus)

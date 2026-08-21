@@ -97,7 +97,7 @@ fun ConsensusHeader(
                                 .padding(horizontal = 5.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = "HFT 20-STRAT",
+                                text = "HFT ${consensus.activeStrategiesCount}-STRAT",
                                 fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = PurplePastel
@@ -138,6 +138,14 @@ fun ConsensusHeader(
                             fontWeight = FontWeight.Medium,
                             color = badgeText.copy(alpha = 0.8f)
                         )
+                        if (consensus.conflict) {
+                            Text(
+                                text = "⚠️ KARIŞIK",
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = badgeText.copy(alpha = 0.9f)
+                            )
+                        }
                     }
                 }
             }

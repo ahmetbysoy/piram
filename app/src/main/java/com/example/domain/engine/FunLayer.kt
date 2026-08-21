@@ -1,10 +1,12 @@
 package com.example.domain.engine
 
+import com.example.domain.model.Depth
+import com.example.domain.model.OrderSide
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 /**
  * #20 MarketPersonality — coin'in son davranışına göre kişilik etiketi.
- * Saf Kotlin, test edilebilir.
  */
 object MarketPersonality {
 
@@ -82,19 +84,20 @@ object WhaleRetailBoard {
 
 /**
  * #17 destek: 60 sn'lik likidasyon notional penceresi (pure, injectable clock).
+ * Side bilgisi tutar: BUY likidasyon = short'lar zorla kapatıldı, SELL = long'lar.
  */
 class LiquidationTracker(
     private val windowMs: Long = 60_000L,
     private val clock: () -> Long = System::currentTimeMillis
 ) {
-    private data class Sample(val at: Long, val notional: Double)
+    private data class Sample(val at: Long, val side: OrderSide, val notional: Double)
 
     private val samples = ArrayDeque<Sample>()
 
     @Synchronized
-    fun record(notional: Double, at: Long = clock()) {
+    fun record(side: OrderSide, notional: Double, at: Long = clock()) {
         if (!notional.isFinite() || notional <= 0) return
-        samples.addLast(Sample(at, notional))
+        samples.addLast(Sample(at, side, notional))
         prune(at)
     }
 
@@ -111,6 +114,18 @@ class LiquidationTracker(
     }
 
     @Synchronized
+    fun sumBuy(now: Long = clock()): Double {
+        prune(now)
+        return samples.filter { it.side == OrderSide.BUY }.sumOf { it.notional }
+    }
+
+    @Synchronized
+    fun sumSell(now: Long = clock()): Double {
+        prune(now)
+        return samples.filter { it.side == OrderSide.SELL }.sumOf { it.notional }
+    }
+
+    @Synchronized
     fun clear() {
         samples.clear()
     }
@@ -119,6 +134,90 @@ class LiquidationTracker(
         val cutoff = now - windowMs
         while (samples.isNotEmpty() && samples.first().at < cutoff) {
             samples.removeFirst()
+        }
+    }
+}
+
+/**
+ * #16 PainScoreNarrator — likidasyon yönüne göre "kim acı çekiyor" anlatısı.
+ * SELL likidasyon = long pozisyonlar zorla satılıyor → long'lar acı çekiyor.
+ */
+object PainScore {
+
+    fun evaluate(sellLiqNotional: Double, buyLiqNotional: Double): String? {
+        val diff = sellLiqNotional - buyLiqNotional
+        return when {
+            sellLiqNotional >= 50_000.0 && diff > buyLiqNotional -> "😖 long'lar acı çekiyor"
+            buyLiqNotional >= 50_000.0 && -diff > sellLiqNotional -> "😖 short'lar acı çekiyor"
+            else -> null
+        }
+    }
+}
+
+/**
+ * #18 CalmBeforeStorm — volatilite sıkışması (kısa stdDev / uzun stdDev düşük) +
+ * kitap dengesizliği artıyorsa "fırtına öncesi sessizlik" rozeti.
+ */
+object CalmBeforeStorm {
+
+    fun evaluate(prices: List<Double>, depth: Depth?): String? {
+        if (prices.size < 20 || depth == null) return null
+        val short = stdDev(prices.takeLast(6))
+        val long = stdDev(prices.takeLast(20))
+        if (long <= 0) return null
+        val volRatio = short / long
+        if (volRatio >= 0.6) return null // sıkışma yok
+        val bid = depth.bids.take(5).sumOf { it.volume }
+        val ask = depth.asks.take(5).sumOf { it.volume }
+        val imbalance = if (bid + ask > 0) (bid - ask) / (bid + ask) else 0.0
+        return if (abs(imbalance) > 0.3) "🌪️ Fırtına öncesi sessizlik" else null
+    }
+
+    private fun stdDev(values: List<Double>): Double {
+        if (values.size <= 1) return 0.0
+        val mean = values.sum() / values.size
+        val variance = values.map { (it - mean) * (it - mean) }.sum() / (values.size - 1)
+        return sqrt(variance)
+    }
+}
+
+/**
+ * #13 PersonalityHistory — kişilik değişimlerinin günlük özeti
+ * ("bugün 3 kere ÇILGIN moduna girdi" tarzı).
+ */
+class PersonalityHistory(
+    private val windowMs: Long = 24 * 3_600_000L,
+    private val clock: () -> Long = System::currentTimeMillis
+) {
+    private data class Entry(val at: Long, val label: String)
+
+    private val entries = ArrayDeque<Entry>()
+
+    @Synchronized
+    fun record(label: String, at: Long = clock()) {
+        if (label.isEmpty()) return
+        entries.addLast(Entry(at, label))
+        prune(at)
+    }
+
+    @Synchronized
+    fun summaryChip(now: Long = clock()): String {
+        prune(now)
+        if (entries.isEmpty()) return ""
+        val counts = entries.groupingBy { it.label }.eachCount()
+        val top = counts.maxByOrNull { it.value } ?: return ""
+        return "📅 ${top.key}×${top.value}"
+    }
+
+    @Synchronized
+    fun clear() {
+        entries.clear()
+    }
+
+    private fun prune(now: Long) {
+        val cutoff = now - windowMs
+        while (entries.isNotEmpty() && entries.first().at < cutoff) {
+            entries.removeFirst()
         }
     }
 }

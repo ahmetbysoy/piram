@@ -14,9 +14,13 @@ import com.example.domain.SymbolRegistry
 import com.example.domain.engine.AdaptiveEdges
 import com.example.domain.engine.DepthAggregator
 import com.example.domain.engine.DivergenceEngine
+import com.example.domain.engine.CalmBeforeStorm
 import com.example.domain.engine.DivergenceKind
 import com.example.domain.engine.LiquidationTracker
+import com.example.domain.engine.MarketPersonality
 import com.example.domain.engine.OneMinuteVolumeTracker
+import com.example.domain.engine.PainScore
+import com.example.domain.engine.PersonalityHistory
 import com.example.domain.engine.SignalConfig
 import com.example.domain.engine.WindowLedger
 import com.example.domain.engine.bucket.MicroBucketManager
@@ -65,10 +69,10 @@ data class PyramidUiState(
         neutralScore = 100.0,
         confidence = 0.5,
         consensusStrength = 0.0,
-        activeStrategiesCount = 20,
+        activeStrategiesCount = 23,
         bullishCount = 0,
         bearishCount = 0,
-        neutralCount = 20
+        neutralCount = 23
     ),
     val depth: Depth? = null,
     val venueDepths: List<Depth> = emptyList(),
@@ -82,6 +86,9 @@ data class PyramidUiState(
     val retailNotional: Double = 0.0,
     val changePct: Double = 0.0,
     val recentLiqNotional: Double = 0.0,
+    val painYazi: String = "",
+    val calmStormYazi: String = "",
+    val personalitySummary: String = "",
     val divergenceYazi: String = "",
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframeBuyNotional: Double = 0.0,
@@ -123,6 +130,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val recentNotionals = ConcurrentLinkedDeque<Double>()
     private val windowLedger = WindowLedger()
     private val liqTracker = LiquidationTracker()
+    private val personalityHistory = PersonalityHistory()
+    private var lastPersonality = ""
     private var sessionOpenPrice = 0.0
     private var lastAdaptRun = 0L
     private var adaptLo: Double = SignalConfig.MIN_NOTIONAL
@@ -235,7 +244,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         liquidationStreamJob = viewModelScope.launch(Dispatchers.IO) {
             repository.subscribeLiquidations().collect { liq ->
                 if (liq.symbol == _uiState.value.symbol) {
-                    liqTracker.record(liq.notional, liq.timestamp)
+                    liqTracker.record(liq.side, liq.notional, liq.timestamp)
                     _uiState.value = _uiState.value.copy(lastLiquidation = liq)
                     hapticController.triggerBurstAlert(_uiState.value.isHapticEnabled)
                 }
@@ -259,6 +268,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         recentNotionals.clear()
         windowLedger.reset()
         liqTracker.clear()
+        personalityHistory.clear()
+        lastPersonality = ""
         sessionOpenPrice = 0.0
         lastAdaptRun = 0L
         lastJournalKind = DivergenceKind.YOK
@@ -356,6 +367,23 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 val changePct = if (sessionOpenPrice > 0) (currentPrice - sessionOpenPrice) / sessionOpenPrice * 100.0 else 0.0
                 val divergence = DivergenceEngine.evaluate(layers, changePct, oiDelta = _uiState.value.oiDelta)
 
+                // Eğlenceli/özet katman: acı skoru, fırtına rozeti, kişilik geçmişi
+                val painYazi = PainScore.evaluate(liqTracker.sumSell(now), liqTracker.sumBuy(now)) ?: ""
+                val calmStormYazi = CalmBeforeStorm.evaluate(priceList, _uiState.value.depth) ?: ""
+                val totalNV = whaleVol + retailVol
+                val whalePct = if (totalNV > 0) whaleVol / totalNV * 100.0 else 0.0
+                val personalityLabel = MarketPersonality.evaluate(
+                    whalePct = whalePct,
+                    burstCount = activeBursts.size,
+                    changePct = changePct,
+                    ofi = ofi
+                ).first
+                if (personalityLabel != lastPersonality) {
+                    lastPersonality = personalityLabel
+                    personalityHistory.record(personalityLabel, now)
+                }
+                val personalitySummary = personalityHistory.summaryChip(now)
+
                 // Sinyal günlüğü: toplama/boşaltma kaydet (60sn spam koruması)
                 if (divergence.kind != DivergenceKind.YOK &&
                     divergence.kind != lastJournalKind &&
@@ -407,6 +435,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                         orderFlowImbalance = ofi,
                         buyVolume1m = buyVolume1m,
                         sellVolume1m = sellVolume1m,
+                        liquidationNotional60s = liqTracker.sum(now),
+                        liquidationCount60s = liqTracker.count(now),
                         vwap = vwap,
                         exchangePrices = venuePrices.toMap(),
                         timestamp = now
@@ -427,6 +457,9 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     retailNotional = retailVol,
                     changePct = changePct,
                     recentLiqNotional = liqTracker.sum(now),
+                    painYazi = painYazi,
+                    calmStormYazi = calmStormYazi,
+                    personalitySummary = personalitySummary,
                     divergenceYazi = divergence.yazi,
                     divergenceKind = divergence.kind,
                     timeframeBuyNotional = winSum.buyNotional,

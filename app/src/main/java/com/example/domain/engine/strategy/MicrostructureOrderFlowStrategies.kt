@@ -1,5 +1,6 @@
 package com.example.domain.engine.strategy
 
+import com.example.domain.engine.AbsorptionIndex
 import com.example.domain.model.MarketSnapshot
 import com.example.domain.model.OrderSide
 import com.example.domain.model.SignalType
@@ -169,13 +170,18 @@ class LiquidityHuntStrategy : Strategy {
         val high = trades.maxOf { it.price }
         val low = trades.minOf { it.price }
         val currentPrice = data.currentPrice
-        val recent5 = trades.takeLast(5)
         val flow = data.orderFlowImbalance
 
-        // Liquidity sweep low: price pierced near low but recent orders are heavy BUYs (absorption)
-        val isLowSweep = (currentPrice - low) / (high - low + 0.0001) < 0.15 && flow > 0.35
-        // Liquidity sweep high: price pierced near high but recent orders are heavy SELLs (distribution)
-        val isHighSweep = (high - currentPrice) / (high - low + 0.0001) < 0.15 && flow < -0.35
+        // #15 absorption: yüksek hacim + dar fiyat aralığı = emilim
+        val absorption = AbsorptionIndex.compute(trades, data.recentPrices)
+
+        val nearLow = (currentPrice - low) / (high - low + 0.0001) < 0.15
+        val nearHigh = (high - currentPrice) / (high - low + 0.0001) < 0.15
+
+        // Liquidity sweep low: fiyat dibe yakın + agresif alım VEYA güçlü emilim
+        val isLowSweep = nearLow && (flow > 0.35 || absorption > 0.6)
+        // Liquidity sweep high: fiyat tepeye yakın + agresif satış VEYA güçlü emilim
+        val isHighSweep = nearHigh && (flow < -0.35 || absorption > 0.6)
 
         val score = when {
             isLowSweep -> 0.85 // Trapped sellers absorbed -> Launch UP
@@ -185,10 +191,10 @@ class LiquidityHuntStrategy : Strategy {
 
         val signal = SignalThresholds.signalFor(score, strong = 0.6, weak = 0.2)
 
-        val reason = if (isLowSweep) "LIQUIDITY SWEPT AT LOWS! Massive absorption."
-        else if (isHighSweep) "LIQUIDITY SWEPT AT HIGHS! Aggressive dump."
-        else "No sweep detected in current range."
+        val reason = if (isLowSweep) "LIQUIDITY SWEPT AT LOWS! Absorption ${"%.2f".format(absorption)}."
+        else if (isHighSweep) "LIQUIDITY SWEPT AT HIGHS! Absorption ${"%.2f".format(absorption)}."
+        else "No sweep detected in current range (absorption ${"%.2f".format(absorption)})."
 
-        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("isLowSweep" to (if (isLowSweep) 1.0 else 0.0)))
+        return StrategyResult(id, name, signal, SignalThresholds.confidenceFor(score, base = 0.55, scale = 0.4), score, reason, mapOf("isLowSweep" to (if (isLowSweep) 1.0 else 0.0), "absorption" to absorption))
     }
 }

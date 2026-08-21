@@ -88,6 +88,12 @@
 - [x] Kategori rozeti softWrap + GÜÇLÜ global sıralama + VenueStrip fade
 - [x] Kanka özet bilgi sıralaması + boş bucket soluk render
 
-## Phase 19: Next (Backlog)
+## Phase 19: 15 Öneri Uygulaması (Completed)
+- [x] 3 yeni strateji (WhaleFootprint, RoundNumberMagnet, LiquidationCascade) → 23 strateji
+- [x] conflictResolver (kategori ağırlığı) + AbsorptionIndex + IcebergDetector
+- [x] PainScore + CalmBeforeStorm + PersonalityHistory
+
+## Phase 20: Next (Backlog)
+- [ ] FundingRateSqueeze (#2) · ExchangeLeadLag (#5) · multiTimeframeConsensus (#7)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
-- [ ] Düşük öncelik: #12 ses, #14 animasyon, #16 pain score
+- [ ] Düşük öncelik: #12 ses, #14 animasyon

@@ -49,6 +49,26 @@
 45 riskProfile · 46 healthScore · 47 exportStrategyReport · 48 multiCoinScanner ·
 49 pruneOldSessions · 50 explainSignal → **⬜ Backlog**
 
+## Tur 6 — 15 Yüksek Etkili Öneri (uygulama durumu)
+
+| Öneri | Durum |
+|---|---|
+| 1 WhaleFootprintStrategy | ✅ YAPILDI (yeni strateji, isWhale kullanır) |
+| 2 FundingRateSqueezeStrategy | ⬜ Backlog (funding rate REST gerekli) |
+| 3 LiquidationCascadeStrategy | ✅ YAPILDI (MarketSnapshot'a 60sn likidasyon alanları eklendi) |
+| 4 RoundNumberMagnetStrategy | ✅ YAPILDI (psikolojik seviye çekimi) |
+| 5 ExchangeLeadLagStrategy | ⬜ Backlog (venue bazlı zaman damgası gerekli) |
+| 6 conflictResolver | ✅ YAPILDI (kategori ağırlığı: MICRO 1.3 / ARB 1.1 / TREND 0.9 + conflict bayrağı) |
+| 7 multiTimeframeConsensus | ⬜ Backlog |
+| 8 strategyCorrelationMatrix | ⬜ Backlog |
+| 9 explainSignal | ⬜ Backlog |
+| 10 NextCandlePredictionGame | ⬜ Backlog |
+| 11 PainScoreNarrator (#16) | ✅ YAPILDI (LiquidationTracker side'lı + PainScore) |
+| 12 CalmBeforeStormBadge (#18) | ✅ YAPILDI (sıkışma + kitap dengesizliği) |
+| 13 PersonalityHistory | ✅ YAPILDI (günlük "ÇILGIN×3" özeti) |
+| 14 icebergDetector | ✅ YAPILDI (dolup-boşalan seviye tespiti) |
+| 15 absorptionIndex | ✅ YAPILDI (LiquidityHunt'a emilim katmanı) |
+
 ## Öncelik Sırası (uygulanacak)
 
 | Sıra | İş | Efor | Durum |

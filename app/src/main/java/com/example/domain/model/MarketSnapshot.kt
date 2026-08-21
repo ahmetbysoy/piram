@@ -15,6 +15,8 @@ data class MarketSnapshot(
     val orderFlowImbalance: Double = 0.0,
     val buyVolume1m: Double = 0.0,
     val sellVolume1m: Double = 0.0,
+    val liquidationNotional60s: Double = 0.0,
+    val liquidationCount60s: Int = 0,
     val vwap: Double = 0.0,
     val exchangePrices: Map<String, Double> = emptyMap(),
     val timestamp: Long = System.currentTimeMillis()

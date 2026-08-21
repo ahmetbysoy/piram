@@ -13,5 +13,6 @@ data class ConsensusResult(
     val neutralCount: Int,
     val topBullishStrategy: String? = null,
     val topBearishStrategy: String? = null,
+    val conflict: Boolean = false, // #6: güçlü fikir ayrılığı (karışık piyasa)
     val timestamp: Long = System.currentTimeMillis()
 )

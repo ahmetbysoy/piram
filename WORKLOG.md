@@ -27,3 +27,4 @@
 | Step 21 | Zıplama + Hiyerarşi | ConsensusHeader/MoodStrip/SignalJournalCard/StrategyCard fix, kategori renkleri, sticky header, sinyal glow, sıralama ayrımı | COMPLETED |
 | Step 22 | Eğlenceli Katman 2 | MarketPersonality (#20), RektMeter+LiquidationTracker (#17), WhaleRetailBoard+ScoreboardBar (#19), FunLayer2Test | COMPLETED |
 | Step 23 | Görsel T5 | Kategori rozeti softWrap, GÜÇLÜ global sıralama, VenueStrip fade, özet sıralama, boş bucket soluk render | COMPLETED |
+| Step 24 | 15 Öneri | WhaleFootprint/RoundNumberMagnet/LiquidationCascade stratejileri (23 toplam), conflictResolver, AbsorptionIndex, IcebergDetector, PainScore, CalmBeforeStorm, PersonalityHistory | COMPLETED |

@@ -91,7 +91,10 @@ fun PyramidScreen(
                 orderFlowImbalance = uiState.orderFlowImbalance,
                 currentPrice = uiState.currentPrice,
                 vwap = uiState.vwap,
-                changePct = uiState.changePct
+                changePct = uiState.changePct,
+                painYazi = uiState.painYazi,
+                calmStormYazi = uiState.calmStormYazi,
+                personalitySummary = uiState.personalitySummary
             )
 
             // Kurumsal vs perakende skor tablosu (#19)

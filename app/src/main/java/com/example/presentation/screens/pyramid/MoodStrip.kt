@@ -49,6 +49,9 @@ fun MoodStrip(
     currentPrice: Double,
     vwap: Double,
     changePct: Double = 0.0,
+    painYazi: String = "",
+    calmStormYazi: String = "",
+    personalitySummary: String = "",
     modifier: Modifier = Modifier
 ) {
     val emoji = MarketMood.emoji(consensusStrength)
@@ -133,7 +136,8 @@ fun MoodStrip(
                 )
             }
 
-            if (quiet) {
+            // Fırtına öncesi (sıkışma + kitap dengesizliği) veya sessizlik
+            if (calmStormYazi.isNotBlank()) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
@@ -141,8 +145,57 @@ fun MoodStrip(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = "🌫️ Fırtına öncesi sessizlik",
+                        text = calmStormYazi,
                         fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = TextMuted
+                    )
+                }
+            } else if (quiet) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(SurfaceDark)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = "🌫️ Sessizlik",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = TextMuted
+                    )
+                }
+            }
+
+            // Acı skoru (#16)
+            if (painYazi.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(SurfaceDark)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = painYazi,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = SellRed
+                    )
+                }
+            }
+
+            // Kişilik geçmişi (#13)
+            if (personalitySummary.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(SurfaceDark)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = personalitySummary,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Medium,
                         color = TextMuted
                     )

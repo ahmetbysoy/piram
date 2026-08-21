@@ -13,9 +13,9 @@ import org.junit.Test
 class StrategyEngineTest {
 
     @Test
-    fun testAll20StrategiesExecution() {
+    fun testAllStrategiesExecution() {
         val engine = StrategyEngine()
-        assertEquals(20, engine.strategies.size)
+        assertEquals(23, engine.strategies.size)
 
         val trades = listOf(
             Order("1", OrderSide.BUY, 1.0, 60000.0, System.currentTimeMillis()),
@@ -38,9 +38,9 @@ class StrategyEngineTest {
         )
 
         val (results, consensus) = engine.executeAll(snapshot)
-        assertEquals(20, results.size)
+        assertEquals(23, results.size)
         assertNotNull(consensus)
-        assertTrue(consensus.activeStrategiesCount == 20)
+        assertTrue(consensus.activeStrategiesCount == 23)
         assertTrue(consensus.buyScore >= 0.0 && consensus.buyScore <= 100.0)
     }
 }

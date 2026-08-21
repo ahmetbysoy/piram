@@ -4,6 +4,7 @@ import com.example.domain.engine.LiquidationTracker
 import com.example.domain.engine.MarketPersonality
 import com.example.domain.engine.RektMeter
 import com.example.domain.engine.WhaleRetailBoard
+import com.example.domain.model.OrderSide
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -82,8 +83,8 @@ class LiquidationTrackerTest {
     fun `60sn pencere toplami`() {
         var now = 0L
         val t = LiquidationTracker(clock = { now })
-        t.record(100.0, 0L)
-        t.record(200.0, 10_000L)
+        t.record(OrderSide.BUY, 100.0, 0L)
+        t.record(OrderSide.SELL, 200.0, 10_000L)
         assertEquals(300.0, t.sum(now), 1e-9)
         assertEquals(2, t.count(now))
     }
@@ -92,7 +93,7 @@ class LiquidationTrackerTest {
     fun `60sn sonrasi budanir`() {
         var now = 0L
         val t = LiquidationTracker(clock = { now })
-        t.record(100.0, 0L)
+        t.record(OrderSide.BUY, 100.0, 0L)
         now = 61_000L
         assertEquals(0.0, t.sum(now), 1e-9)
         assertEquals(0, t.count(now))
@@ -101,9 +102,20 @@ class LiquidationTrackerTest {
     @Test
     fun `negatif yok sayilir`() {
         val t = LiquidationTracker(clock = { 0L })
-        t.record(-5.0, 0L)
-        t.record(0.0, 0L)
+        t.record(OrderSide.BUY, -5.0, 0L)
+        t.record(OrderSide.BUY, 0.0, 0L)
         assertEquals(0, t.count(0L))
+    }
+
+    @Test
+    fun `side bazli toplamlar`() {
+        var now = 0L
+        val t = LiquidationTracker(clock = { now })
+        t.record(OrderSide.BUY, 100.0, 0L)
+        t.record(OrderSide.BUY, 50.0, 1_000L)
+        t.record(OrderSide.SELL, 300.0, 2_000L)
+        assertEquals(150.0, t.sumBuy(now), 1e-9)
+        assertEquals(300.0, t.sumSell(now), 1e-9)
     }
 }
 
