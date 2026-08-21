@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.core.theme.BgDark
+import com.example.domain.engine.RektMeter
 import com.example.presentation.components.StatusIndicatorBadge
 import com.example.presentation.components.TimeframeSelector
 
@@ -80,7 +81,7 @@ fun PyramidScreen(
                 divergenceKind = uiState.divergenceKind
             )
 
-            // Ruh hali şeridi: emoji + seri + "kanka özeti"
+            // Ruh hali şeridi: emoji + seri + kişilik + "kanka özeti"
             MoodStrip(
                 consensusStrength = uiState.consensus.consensusStrength,
                 journal = uiState.journal,
@@ -89,7 +90,14 @@ fun PyramidScreen(
                 burstCount = uiState.activeBursts.size,
                 orderFlowImbalance = uiState.orderFlowImbalance,
                 currentPrice = uiState.currentPrice,
-                vwap = uiState.vwap
+                vwap = uiState.vwap,
+                changePct = uiState.changePct
+            )
+
+            // Kurumsal vs perakende skor tablosu (#19)
+            ScoreboardBar(
+                whaleNotional = uiState.whaleNotional,
+                retailNotional = uiState.retailNotional
             )
 
             // Cross-venue spread, 1M flow & per-venue prices
@@ -121,7 +129,8 @@ fun PyramidScreen(
             // Likidasyon bandı
             LiquidationBanner(
                 liquidation = uiState.lastLiquidation,
-                priceDecimals = uiState.priceDecimals
+                priceDecimals = uiState.priceDecimals,
+                rektLevel = RektMeter.level(uiState.recentLiqNotional)
             )
 
             // Sinyal günlüğü (toplama/boşaltma + isabet)

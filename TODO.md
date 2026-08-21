@@ -29,3 +29,4 @@
 - [x] Ruh hali şeridi (emoji + seri + kanka özeti)
 - [x] Teknik borç: DRY SignalThresholds + DepthAggregator birleştirme + DivergenceEngine fix
 - [x] Zıplama kalıntıları (ConsensusHeader/MoodStrip/SignalJournalCard/StrategyCard) + strateji tab hiyerarşisi
+- [x] Eğlenceli katman 2 (kişilik + rekt metre + skor tablosu)

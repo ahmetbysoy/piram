@@ -56,17 +56,17 @@
 | P1 | BurstDetector O(n) → O(1) amortized | Küçük | ✅ YAPILDI |
 | P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ YAPILDI |
 | P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ✅ YAPILDI |
-| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | 🔶 Kısmen (11/13/15 yapıldı — MoodStrip) |
+| P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | ✅ 11/13/15/17/19/20 yapıldı; kalan 12/14/16 düşük öncelik |
 | — | DRY: ortak SignalThresholds + confidence | Orta | ✅ YAPILDI (SignalThresholds; 18 sinyal + 19 güven tek noktada) |
 | — | DepthAggregator aynı seviye birleştirme | Küçük | ✅ YAPILDI (mergeLevels) |
 | — | DivergenceEngine topFrom sabit | Küçük | ✅ YAPILDI (numLayers-bağımlı) |
 
-### P4 detayı (ilk dilim — yapıldı)
-- `MarketMood` (#11) — konsensüs gücüne göre emoji (😱🐻😐🐂🚀) + etiket (Panik/Ayı/Kararsız/Boğa/FOMO).
-- `StreakStats` (#15) — sinyal günlüğünden art arda doğru seri (current/best/total/winRate), saf.
-- `StoryGenerator` (#13) — "Kanka özet" tek cümlelik Türkçe anlatı (kurumsal/perakende + akış + salvo + VWAP).
-- `MoodStrip` — üçünü tek kompakt kartta birleştirir (PyramidScreen, FlowNarrative altına).
-- Kalan P4 (#12 ses, #14 animasyon, #16 pain, #17 rekt, #18 fırtına rozeti [MoodStrip'te sessizlik rozeti olarak kısmen], #19 skorbord, #20 kişilik): ⬜
+### P4 detayı (ikinci dilim — yapıldı)
+- `MarketPersonality` (#20) — coin kişiliği: AGRESİF 🦈 / SİNSİ 🐙 / ÇILGIN 🔥 / SAKİN 😴 / KARARSIZ 🎲 (MoodStrip'e çip).
+- `RektMeter` (#17) — 60sn likidasyon notional'ına göre rekt seviyesi 0-5 + 🔥 + "REKT/KIYIM/SIKINTI" (LiquidationBanner'a).
+- `LiquidationTracker` — 60sn likidasyon notional penceresi (pure, injectable clock).
+- `WhaleRetailBoard` (#19) — kurumsal vs perakende skor tablosu (🐋 vs 🐟, "3-0" skor, tug-of-war bar) → `ScoreboardBar`.
+- Kalan P4 (#12 ses, #14 animasyon, #16 pain): ⬜ düşük öncelik
 
 ### P3 detayı (#21 — uygulandı)
 - `StrategyPerformanceTracker` — saf Kotlin, injectable clock, throttle'lı kayıt (5sn/strateji),

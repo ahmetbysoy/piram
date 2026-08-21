@@ -1,5 +1,12 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.12.0] - Eğlenceli Katman 2 (#17/#19/#20)
+
+### Added
+- `MarketPersonality` (#20) — coin kişiliği: AGRESİF 🦈 / SİNSİ 🐙 / ÇILGIN 🔥 / SAKİN 😴 / KARARSIZ 🎲 (MoodStrip çipi).
+- `RektMeter` (#17) + `LiquidationTracker` — 60sn likidasyon notional'ına göre rekt seviyesi (0-5, 🔥, REKT/KIYIM/SIKINTI) LiquidationBanner'da.
+- `WhaleRetailBoard` (#19) + `ScoreboardBar` — kurumsal vs perakende skor tablosu (🐋 vs 🐟, "3-0", tug-of-war bar).
+
 ## [1.11.0] - Zıplama Kalıntıları + Strateji Tab Hiyerarşisi
 
 ### Fixed

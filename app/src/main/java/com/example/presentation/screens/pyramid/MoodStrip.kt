@@ -1,12 +1,14 @@
 package com.example.presentation.screens.pyramid
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ import com.example.core.theme.TextMuted
 import com.example.core.theme.TextSecondary
 import com.example.core.theme.WhaleGold
 import com.example.domain.engine.MarketMood
+import com.example.domain.engine.MarketPersonality
 import com.example.domain.engine.StoryGenerator
 import com.example.domain.engine.StreakStats
 import com.example.domain.model.JournalRow
@@ -45,6 +48,7 @@ fun MoodStrip(
     orderFlowImbalance: Double,
     currentPrice: Double,
     vwap: Double,
+    changePct: Double = 0.0,
     modifier: Modifier = Modifier
 ) {
     val emoji = MarketMood.emoji(consensusStrength)
@@ -64,6 +68,14 @@ fun MoodStrip(
         vwap = vwap
     )
     val quiet = (whaleNotional + retailNotional) < 500.0 && burstCount == 0
+    val total = whaleNotional + retailNotional
+    val whalePct = if (total > 0) whaleNotional / total * 100.0 else 0.0
+    val personality = MarketPersonality.evaluate(
+        whalePct = whalePct,
+        burstCount = burstCount,
+        changePct = changePct,
+        ofi = orderFlowImbalance
+    )
 
     Column(
         modifier = modifier
@@ -74,7 +86,9 @@ fun MoodStrip(
             .testTag("mood_strip")
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -102,6 +116,21 @@ fun MoodStrip(
                         color = WhaleGold
                     )
                 }
+            }
+
+            // Kişilik etiketi (#20)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(SurfaceDark)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = "${personality.second} ${personality.first}",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = TextMuted
+                )
             }
 
             if (quiet) {

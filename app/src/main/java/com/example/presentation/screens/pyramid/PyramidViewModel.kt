@@ -15,6 +15,7 @@ import com.example.domain.engine.AdaptiveEdges
 import com.example.domain.engine.DepthAggregator
 import com.example.domain.engine.DivergenceEngine
 import com.example.domain.engine.DivergenceKind
+import com.example.domain.engine.LiquidationTracker
 import com.example.domain.engine.OneMinuteVolumeTracker
 import com.example.domain.engine.SignalConfig
 import com.example.domain.engine.WindowLedger
@@ -79,6 +80,8 @@ data class PyramidUiState(
     val vwap: Double = 0.0,
     val whaleNotional: Double = 0.0,
     val retailNotional: Double = 0.0,
+    val changePct: Double = 0.0,
+    val recentLiqNotional: Double = 0.0,
     val divergenceYazi: String = "",
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframeBuyNotional: Double = 0.0,
@@ -119,6 +122,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val minuteVolume = OneMinuteVolumeTracker()
     private val recentNotionals = ConcurrentLinkedDeque<Double>()
     private val windowLedger = WindowLedger()
+    private val liqTracker = LiquidationTracker()
     private var sessionOpenPrice = 0.0
     private var lastAdaptRun = 0L
     private var adaptLo: Double = SignalConfig.MIN_NOTIONAL
@@ -231,6 +235,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         liquidationStreamJob = viewModelScope.launch(Dispatchers.IO) {
             repository.subscribeLiquidations().collect { liq ->
                 if (liq.symbol == _uiState.value.symbol) {
+                    liqTracker.record(liq.notional, liq.timestamp)
                     _uiState.value = _uiState.value.copy(lastLiquidation = liq)
                     hapticController.triggerBurstAlert(_uiState.value.isHapticEnabled)
                 }
@@ -253,6 +258,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         minuteVolume.clear()
         recentNotionals.clear()
         windowLedger.reset()
+        liqTracker.clear()
         sessionOpenPrice = 0.0
         lastAdaptRun = 0L
         lastJournalKind = DivergenceKind.YOK
@@ -419,6 +425,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     vwap = vwap,
                     whaleNotional = whaleVol,
                     retailNotional = retailVol,
+                    changePct = changePct,
+                    recentLiqNotional = liqTracker.sum(now),
                     divergenceYazi = divergence.yazi,
                     divergenceKind = divergence.kind,
                     timeframeBuyNotional = winSum.buyNotional,

@@ -28,17 +28,20 @@ import com.example.core.theme.SellRed
 import com.example.core.theme.SurfaceDark
 import com.example.core.theme.TextPrimary
 import com.example.core.util.MathUtils
+import com.example.domain.engine.RektMeter
 import com.example.domain.model.Liquidation
 import com.example.domain.model.OrderSide
 
 /**
  * Son likidasyon (forceOrder) olayını gösteren tek satırlık bant.
  * Sabit yükseklik rezerve eder: olay gelip gittiğinde layout zıplamaz.
+ * `rektLevel` (0-5): 60sn'lik likidasyon notional'ına göre "rekt" seviyesi (#17).
  */
 @Composable
 fun LiquidationBanner(
     liquidation: Liquidation?,
     priceDecimals: Int = -1,
+    rektLevel: Int = 0,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -88,6 +91,15 @@ fun LiquidationBanner(
                     fontWeight = FontWeight.SemiBold,
                     color = color
                 )
+
+                if (rektLevel >= 3) {
+                    Text(
+                        text = "${RektMeter.emoji(rektLevel)} ${RektMeter.label(rektLevel)}",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = color
+                    )
+                }
             }
         }
     }

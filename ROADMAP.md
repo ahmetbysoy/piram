@@ -81,6 +81,9 @@
 - [x] ConsensusHeader satır fix + MoodStrip string bug + SignalJournalCard sabit 3 satır
 - [x] StrategyCard alpha fade + sıralama toggle ayrımı + kategori renkleri + sticky header + emoji
 
-## Phase 17: Next (Backlog)
-- [ ] Eğlenceli katman kalanı (#12 ses, #14 animasyon, #16 pain, #17 rekt, #19 skorbord, #20 kişilik)
+## Phase 17: Eğlenceli Katman 2 (Completed)
+- [x] MarketPersonality (#20) + RektMeter/LiquidationTracker (#17) + WhaleRetailBoard/ScoreboardBar (#19)
+
+## Phase 18: Next (Backlog)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
+- [ ] Düşük öncelik: #12 ses, #14 animasyon, #16 pain score
