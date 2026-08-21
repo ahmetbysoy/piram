@@ -51,6 +51,7 @@ fun ConsensusHeader(
     consensus: ConsensusResult,
     currentPrice: Double,
     symbol: String,
+    priceDecimals: Int = -1,
     modifier: Modifier = Modifier
 ) {
     val (badgeBg, badgeBorder, badgeText, signalLabel) = when (consensus.overallSignal) {
@@ -104,7 +105,7 @@ fun ConsensusHeader(
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = if (currentPrice > 0) "$${com.example.core.util.MathUtils.formatPrice(currentPrice)}" else "Streaming Live...",
+                        text = if (currentPrice > 0) "$${com.example.core.util.MathUtils.formatPrice(currentPrice, priceDecimals)}" else "Streaming Live...",
                         fontSize = 20.sp,
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Bold,

@@ -20,7 +20,8 @@
 | Radar ekranı (miniTicker) | ✅ UYGULANDI (`BinanceMiniTickerClient` + `RadarScreen` + 4. sekme) |
 | Sinyal günlüğü + isabet oranı | ✅ UYGULANDI (Room `JournalDao` + `SignalJournalCard` + later5/15/60) |
 | Kod temizliği | ✅ UYGULANDI (şablon artıkları + ölü bağımlılıklar kaldırıldı) |
-| **Kalan (Phase 9)** | tickSize format + sembol arama, 24s istatistik, book heatmap, backtest, push bildirim |
+| tickSize format + sembol arama | ✅ UYGULANDI (`SymbolRegistry` + `ExchangeInfoClient` + `MathUtils.formatPrice(price, decimals)`) |
+| **Kalan (Phase 10)** | 24s istatistik, book heatmap, backtest, push bildirim |
 
 ---
 

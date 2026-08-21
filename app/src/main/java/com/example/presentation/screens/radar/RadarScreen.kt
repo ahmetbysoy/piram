@@ -90,7 +90,8 @@ fun RadarScreen(
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             items(uiState.rows, key = { it.symbol }) { row ->
-                RadarRow(row = row, onClick = { viewModel.pickSymbol(row.symbol) })
+                val decimals = viewModel.symbolRegistry.tickDecimals(row.symbol) ?: -1
+                RadarRow(row = row, priceDecimals = decimals, onClick = { viewModel.pickSymbol(row.symbol) })
             }
         }
     }
@@ -122,6 +123,7 @@ private fun SortChip(
 @Composable
 private fun RadarRow(
     row: MiniTickerRow,
+    priceDecimals: Int,
     onClick: () -> Unit
 ) {
     val pctColor = when {
@@ -159,7 +161,7 @@ private fun RadarRow(
 
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                text = MathUtils.formatPrice(row.last),
+                text = MathUtils.formatPrice(row.last, priceDecimals),
                 fontSize = 14.sp,
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,

@@ -16,3 +16,4 @@
 | Step 10 | Notional & Anlatı | USDT notional katmanlama, SignalConfig, AdaptiveEdges, DivergenceEngine, WindowLedger, likidasyon (forceOrder), OI + oiState, Radar ekranı | COMPLETED |
 | Step 11 | Journal & Temizlik | Room sinyal günlüğü + isabet oranı, şablon artıkları ve kullanılmayan bağımlılıkların temizliği | COMPLETED |
 | Step 12 | CI Uyumu | Workflow Capacitor şablonuyla uyumlandı: Java 21, setup-android, APK rename (piram-debug.apk), artifact (piram-APK), if-no-files-found | COMPLETED |
+| Step 13 | Format & Arama | SymbolRegistry + ExchangeInfoClient, tickSize fiyat formatı, aranabilir sembol listesi, Radar/UI tickSize hanesi | COMPLETED |

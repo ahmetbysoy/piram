@@ -7,7 +7,9 @@ import com.example.data.local.db.AppDatabase
 import com.example.data.local.prefs.UserPreferences
 import com.example.data.local.prefs.UserPreferencesRepository
 import com.example.data.repository.MarketDataRepository
+import com.example.domain.SymbolRegistry
 import com.example.domain.model.ExchangeStatus
+import com.example.domain.model.SymbolMeta
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +20,7 @@ data class SettingsScreenUiState(
     val preferences: UserPreferences = UserPreferences(),
     val exchangeStatuses: List<ExchangeStatus> = emptyList(),
     val symbolInput: String = "BTCUSDT",
+    val searchResults: List<SymbolMeta> = emptyList(),
     val isDatabaseClearing: Boolean = false,
     val statusMessage: String? = null
 )
@@ -25,7 +28,8 @@ data class SettingsScreenUiState(
 class SettingsViewModel(
     application: Application,
     private val preferencesRepository: UserPreferencesRepository,
-    private val marketDataRepository: MarketDataRepository
+    private val marketDataRepository: MarketDataRepository,
+    private val symbolRegistry: SymbolRegistry
 ) : AndroidViewModel(application) {
 
     private val db = AppDatabase.getDatabase(application)
@@ -50,19 +54,24 @@ class SettingsViewModel(
     }
 
     fun onSymbolInputChange(input: String) {
-        _uiState.value = _uiState.value.copy(symbolInput = input.uppercase().trim())
+        val clean = input.uppercase().trim()
+        _uiState.value = _uiState.value.copy(
+            symbolInput = clean,
+            searchResults = if (clean.isEmpty()) symbolRegistry.symbols().take(10) else symbolRegistry.search(clean)
+        )
     }
 
+    /** Sorguyu registry üzerinden çözer ve aktif sembol yapar. */
     fun applySymbol(symbol: String = _uiState.value.symbolInput) {
-        val clean = symbol.uppercase().trim()
-        if (clean.isNotEmpty()) {
-            viewModelScope.launch {
-                preferencesRepository.updateActiveSymbol(clean)
-                _uiState.value = _uiState.value.copy(
-                    symbolInput = clean,
-                    statusMessage = "Switched active symbol to $clean"
-                )
-            }
+        val resolved = symbolRegistry.resolve(symbol) ?: symbol.uppercase().trim()
+        if (resolved.isEmpty()) return
+        viewModelScope.launch {
+            preferencesRepository.updateActiveSymbol(resolved)
+            _uiState.value = _uiState.value.copy(
+                symbolInput = resolved,
+                searchResults = emptyList(),
+                statusMessage = "Switched active symbol to $resolved"
+            )
         }
     }
 

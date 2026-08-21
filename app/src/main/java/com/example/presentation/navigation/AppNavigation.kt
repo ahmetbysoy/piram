@@ -146,7 +146,8 @@ fun AppNavigation(
                     RadarViewModel(
                         application = pyramidViewModel.getApplication(),
                         repository = pyramidViewModel.repository,
-                        preferencesRepository = pyramidViewModel.preferencesRepository
+                        preferencesRepository = pyramidViewModel.preferencesRepository,
+                        symbolRegistry = pyramidViewModel.symbolRegistry
                     )
                 }
                 RadarScreen(viewModel = radarViewModel)
@@ -156,7 +157,8 @@ fun AppNavigation(
                     SettingsViewModel(
                         application = pyramidViewModel.getApplication(),
                         preferencesRepository = pyramidViewModel.preferencesRepository,
-                        marketDataRepository = pyramidViewModel.repository
+                        marketDataRepository = pyramidViewModel.repository,
+                        symbolRegistry = pyramidViewModel.symbolRegistry
                     )
                 }
                 SettingsScreen(viewModel = settingsViewModel)

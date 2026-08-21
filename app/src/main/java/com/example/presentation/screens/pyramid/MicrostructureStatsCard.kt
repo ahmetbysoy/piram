@@ -54,6 +54,7 @@ fun MicrostructureStatsCard(
     whaleNotional: Double,
     retailNotional: Double,
     burstCount: Int,
+    priceDecimals: Int = -1,
     modifier: Modifier = Modifier
 ) {
     val ofiPct = orderFlowImbalance * 100.0
@@ -82,7 +83,7 @@ fun MicrostructureStatsCard(
         // Metric 2: VWAP
         StatColumn(
             label = "VWAP",
-            value = MathUtils.formatPrice(vwap),
+            value = MathUtils.formatPrice(vwap, priceDecimals),
             valueColor = NeonCyan,
             subLabel = "VOL-WEIGHTED"
         )

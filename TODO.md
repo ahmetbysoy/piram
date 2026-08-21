@@ -21,3 +21,4 @@
 - [x] Radar ekranı (miniTicker taraması)
 - [x] Sinyal günlüğü + isabet oranı (Room)
 - [x] Kod temizliği (gereksiz dosyalar + bağımlılıklar)
+- [x] tickSize fiyat formatı + aranabilir sembol listesi (tohum fallback)

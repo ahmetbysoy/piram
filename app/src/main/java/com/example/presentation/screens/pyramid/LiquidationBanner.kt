@@ -35,6 +35,7 @@ import com.example.domain.model.OrderSide
 @Composable
 fun LiquidationBanner(
     liquidation: Liquidation?,
+    priceDecimals: Int = -1,
     modifier: Modifier = Modifier
 ) {
     if (liquidation == null) return
@@ -68,7 +69,7 @@ fun LiquidationBanner(
             letterSpacing = 0.5.sp
         )
         Text(
-            text = "${MathUtils.formatVolume(liquidation.quantity)} @ ${MathUtils.formatPrice(liquidation.price)}",
+            text = "${MathUtils.formatVolume(liquidation.quantity)} @ ${MathUtils.formatPrice(liquidation.price, priceDecimals)}",
             fontSize = 11.sp,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold,

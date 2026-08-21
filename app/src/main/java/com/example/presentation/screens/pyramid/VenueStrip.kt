@@ -55,6 +55,7 @@ fun VenueStrip(
     oiUsdt: Double?,
     oiDelta: Double?,
     oiState: OiState,
+    priceDecimals: Int = -1,
     modifier: Modifier = Modifier
 ) {
     val prices = venuePrices.values.filter { it > 0 }
@@ -148,7 +149,7 @@ fun VenueStrip(
             }
             StripCell(
                 label = VENUE_CODES[exchange] ?: exchange.take(3).uppercase(),
-                value = MathUtils.formatPrice(price),
+                value = MathUtils.formatPrice(price, priceDecimals),
                 valueColor = color
             )
         }

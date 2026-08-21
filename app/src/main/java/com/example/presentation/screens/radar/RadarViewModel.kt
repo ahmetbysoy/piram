@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.prefs.UserPreferencesRepository
 import com.example.data.repository.MarketDataRepository
+import com.example.domain.SymbolRegistry
 import com.example.domain.model.MiniTickerRow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +27,8 @@ data class RadarUiState(
 class RadarViewModel(
     application: Application,
     private val repository: MarketDataRepository,
-    private val preferencesRepository: UserPreferencesRepository
+    private val preferencesRepository: UserPreferencesRepository,
+    val symbolRegistry: SymbolRegistry
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(RadarUiState())

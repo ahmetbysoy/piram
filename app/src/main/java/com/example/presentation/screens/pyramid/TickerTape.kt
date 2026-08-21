@@ -55,7 +55,8 @@ import com.example.domain.model.OrderSide
 @Composable
 fun TickerTape(
     whaleOrders: List<Order>,
-    onOrderClick: (Order) -> Unit,
+    priceDecimals: Int = -1,
+    onOrderClick: (Order) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -117,7 +118,7 @@ fun TickerTape(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(whaleOrders, key = { it.id }) { order ->
-                    TickerItem(order = order, onClick = { onOrderClick(order) })
+                    TickerItem(order = order, priceDecimals = priceDecimals, onClick = { onOrderClick(order) })
                 }
             }
         }
@@ -127,6 +128,7 @@ fun TickerTape(
 @Composable
 private fun TickerItem(
     order: Order,
+    priceDecimals: Int,
     onClick: () -> Unit
 ) {
     val isBuy = order.side == OrderSide.BUY
@@ -167,7 +169,7 @@ private fun TickerItem(
         )
 
         Text(
-            text = "@ ${MathUtils.formatPrice(order.price)}",
+            text = "@ ${MathUtils.formatPrice(order.price, priceDecimals)}",
             fontSize = 10.sp,
             fontFamily = FontFamily.Monospace,
             color = TextSecondary

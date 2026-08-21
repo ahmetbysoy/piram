@@ -7,8 +7,10 @@ import com.example.core.util.MathUtils
 import com.example.data.local.db.AppDatabase
 import com.example.data.local.db.JournalEntity
 import com.example.data.local.prefs.UserPreferencesRepository
+import com.example.data.remote.rest.ExchangeInfoClient
 import com.example.data.repository.MarketDataRepository
 import com.example.data.repository.MarketDataRepositoryImpl
+import com.example.domain.SymbolRegistry
 import com.example.domain.engine.AdaptiveEdges
 import com.example.domain.engine.DepthAggregator
 import com.example.domain.engine.DivergenceEngine
@@ -86,6 +88,7 @@ data class PyramidUiState(
     val oiDelta: Double? = null,
     val oiState: OiState = OiState.BEKLIYOR,
     val journal: List<JournalRow> = emptyList(),
+    val priceDecimals: Int = -1,   // -1 = otomatik; aksi halde tickSize hanesi
     val timeframe: String = "1M",
     val isHapticEnabled: Boolean = true
 )
@@ -95,6 +98,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val db = AppDatabase.getDatabase(application)
     val repository: MarketDataRepository = MarketDataRepositoryImpl(db)
     val preferencesRepository = UserPreferencesRepository(application)
+    val symbolRegistry = SymbolRegistry()
     val strategyEngine = StrategyEngine()
     private val hapticController = HapticController(application)
 
@@ -133,6 +137,13 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private var decayFactor = 0.15f
 
     init {
+        // Sembol listesi + tickSize (exchangeInfo; tohum liste fallback)
+        viewModelScope.launch(Dispatchers.IO) {
+            ExchangeInfoClient().fetch()?.let { symbolRegistry.ingest(it) }
+            val decimals = symbolRegistry.tickDecimals(currentSymbol) ?: -1
+            _uiState.value = _uiState.value.copy(priceDecimals = decimals)
+        }
+
         // Collect exchange statuses
         viewModelScope.launch {
             repository.exchangeStatuses.collect { statuses ->
@@ -146,10 +157,12 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 val symbolChanged = prefs.activeSymbol != currentSymbol
                 currentSymbol = prefs.activeSymbol
                 decayFactor = prefs.decayFactor
+                val decimals = symbolRegistry.tickDecimals(prefs.activeSymbol) ?: -1
                 _uiState.value = _uiState.value.copy(
                     symbol = prefs.activeSymbol,
                     timeframe = prefs.timeframe,
-                    isHapticEnabled = prefs.hapticEnabled
+                    isHapticEnabled = prefs.hapticEnabled,
+                    priceDecimals = decimals
                 )
 
                 if (symbolChanged || tradeStreamJob == null) {

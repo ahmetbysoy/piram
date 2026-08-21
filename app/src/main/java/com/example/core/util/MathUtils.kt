@@ -1,5 +1,6 @@
 package com.example.core.util
 
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -108,6 +109,34 @@ object MathUtils {
             price >= 1.0 -> priceFormat4.format(price)
             else -> priceFormat8.format(price)
         }
+    }
+
+    /**
+     * tickSize'a göre fiyat yazımı: tam sayı kısmı olduğu gibi, kesir kısmı
+     * `decimals` haneye tamamlanır (kısa ise sıfırla doldurulur, uzunsa kırpılır).
+     * `decimals < 0` → otomatik biçime düşer.
+     */
+    fun formatPrice(price: Double, decimals: Int): String {
+        if (decimals < 0) return formatPrice(price)
+        val raw = BigDecimal.valueOf(price).toPlainString()
+        val parts = raw.split('.', limit = 2)
+        val intPart = parts[0]
+        if (decimals == 0) return intPart
+        val fracRaw = parts.getOrElse(1) { "" }
+        val frac = if (fracRaw.length >= decimals) {
+            fracRaw.substring(0, decimals)
+        } else {
+            fracRaw.padEnd(decimals, '0')
+        }
+        return "$intPart.$frac"
+    }
+
+    /** tickSize stringinden ondalık hane sayısı: "0.0001" → 4, "1" → 0. */
+    fun decimalsFromTickSize(tickSize: String): Int {
+        val t = tickSize.trim()
+        val dot = t.indexOf('.')
+        if (dot < 0) return 0
+        return t.length - dot - 1
     }
 
     fun formatVolume(volume: Double): String {

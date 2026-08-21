@@ -1,5 +1,14 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.4.0] - tickSize Fiyat Formatı + Sembol Arama
+
+### Added
+- `SymbolRegistry` + `SymbolMeta` — exchangeInfo'dan sembol listesi/tickSize (tohum liste fallback),
+  rank skorlu arama, `resolve` (ETH → ETHUSDT).
+- `ExchangeInfoClient` — Binance spot exchangeInfo REST.
+- `MathUtils.formatPrice(price, decimals)` — tickSize hanesine göre fiyat (altcoin'lerde doğru hane).
+- Settings'e aranabilir sembol önerileri; Radar ve tüm fiyat görünümleri tickSize hanesi kullanır.
+
 ## [1.3.0] - Sinyal Günlüğü + Kod Temizliği
 
 ### Added

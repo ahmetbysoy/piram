@@ -166,6 +166,40 @@ fun SettingsScreen(
                     }
                 }
 
+                // Arama önerileri (registry'den)
+                if (uiState.searchResults.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        uiState.searchResults.take(8).forEach { meta ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(SurfaceDark)
+                                    .clickable { viewModel.applySymbol(meta.symbol) }
+                                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                                    .testTag("symbol_suggestion_${meta.symbol}"),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = meta.symbol,
+                                    fontSize = 12.sp,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary
+                                )
+                                Text(
+                                    text = meta.tickSize,
+                                    fontSize = 10.sp,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = TextMuted
+                                )
+                            }
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Quick Presets

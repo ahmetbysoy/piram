@@ -48,8 +48,11 @@
 - [x] Sinyal günlüğü + isabet oranı (Room tabanlı journal, later5/15/60)
 - [x] Kod temizliği: şablon artıkları + kullanılmayan bağımlılıklar (Moshi/Retrofit/Firebase/Roborazzi/UI-test)
 
-## Phase 9: Next (Backlog)
-- [ ] tickSize'a göre fiyat formatı + aranabilir sembol listesi (tohum fallback)
+## Phase 9: Format & Sembol Arama (Completed)
+- [x] tickSize'a göre fiyat formatı (altcoin'lerde doğru hane)
+- [x] Aranabilir sembol listesi + tohum fallback (`SymbolRegistry` + `ExchangeInfoClient`)
+
+## Phase 10: Next (Backlog)
 - [ ] 24h ticker stats (high/low/volume/change) per venue
 - [ ] Aggregated order book heatmap + depth imbalance chart
 - [ ] Trade replay & offline backtest harness

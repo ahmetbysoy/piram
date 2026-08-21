@@ -68,7 +68,8 @@ fun PyramidScreen(
             ConsensusHeader(
                 consensus = uiState.consensus,
                 currentPrice = uiState.currentPrice,
-                symbol = uiState.symbol
+                symbol = uiState.symbol,
+                priceDecimals = uiState.priceDecimals
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -90,7 +91,8 @@ fun PyramidScreen(
                 timeframe = uiState.timeframe,
                 oiUsdt = uiState.oiUsdt,
                 oiDelta = uiState.oiDelta,
-                oiState = uiState.oiState
+                oiState = uiState.oiState,
+                priceDecimals = uiState.priceDecimals
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -98,13 +100,17 @@ fun PyramidScreen(
             // Whale Ticker Tape
             TickerTape(
                 whaleOrders = uiState.whaleOrders,
+                priceDecimals = uiState.priceDecimals,
                 onOrderClick = { /* could inspect whale order */ }
             )
 
             Spacer(modifier = Modifier.height(4.dp))
 
             // Likidasyon bandı
-            LiquidationBanner(liquidation = uiState.lastLiquidation)
+            LiquidationBanner(
+                liquidation = uiState.lastLiquidation,
+                priceDecimals = uiState.priceDecimals
+            )
 
             // Sinyal günlüğü (toplama/boşaltma + isabet)
             SignalJournalCard(journal = uiState.journal)
@@ -134,7 +140,8 @@ fun PyramidScreen(
                 depth = uiState.depth,
                 whaleNotional = uiState.whaleNotional,
                 retailNotional = uiState.retailNotional,
-                burstCount = uiState.activeBursts.size
+                burstCount = uiState.activeBursts.size,
+                priceDecimals = uiState.priceDecimals
             )
         }
 
