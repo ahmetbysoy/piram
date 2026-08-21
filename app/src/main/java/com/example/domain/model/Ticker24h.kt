@@ -20,7 +20,7 @@ object Ticker24hParser {
         return try {
             val o = JSONObject(json)
             val symbol = o.optString("symbol", "")
-            val last = o.optString("lastPrice", "0").toDoubleOrNull() ?: return null
+            val last = o.optString("lastPrice", "").toDoubleOrNull() ?: return null
             if (symbol.isEmpty()) return null
             val open = o.optString("openPrice", "0").toDoubleOrNull() ?: 0.0
             val high = o.optString("highPrice", "0").toDoubleOrNull() ?: 0.0
