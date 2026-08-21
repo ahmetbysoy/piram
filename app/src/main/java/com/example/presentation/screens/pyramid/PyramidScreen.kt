@@ -15,9 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -130,6 +127,14 @@ fun PyramidScreen(
                     modifier = Modifier.fillMaxSize()
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Derinlik ısı haritası (bid/ask duvarları + dengesizlik)
+            DepthHeatmap(
+                depth = uiState.depth,
+                priceDecimals = uiState.priceDecimals
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

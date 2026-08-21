@@ -22,3 +22,4 @@
 - [x] Sinyal günlüğü + isabet oranı (Room)
 - [x] Kod temizliği (gereksiz dosyalar + bağımlılıklar)
 - [x] tickSize fiyat formatı + aranabilir sembol listesi (tohum fallback)
+- [x] Derinlik ısı haritası + kitap dengesizliği

@@ -14,6 +14,7 @@
 - **Sinyal Günlüğü**: 100% (Room journal + later15 isabet oranı)
 - **Temizlik**: 100% (şablon artıkları ve kullanılmayan bağımlılıklar kaldırıldı)
 - **Format & Sembol Arama**: 100% (tickSize fiyat formatı + SymbolRegistry + aranabilir sembol listesi)
+- **Derinlik Isı Haritası**: 100% (BookProfile + DepthHeatmap, kitap dengesizliği + duvar fiyatları)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

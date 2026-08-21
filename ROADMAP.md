@@ -52,8 +52,10 @@
 - [x] tickSize'a göre fiyat formatı (altcoin'lerde doğru hane)
 - [x] Aranabilir sembol listesi + tohum fallback (`SymbolRegistry` + `ExchangeInfoClient`)
 
-## Phase 10: Next (Backlog)
+## Phase 10: Derinlik Isı Haritası (Completed)
+- [x] Order book heatmap + kitap dengesizliği (`BookProfile` + `DepthHeatmap`)
+
+## Phase 11: Next (Backlog)
 - [ ] 24h ticker stats (high/low/volume/change) per venue
-- [ ] Aggregated order book heatmap + depth imbalance chart
 - [ ] Trade replay & offline backtest harness
 - [ ] Push-notification whale/burst alerts

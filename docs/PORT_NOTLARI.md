@@ -21,7 +21,8 @@
 | Sinyal günlüğü + isabet oranı | ✅ UYGULANDI (Room `JournalDao` + `SignalJournalCard` + later5/15/60) |
 | Kod temizliği | ✅ UYGULANDI (şablon artıkları + ölü bağımlılıklar kaldırıldı) |
 | tickSize format + sembol arama | ✅ UYGULANDI (`SymbolRegistry` + `ExchangeInfoClient` + `MathUtils.formatPrice(price, decimals)`) |
-| **Kalan (Phase 10)** | 24s istatistik, book heatmap, backtest, push bildirim |
+| Order book heatmap + dengesizlik | ✅ UYGULANDI (`BookProfile` + `DepthHeatmap`) |
+| **Kalan (Phase 11)** | 24s istatistik, backtest, push bildirim |
 
 ---
 

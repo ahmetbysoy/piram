@@ -1,5 +1,15 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.5.0] - Derinlik Isı Haritası
+
+### Added
+- `BookProfile` — konsolide kitap profili (bid/ask toplam, dengesizlik, duvar fiyatları). Saf, test edilebilir.
+- `DepthHeatmap` — ilk 5 bid/ask seviyesini aynalı barlarla gösteren kompakt derinlik ısı haritası;
+  kitap dengesizliği + bid/ask duvar fiyatları.
+
+### Cleanup
+- PyramidScreen'de kullanılmayan importlar kaldırıldı.
+
 ## [1.4.0] - tickSize Fiyat Formatı + Sembol Arama
 
 ### Added
