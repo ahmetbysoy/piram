@@ -146,7 +146,29 @@ fun StrategiesScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Sabit Konsensüs Özeti — tek bakışta ▲/▼/—
+        uiState.consensus?.let { c ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(SurfaceDark)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .testTag("consensus_summary"),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("KONSENSÜS", fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.6.sp, color = TextMuted)
+                Text("▲ ${c.bullishCount}", fontSize = 13.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = BuyGreen)
+                Text("— ${c.neutralCount}", fontSize = 13.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = TextSecondary)
+                Text("▼ ${c.bearishCount}", fontSize = 13.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = SellRed)
+                Text("${"%.0f".format(c.confidence * 100)}%", fontSize = 12.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold, color = PurplePastel)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Kategori filtreleri (renkli) + ayrı sıralama düğmesi
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -351,7 +373,7 @@ private fun StrategyCard(
                     .background(accent)
             )
 
-            Column(modifier = Modifier.padding(14.dp)) {
+            Column(modifier = Modifier.padding(10.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -446,18 +468,6 @@ private fun StrategyCard(
                                 )
                             }
                         }
-
-                        Switch(
-                            checked = item.isEnabled,
-                            onCheckedChange = { onToggle() },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = BgDark,
-                                checkedTrackColor = PurplePastel,
-                                uncheckedThumbColor = TextMuted,
-                                uncheckedTrackColor = SurfaceDark
-                            ),
-                            modifier = Modifier.size(36.dp)
-                        )
                     }
                 }
 
@@ -467,43 +477,36 @@ private fun StrategyCard(
                         alpha = if (item.isEnabled) 1f else 0.25f
                     }
                 ) {
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = SignalExplainer.explain(result),
-                            fontSize = 11.sp,
-                            fontFamily = FontFamily.Monospace,
-                            color = TextSecondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Text(
-                            text = "Score: ${if (result.score > 0) "+" else ""}${"%.2f".format(result.score)}",
-                            fontSize = 10.sp,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            color = signalColor
-                        )
-                    }
+                    // Reasoning tam genişlik (tek satır)
+                    Text(
+                        text = SignalExplainer.explain(result),
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                     Spacer(modifier = Modifier.height(6.dp))
 
+                    // Skor + güven + switch (ikincil konum)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Confidence: ${"%.0f".format(result.confidence * 100)}%",
+                            text = "${if (result.score > 0) "+" else ""}${"%.2f".format(result.score)}",
+                            fontSize = 10.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            color = signalColor
+                        )
+                        Text(
+                            text = "${"%.0f".format(result.confidence * 100)}%",
                             fontSize = 9.sp,
                             color = TextMuted
                         )
@@ -515,6 +518,17 @@ private fun StrategyCard(
                                 .clip(RoundedCornerShape(2.dp)),
                             color = PurplePastel,
                             trackColor = SurfaceDark
+                        )
+                        Switch(
+                            checked = item.isEnabled,
+                            onCheckedChange = { onToggle() },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = BgDark,
+                                checkedTrackColor = PurplePastel,
+                                uncheckedThumbColor = TextMuted,
+                                uncheckedTrackColor = SurfaceDark
+                            ),
+                            modifier = Modifier.size(30.dp)
                         )
                     }
                 }

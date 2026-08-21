@@ -55,6 +55,8 @@ fun ConsensusHeader(
     symbol: String,
     priceDecimals: Int = -1,
     consensusUnstable: Boolean = false,
+    moodEmoji: String = "",
+    narrative: String = "",
     modifier: Modifier = Modifier
 ) {
     val (badgeBg, badgeBorder, badgeText, signalLabel) = when (consensus.overallSignal) {
@@ -126,6 +128,12 @@ fun ConsensusHeader(
                         .testTag("consensus_signal_badge")
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        if (moodEmoji.isNotBlank()) {
+                            Text(
+                                text = moodEmoji,
+                                fontSize = 22.sp
+                            )
+                        }
                         Text(
                             text = signalLabel,
                             fontSize = 13.sp,
@@ -197,7 +205,7 @@ fun ConsensusHeader(
                     .height(6.dp)
                     .clip(RoundedCornerShape(3.dp)),
                 color = BuyGreen,
-                trackColor = SellRed
+                trackColor = SurfaceDark // boş kalan kısım NEUTRAL (eskiden SellRed'di)
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -259,6 +267,21 @@ fun ConsensusHeader(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
+                )
+            }
+
+            // Tek anlatı motoru: divergence ?: kanka özeti (FlowNarrative + StoryGenerator birleşti)
+            if (narrative.isNotBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = narrative,
+                    fontSize = 11.sp,
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("hero_narrative")
                 )
             }
         }

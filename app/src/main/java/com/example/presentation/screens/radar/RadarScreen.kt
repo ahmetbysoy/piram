@@ -83,6 +83,55 @@ fun RadarScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Top Movers — en büyük |%değişim| 3 coin (sıralamadan bağımsız)
+        val topMovers = uiState.rows.sortedByDescending { kotlin.math.abs(it.changePct) }.take(3)
+        if (topMovers.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("top_movers"),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                topMovers.forEach { row ->
+                    val moversColor = when {
+                        row.changePct > 0 -> BuyGreen
+                        row.changePct < 0 -> SellRed
+                        else -> TextSecondary
+                    }
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(CardDark)
+                            .border(1.dp, moversColor.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
+                            .clickable { viewModel.pickSymbol(row.symbol) }
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = if (row.changePct > 0) "🔥" else "🧊",
+                            fontSize = 11.sp
+                        )
+                        Text(
+                            text = row.symbol.replace("USDT", ""),
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary
+                        )
+                        Text(
+                            text = "${if (row.changePct > 0) "+" else ""}${"%.1f".format(row.changePct)}%",
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Bold,
+                            color = moversColor
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,11 +181,14 @@ private fun RadarRow(
         else -> TextSecondary
     }
 
+    // %değişim büyüklüğüne göre hafif arka plan tonu (0.06 .. 0.30)
+    val magnitude = (kotlin.math.abs(row.changePct) / 25.0).toFloat().coerceIn(0.06f, 0.30f)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .background(CardDark)
+            .background(pctColor.copy(alpha = magnitude))
             .border(1.dp, BorderDark, RoundedCornerShape(10.dp))
             .clickable { onClick() }
             .padding(horizontal = 12.dp, vertical = 10.dp)

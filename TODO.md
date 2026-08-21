@@ -39,3 +39,4 @@
 - [x] 24s ticker istatistikleri (High/Low/Δ%/Hacim)
 - [x] Ses efekti (#12) + güven nabız barı (#14)
 - [x] 5 yeni strateji (#17/#19/#20/#21/#22 → 30) + açık tema + pasif/kararsız rozetleri
+- [x] UI yeniden tasarım (3 katmanlı: Hero + Sinyal/Piyasa Şeridi + Detaylar, Top Movers, konsensüs özeti)

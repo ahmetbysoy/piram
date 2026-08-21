@@ -39,7 +39,7 @@ import com.example.domain.model.DepthLevel
  * kitap dengesizliğini ve duvar fiyatlarını gösterir.
  */
 @Composable
-fun DepthHeatmap(
+fun OrderBookBars(
     depth: Depth?,
     priceDecimals: Int = -1,
     modifier: Modifier = Modifier
@@ -62,7 +62,7 @@ fun DepthHeatmap(
             .background(CardDark)
             .border(1.dp, BorderDark, RoundedCornerShape(12.dp))
             .padding(horizontal = 10.dp, vertical = 8.dp)
-            .testTag("depth_heatmap")
+            .testTag("order_book_bars")
     ) {
         // Header: imbalance
         Row(

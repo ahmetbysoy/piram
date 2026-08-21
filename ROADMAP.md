@@ -118,7 +118,18 @@
 - [x] StrategyEngine.isPassive (#26) + ConsensusVolatility (#27) "KARARSIZ" rozeti
 - [x] Açık pastel tema (Color.kt + Theme.kt çift şema) + 🚀/🐻 emoji rozetleri + chip dolgu
 
-## Phase 27: Next (Backlog — kullanıcı talebine göre)
+## Phase 27: UI Yeniden Tasarım — 3 Katmanlı Mimari (Completed)
+- [x] Hero: tek kart (sembol+fiyat+büyük emoji rozet+güven+anlatı); BUY/SELL bar boş kısmı NEUTRAL
+- [x] Anlatı birleşti: divergence ?: kanka özeti (FlowNarrative + StoryGenerator tek motor)
+- [x] Sinyal Şeridi: 7 chip → öncelikli tek chip + "+N daha" (calmStorm>pain>mtf>personality>streak>nextCandle)
+- [x] Piyasa Şeridi: ScoreboardBar + VenueStrip birleşti (skor + venue + OI + WIN)
+- [x] Detaylar bölümü (varsayılan kapalı): tape/likidasyon/journal/ticker/orderbook/mikroyapı
+- [x] PyramidCanvas dinamik yükseklik (min 200dp, max 400dp)
+- [x] DepthHeatmap → OrderBookBars yeniden adlandırma
+- [x] Strategies: sabit Konsensüs Özeti + küçük kart + reasoning tam genişlik + switch ikincil
+- [x] Radar: Top Movers şeridi + %değişim tonlu satırlar
+
+## Phase 28: Next (Backlog — kullanıcı talebine göre)
 - [ ] SpoofingDetector (#16) · SessionOverlap (#18) · CorrelationBreak (#23)
 - [ ] register/unregister (#24) · backtestStrategy (#25) · vetoRule (#28) · adaptiveWeighting genişletme (#29)
 - [ ] bookPressureVelocity (#30) · tradeSizeDistribution (#31) · sweepReplayLog (#32) · CVD (#33) · clustering (#34) · depthImbalanceHistory (#35) · crossVenueLeadIndicator (#36)

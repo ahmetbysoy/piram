@@ -35,3 +35,4 @@
 | Step 29 | 24s Ticker | Ticker24h + Ticker24hClient + TickerStatsCard + 30sn poll, ölü alanlar besleniyor, Ticker24hParserTest | COMPLETED |
 | Step 30 | Ses + Animasyon | SoundController (#12) + Settings toggle + PulseBar (#14) + ConsensusHeader güven barı | COMPLETED |
 | Step 31 | 5 Strateji + Tema | Wick/OIDiv/TapeSpeed/VwapRev/Fib (30 strateji), isPassive, ConsensusVolatility, açık pastel tema, emoji rozetler | COMPLETED |
+| Step 32 | UI Yeniden Tasarım | 3 katman (Hero + SignalStrip + MarketStrip + DetailsSection), OrderBookBars, Top Movers, konsensüs özeti, eski bileşenler kaldırıldı | COMPLETED |

@@ -1,5 +1,25 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.22.0] - UI Yeniden Tasarım (3 Katmanlı Mimari)
+
+### Changed (yalnızca UI/layout — hesaplama mantığına dokunulmadı)
+- **Hero**: tek kart — sembol+fiyat+büyük emoji rozet+güven ısı barı+anlatı. BUY/SELL barının
+  boş kısmı SellRed yerine NEUTRAL (SurfaceDark).
+- **Anlatı birleşti**: divergence ?: "kanka özeti" (FlowNarrative + StoryGenerator tek motor).
+- **Sinyal Şeridi**: 7 chip → öncelikli tek chip + "+N daha" genişletme
+  (calmStorm > pain > mtf > personality > streak > nextCandle).
+- **Piyasa Şeridi**: ScoreboardBar + VenueStrip tek kartta birleşti.
+- **Detaylar bölümü** (varsayılan kapalı): TickerTape, Likidasyon, Sinyal Günlüğü,
+  24s Ticker, OrderBookBars, Mikroyapı kartları.
+- PyramidCanvas dinamik yükseklik (min 200dp, max 400dp).
+- `DepthHeatmap` → `OrderBookBars` yeniden adlandırıldı.
+- Strategies tab: sabit **Konsensüs Özeti** (▲/▼/—), daha küçük kart, reasoning tam genişlik,
+  switch ikincil konumda.
+- Radar tab: **Top Movers** şeridi (en büyük %değişim 3 coin) + %değişim büyüklüğüne göre satır tonu.
+
+### Removed
+- Kullanılmayan eski bileşenler: FlowNarrative, MoodStrip, ScoreboardBar, VenueStrip.
+
 ## [1.21.0] - 5 Yeni Strateji + Açık Tema + Pasif/Kararsız Rozetleri
 
 ### Added (strateji — toplam 30)
