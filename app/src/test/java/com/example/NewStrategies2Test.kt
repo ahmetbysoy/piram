@@ -44,8 +44,8 @@ class OIDivergenceStrategyTest {
 
     private fun snap(changePct: Double, oiDelta: Double) = MarketSnapshot(
         symbol = "BTCUSDT",
-        currentPrice = 100.0,
-        recentPrices = listOf(100.0, 100.0 + changePct),
+        currentPrice = 100.0 + changePct,
+        recentPrices = listOf(100.0, 100.0, 100.0, 100.0, 100.0 + changePct),
         oiDelta = oiDelta
     )
 
