@@ -57,7 +57,8 @@ class CalmBeforeStormTest {
 
     @Test
     fun `genis aralikta rozet yok`() {
-        val prices = (1..20).map { 100.0 + it * 3.0 } // volatil
+        // Uzun dönem sakin, kısa dönem ani hareket → volRatio yüksek → sıkışma yok
+        val prices = (1..14).map { 100.0 } + listOf(90.0, 110.0, 90.0, 110.0, 90.0, 110.0)
         val depth = Depth(
             bids = listOf(DepthLevel(100.0, 50.0)),
             asks = listOf(DepthLevel(101.0, 5.0)),

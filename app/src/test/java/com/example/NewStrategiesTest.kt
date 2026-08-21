@@ -65,9 +65,9 @@ class RoundNumberMagnetStrategyTest {
     @Test
     fun `roundLevel buyukluge gore`() {
         assertEquals(60_000.0, RoundNumberMagnetStrategy.roundLevel(60_200.0), 1e-9)
-        assertEquals(1_000.0, RoundNumberMagnetStrategy.roundLevel(1_234.0), 1e-9)
-        assertEquals(100.0, RoundNumberMagnetStrategy.roundLevel(123.0), 1e-9)
-        assertEquals(10.0, RoundNumberMagnetStrategy.roundLevel(12.3), 1e-9)
+        assertEquals(1_200.0, RoundNumberMagnetStrategy.roundLevel(1_234.0), 1e-9)
+        assertEquals(120.0, RoundNumberMagnetStrategy.roundLevel(123.0), 1e-9)
+        assertEquals(12.0, RoundNumberMagnetStrategy.roundLevel(12.3), 1e-9)
     }
 
     @Test
