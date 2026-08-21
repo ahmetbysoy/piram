@@ -20,6 +20,7 @@ data class UserPreferences(
     val enabledExchanges: Set<String> = setOf("Binance", "Bybit", "OKX"),
     val decayFactor: Float = 0.15f,
     val hapticEnabled: Boolean = true,
+    val notificationsEnabled: Boolean = false,
     val timeframe: String = "1M",
     val pyramidLayers: Int = 8
 )
@@ -31,6 +32,7 @@ class UserPreferencesRepository(private val context: Context) {
         val ENABLED_EXCHANGES = stringSetPreferencesKey("enabled_exchanges")
         val DECAY_FACTOR = floatPreferencesKey("decay_factor")
         val HAPTIC_ENABLED = booleanPreferencesKey("haptic_enabled")
+        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val TIMEFRAME = stringPreferencesKey("timeframe")
         val PYRAMID_LAYERS = intPreferencesKey("pyramid_layers")
     }
@@ -41,6 +43,7 @@ class UserPreferencesRepository(private val context: Context) {
             enabledExchanges = preferences[PreferencesKeys.ENABLED_EXCHANGES] ?: setOf("Binance", "Bybit", "OKX"),
             decayFactor = preferences[PreferencesKeys.DECAY_FACTOR] ?: 0.15f,
             hapticEnabled = preferences[PreferencesKeys.HAPTIC_ENABLED] ?: true,
+            notificationsEnabled = preferences[PreferencesKeys.NOTIFICATIONS_ENABLED] ?: false,
             timeframe = preferences[PreferencesKeys.TIMEFRAME] ?: "1M",
             pyramidLayers = preferences[PreferencesKeys.PYRAMID_LAYERS] ?: 8
         )
@@ -69,6 +72,12 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun updateHapticEnabled(enabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.HAPTIC_ENABLED] = enabled
+        }
+    }
+
+    suspend fun updateNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.NOTIFICATIONS_ENABLED] = enabled
         }
     }
 

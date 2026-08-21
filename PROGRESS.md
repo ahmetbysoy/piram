@@ -27,6 +27,7 @@
 - **15 Öneri**: 100% (3 strateji + conflictResolver + absorption + iceberg + pain/calm/personality)
 - **Funding + Lead-Lag**: 100% (FundingRateSqueeze #2 + ExchangeLeadLag #5, toplam 25 strateji)
 - **Çapraz Zaman + Oyun**: 100% (MultiTimeframeConsensus #7 + NextCandleGame #10)
+- **Push Bildirim**: 100% (NotificationHelper + izin + Settings toggle + whale/burst bildirim)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

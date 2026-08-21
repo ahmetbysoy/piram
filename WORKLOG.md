@@ -30,3 +30,4 @@
 | Step 24 | 15 Öneri | WhaleFootprint/RoundNumberMagnet/LiquidationCascade stratejileri (23 toplam), conflictResolver, AbsorptionIndex, IcebergDetector, PainScore, CalmBeforeStorm, PersonalityHistory | COMPLETED |
 | Step 25 | Funding + Lead-Lag | FundingRateSqueeze (#2) + ExchangeLeadLag (#5) → 25 strateji, FundingRateClient, venueTimes | COMPLETED |
 | Step 26 | Çapraz Zaman + Oyun | MultiTimeframeConsensus (#7) + NextCandleGame (#10), MoodStrip çipleri, NextCandleMtfTest | COMPLETED |
+| Step 27 | Push Bildirim | NotificationHelper, POST_NOTIFICATIONS + runtime izin, Settings toggle, whale/burst bildirim (30sn throttle) | COMPLETED |

@@ -34,3 +34,4 @@
 - [x] 15 öneri: 3 strateji + conflict + absorption + iceberg + pain/calm/personality
 - [x] FundingRateSqueeze (#2) + ExchangeLeadLag (#5)
 - [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
+- [x] Push bildirim (whale/burst + izin + Settings toggle)

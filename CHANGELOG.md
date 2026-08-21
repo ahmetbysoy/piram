@@ -1,5 +1,14 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.17.0] - Push Bildirimleri
+
+### Added
+- `NotificationHelper` — whale (🐋) ve salvo (⚡) bildirim kanalları + bildirim basımı
+  (izin yoksa veya bildirimler kapalıysa sessiz no-op).
+- `POST_NOTIFICATIONS` izni + MainActivity'de API 33+ runtime izin isteği.
+- `UserPreferences.notificationsEnabled` + Settings'e "Whale & Salvo Bildirimleri" toggle.
+- ViewModel — whale/salvo olaylarında bildirim (30 sn throttle, tercih kapalıysa kapalı).
+
 ## [1.16.0] - Çapraz Zaman + Next-Candle Oyunu
 
 ### Added

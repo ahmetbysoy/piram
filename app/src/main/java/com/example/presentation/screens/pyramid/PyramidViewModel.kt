@@ -45,6 +45,7 @@ import com.example.domain.model.OrderSide
 import com.example.domain.model.SignalType
 import com.example.domain.model.StrategyResult
 import com.example.presentation.components.HapticController
+import com.example.presentation.components.NotificationHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -105,7 +106,8 @@ data class PyramidUiState(
     val journal: List<JournalRow> = emptyList(),
     val priceDecimals: Int = -1,   // -1 = otomatik; aksi halde tickSize hanesi
     val timeframe: String = "1M",
-    val isHapticEnabled: Boolean = true
+    val isHapticEnabled: Boolean = true,
+    val notificationsEnabled: Boolean = false
 )
 
 class PyramidViewModel(application: Application) : AndroidViewModel(application) {
@@ -138,8 +140,11 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val liqTracker = LiquidationTracker()
     private val personalityHistory = PersonalityHistory()
     private val candleGame = NextCandleGame()
+    private val notificationHelper by lazy { NotificationHelper(getApplication()) }
     private var lastMtfRun = 0L
     private var lastPersonality = ""
+    private var lastWhaleNotifAt = 0L
+    private var lastBurstNotifAt = 0L
     private var sessionOpenPrice = 0.0
     private var lastAdaptRun = 0L
     private var adaptLo: Double = SignalConfig.MIN_NOTIONAL
@@ -183,6 +188,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     symbol = prefs.activeSymbol,
                     timeframe = prefs.timeframe,
                     isHapticEnabled = prefs.hapticEnabled,
+                    notificationsEnabled = prefs.notificationsEnabled,
                     priceDecimals = decimals
                 )
 
@@ -317,11 +323,13 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     recentWhales.addFirst(processedOrder)
                     while (recentWhales.size > 25) recentWhales.pollLast()
                     hapticController.triggerWhaleAlert(_uiState.value.isHapticEnabled)
+                    maybeNotifyWhale(processedOrder)
                 }
 
                 val burst = burstDetector.processOrder(processedOrder)
                 if (burst != null) {
                     hapticController.triggerBurstAlert(_uiState.value.isHapticEnabled)
+                    maybeNotifyBurst(burst)
                 }
             }
         }
@@ -545,6 +553,37 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         "5M" -> 300L
         "15M" -> 900L
         else -> null // "ALL" → oturum boyu
+    }
+
+    /** Whale bildirimi (30 sn throttle, tercih kapalıysa no-op). */
+    private fun maybeNotifyWhale(order: Order) {
+        if (!_uiState.value.notificationsEnabled) return
+        val now = System.currentTimeMillis()
+        if (now - lastWhaleNotifAt < 30_000L) return
+        lastWhaleNotifAt = now
+        val side = if (order.side == OrderSide.BUY) "ALIŞ" else "SATIŞ"
+        notificationHelper.postWhale(
+            symbol = _uiState.value.symbol,
+            side = side,
+            volume = order.volume,
+            price = order.price,
+            value = order.value
+        )
+    }
+
+    /** Salvo bildirimi (30 sn throttle, tercih kapalıysa no-op). */
+    private fun maybeNotifyBurst(burst: BurstCluster) {
+        if (!_uiState.value.notificationsEnabled) return
+        val now = System.currentTimeMillis()
+        if (now - lastBurstNotifAt < 30_000L) return
+        lastBurstNotifAt = now
+        val side = if (burst.side == OrderSide.BUY) "ALIŞ" else "SATIŞ"
+        notificationHelper.postBurst(
+            symbol = _uiState.value.symbol,
+            side = side,
+            orderCount = burst.orderCount,
+            totalValue = burst.totalValue
+        )
     }
 
     override fun onCleared() {

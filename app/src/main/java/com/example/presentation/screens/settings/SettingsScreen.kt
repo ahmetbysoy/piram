@@ -380,6 +380,32 @@ fun SettingsScreen(
                         modifier = Modifier.testTag("switch_haptics")
                     )
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Push Bildirim Toggle
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text("Whale & Salvo Bildirimleri", fontSize = 13.sp, color = TextPrimary)
+                        Text("Kurumsal emir ve salvo uyarıları (30 sn arayla)", fontSize = 10.sp, color = TextMuted)
+                    }
+
+                    Switch(
+                        checked = uiState.preferences.notificationsEnabled,
+                        onCheckedChange = { viewModel.toggleNotifications() },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = BgDark,
+                            checkedTrackColor = PurplePastel,
+                            uncheckedThumbColor = TextMuted,
+                            uncheckedTrackColor = SurfaceDark
+                        ),
+                        modifier = Modifier.testTag("switch_notifications")
+                    )
+                }
             }
         }
 

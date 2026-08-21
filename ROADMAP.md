@@ -100,7 +100,10 @@
 ## Phase 21: Çapraz Zaman + Oyun (Completed)
 - [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
 
-## Phase 22: Next (Backlog)
+## Phase 22: Push Bildirimler (Completed)
+- [x] NotificationHelper + POST_NOTIFICATIONS + runtime izin + Settings toggle + whale/burst bildirim
+
+## Phase 23: Next (Backlog)
 - [ ] correlationMatrix (#8) · explainSignal (#9)
-- [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
+- [ ] 24h ticker stats · Trade replay/backtest
 - [ ] Düşük öncelik: #12 ses, #14 animasyon

@@ -95,6 +95,13 @@ class SettingsViewModel(
         }
     }
 
+    fun toggleNotifications() {
+        val current = _uiState.value.preferences.notificationsEnabled
+        viewModelScope.launch {
+            preferencesRepository.updateNotificationsEnabled(!current)
+        }
+    }
+
     fun clearDatabase() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isDatabaseClearing = true)
