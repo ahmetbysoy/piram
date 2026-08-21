@@ -17,7 +17,7 @@ data class BookProfile(
     val askWallPrice: Double?  // en kalın ask seviyesi (duvar)
 )
 
-object BookProfile {
+object BookProfiler {
 
     fun compute(depth: Depth?, levels: Int = 10): BookProfile? {
         if (depth == null || depth.bids.isEmpty() || depth.asks.isEmpty()) return null

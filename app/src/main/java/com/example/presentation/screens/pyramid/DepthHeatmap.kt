@@ -29,7 +29,7 @@ import com.example.core.theme.SellRed
 import com.example.core.theme.TextMuted
 import com.example.core.theme.TextPrimary
 import com.example.core.util.MathUtils
-import com.example.domain.engine.BookProfile
+import com.example.domain.engine.BookProfiler
 import com.example.domain.model.Depth
 import com.example.domain.model.DepthLevel
 
@@ -44,7 +44,7 @@ fun DepthHeatmap(
     modifier: Modifier = Modifier
 ) {
     val d = depth ?: return
-    val profile = BookProfile.compute(d) ?: return
+    val profile = BookProfiler.compute(d) ?: return
 
     val bids = d.bids.take(5)
     val asks = d.asks.take(5)
