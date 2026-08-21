@@ -1,5 +1,7 @@
 package com.example.presentation.screens.pyramid
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -34,19 +37,20 @@ import com.example.domain.model.journalHitRate
 
 /**
  * Sinyal günlüğü: toplama/boşaltma kayıtları + later15 isabet oranı.
+ * Her zaman görünür (boşken placeholder) — satır eklenince layout zıplamaz,
+ * yükseklik değişimi `animateContentSize` ile yumuşatılır.
  */
 @Composable
 fun SignalJournalCard(
     journal: List<JournalRow>,
     modifier: Modifier = Modifier
 ) {
-    if (journal.isEmpty()) return
-
     val (n, ok) = journalHitRate(journal)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .animateContentSize(animationSpec = tween(200))
             .clip(RoundedCornerShape(12.dp))
             .background(CardDark)
             .border(1.dp, BorderDark, RoundedCornerShape(12.dp))
@@ -76,48 +80,63 @@ fun SignalJournalCard(
             }
         }
 
-        journal.take(3).forEach { row ->
-            val isToplama = row.kind == "TOPLAMA"
-            val color = if (isToplama) BuyGreen else SellRed
-            val later = row.later15
-            val laterStr = if (later != null) {
-                val hit = if (isToplama) later >= row.price else later < row.price
-                val arrow = if (hit) "✓" else "✗"
-                "$arrow ${MathUtils.formatPrice(later)}"
-            } else {
-                "bekliyor"
-            }
+        if (journal.isEmpty()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    .height(22.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                )
                 Text(
-                    text = if (isToplama) "TOPLAMA" else "BOŞALTMA",
+                    text = "Henüz sinyal yok — toplama/boşaltma bekleniyor",
                     fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = color
-                )
-                Text(
-                    text = "@ ${MathUtils.formatPrice(row.price)}",
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    color = TextPrimary
-                )
-                Text(
-                    text = "15dk: $laterStr",
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
                     color = TextMuted
                 )
+            }
+        } else {
+            journal.take(3).forEach { row ->
+                val isToplama = row.kind == "TOPLAMA"
+                val color = if (isToplama) BuyGreen else SellRed
+                val later = row.later15
+                val laterStr = if (later != null) {
+                    val hit = if (isToplama) later >= row.price else later < row.price
+                    val arrow = if (hit) "✓" else "✗"
+                    "$arrow ${MathUtils.formatPrice(later)}"
+                } else {
+                    "bekliyor"
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(5.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                    )
+                    Text(
+                        text = if (isToplama) "TOPLAMA" else "BOŞALTMA",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = color
+                    )
+                    Text(
+                        text = "@ ${MathUtils.formatPrice(row.price)}",
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "15dk: $laterStr",
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = TextMuted
+                    )
+                }
             }
         }
     }

@@ -76,3 +76,16 @@
 | U3 | Canvas, üstündeki 7-8 sabit kartlı `Column` içinde `weight(1f)` ile sıkışıyor | ✅ YAPILDI (Column `verticalScroll` + canvas `height(280.dp)`) |
 | U4 | INSTITUTIONAL %85→%0 1dk içinde — decay'in doğal sonucu ama yanıltıcı UX (smoothing floor düşünülebilir) | ⬜ Backlog (UX kararı) |
 | U5 | Consensus fiyattan çok oynak (BUY+38→SELL-26, fiyat +%0.04) — #21 StrategyPerformanceTracker ihtiyacını doğruluyor | ✅ P3 ile UYGULANDI (performans ağırlığı) |
+
+## UI/UX İncelemesi (tur 3 — layout zıplaması)
+
+| # | Tespit | Durum |
+|---|---|---|
+| V1 | `animateContentSize` kullanımı sıfır; `FlowNarrative`/`LiquidationBanner`/`SignalJournalCard` erken-return ile 0dp↔boyut zıplatıyor | ✅ YAPILDI (sabit yükseklik rezervi + placeholder) |
+| V2 | `StrategiesViewModel` 12.5fps'te 20 stratejiyi komple yeniden hesaplıyor (flicker) | ✅ YAPILDI (`.sample(250)` → 4fps) |
+| V3 | `StrategyCard` switch aç/kapa aniden çöküp genişliyor | ✅ YAPILDI (`animateContentSize(tween(200))`) |
+| V4 | `"QUANT STRATEGIES (20)"` hardcoded | ✅ YAPILDI (dinamik `items.size`) |
+| V5 | `reasoning` metninde `maxLines` yok (basamak artışında titreşim) | ✅ YAPILDI (`maxLines=1` + ellipsis) |
+| V6 | Sinyale göre sıralama yok (20 eşit kart, hiyerarşi yok) | ✅ YAPILDI ("GÜÇLÜ ÜSTTE" sıralama chip'i, varsayılan açık) |
+| V7 | Kategori chip sayaçları her recomposition'da yeniden sayılıyor | ✅ YAPILDI (VM'de `categoryCounts` precompute) |
+| V8 | Win-rate rozeti aniden Row'a ekleniyor (yatay kayma) | ✅ YAPILDI (her zaman rezerve, "—" boş durumda) |

@@ -64,7 +64,12 @@
 - [x] StrategyPerformanceTracker + adaptif ağırlıklandırma (executeAll)
 - [x] StrategiesScreen win-rate rozeti
 
-## Phase 13: Next (Backlog)
+## Phase 13: Layout Zıplama Düzeltmeleri (Completed — UX)
+- [x] Sabit yükseklik rezervi (FlowNarrative/LiquidationBanner/SignalJournalCard) + placeholder
+- [x] StrategiesViewModel 4fps throttle (.sample) + animateContentSize + maxLines
+- [x] "GÜÇLÜ ÜSTTE" sıralama + dinamik başlık + kategori sayaç precompute
+
+## Phase 14: Next (Backlog)
 - [ ] Eğlenceli/anlatı katmanı (#11-20)
 - [ ] DRY: ortak SignalThresholds + confidence sabitleri
 - [ ] DepthAggregator gerçek seviye birleştirme; DivergenceEngine numLayers-bağımlı topFrom

@@ -17,6 +17,7 @@
 - **Derinlik Isı Haritası**: 100% (BookProfile + DepthHeatmap, kitap dengesizliği + duvar fiyatları)
 - **Performans & Kalite**: 100% (BurstDetector O(1), ölü kod temizliği, kategori fix, KOD_ANALIZI.md)
 - **Strateji Performans İzleyici**: 100% (StrategyPerformanceTracker + adaptif ağırlık + win-rate rozeti)
+- **Layout Zıplama**: 100% (sabit yükseklik rezervi, 4fps throttle, animateContentSize, sinyal sıralama)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

@@ -1,5 +1,21 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.8.0] - Layout Zıplama Düzeltmeleri (UX)
+
+### Fixed
+- `FlowNarrative` / `LiquidationBanner` / `SignalJournalCard` erken-return yerine sabit yükseklik
+  rezerv ediyor — içerik gelip gittiğinde ekran yukarı-aşağı zıplamıyor.
+- `SignalJournalCard` boşken placeholder gösterir; satır eklenince `animateContentSize` ile yumuşar.
+- `StrategiesViewModel` — 12.5fps yerine `.sample(250)` (4fps): 20 strateji artık insan okuma
+  hızında güncelleniyor, gereksiz CPU + metin flicker'ı bitti.
+- `StrategyCard` switch aç/kapa `animateContentSize(tween(200))` ile yumuşak; `reasoning` metni
+  `maxLines=1` + ellipsis.
+- Win-rate rozeti her zaman rezerve ediliyor (yatay kayma yok).
+
+### Added
+- Strateji tab'ına "GÜÇLÜ ÜSTTE" sıralama (en güçlü BUY/SELL üstte, NEUTRAL altta) — varsayılan.
+- Kategori chip sayaçları ViewModel'de önceden hesaplanıyor; başlık sayısı dinamik.
+
 ## [1.7.0] - Strateji Performans İzleyici (#21)
 
 ### Added

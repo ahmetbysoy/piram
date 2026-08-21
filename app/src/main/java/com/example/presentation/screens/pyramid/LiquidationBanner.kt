@@ -3,8 +3,10 @@ package com.example.presentation.screens.pyramid
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +33,7 @@ import com.example.domain.model.OrderSide
 
 /**
  * Son likidasyon (forceOrder) olayını gösteren tek satırlık bant.
+ * Sabit yükseklik rezerve eder: olay gelip gittiğinde layout zıplamaz.
  */
 @Composable
 fun LiquidationBanner(
@@ -38,48 +41,54 @@ fun LiquidationBanner(
     priceDecimals: Int = -1,
     modifier: Modifier = Modifier
 ) {
-    if (liquidation == null) return
-
-    val isSell = liquidation.side == OrderSide.SELL
-    val color = if (isSell) SellRed else BuyGreen
-    val label = if (isSell) "LONG LİKİDASYON" else "SHORT LİKİDASYON"
-
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(SurfaceDark.copy(alpha = 0.6f))
-            .border(1.dp, color.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
-            .padding(horizontal = 10.dp, vertical = 6.dp)
-            .testTag("liquidation_banner"),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .height(30.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.ElectricBolt,
-            contentDescription = "Likidasyon",
-            tint = color,
-            modifier = Modifier.size(14.dp)
-        )
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Bold,
-            color = color,
-            letterSpacing = 0.5.sp
-        )
-        Text(
-            text = "${MathUtils.formatVolume(liquidation.quantity)} @ ${MathUtils.formatPrice(liquidation.price, priceDecimals)}",
-            fontSize = 11.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary
-        )
-        Text(
-            text = MathUtils.formatUsd(liquidation.notional),
-            fontSize = 10.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = color
-        )
+        if (liquidation != null) {
+            val isSell = liquidation.side == OrderSide.SELL
+            val color = if (isSell) SellRed else BuyGreen
+            val label = if (isSell) "LONG LİKİDASYON" else "SHORT LİKİDASYON"
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(SurfaceDark.copy(alpha = 0.6f))
+                    .border(1.dp, color.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .testTag("liquidation_banner"),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ElectricBolt,
+                    contentDescription = "Likidasyon",
+                    tint = color,
+                    modifier = Modifier.size(14.dp)
+                )
+                Text(
+                    text = label,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = color,
+                    letterSpacing = 0.5.sp
+                )
+                Text(
+                    text = "${MathUtils.formatVolume(liquidation.quantity)} @ ${MathUtils.formatPrice(liquidation.price, priceDecimals)}",
+                    fontSize = 11.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+                Text(
+                    text = MathUtils.formatUsd(liquidation.notional),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = color
+                )
+            }
+        }
     }
 }

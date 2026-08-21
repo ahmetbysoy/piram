@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import com.example.domain.engine.DivergenceKind
 
 /**
  * Toplama / boşaltma anlatı cümlesi (tek satır).
+ * Sabit yükseklik rezerve eder: içerik gelip gittiğinde layout zıplamaz.
  */
 @Composable
 fun FlowNarrative(
@@ -30,32 +32,38 @@ fun FlowNarrative(
     divergenceKind: DivergenceKind,
     modifier: Modifier = Modifier
 ) {
-    if (divergenceYazi.isBlank()) return
-
-    val color = when (divergenceKind) {
-        DivergenceKind.TOPLAMA -> BuyGreen
-        DivergenceKind.BOSALTMA -> SellRed
-        else -> TextSecondary
-    }
-
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .testTag("flow_narrative"),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+            .height(18.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(6.dp)
-                .clip(CircleShape)
-                .background(color)
-        )
-        Text(
-            text = divergenceYazi,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            color = color
-        )
+        if (divergenceYazi.isNotBlank()) {
+            val color = when (divergenceKind) {
+                DivergenceKind.TOPLAMA -> BuyGreen
+                DivergenceKind.BOSALTMA -> SellRed
+                else -> TextSecondary
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("flow_narrative"),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
+                Text(
+                    text = divergenceYazi,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = color
+                )
+            }
+        }
     }
 }
