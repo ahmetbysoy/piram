@@ -73,7 +73,7 @@ class DepthAggregatorTest {
     }
 
     @Test
-    fun `ayni fiyat seviyeleri birlestirilir (gercek consolidated book)`() {
+    fun `ayni fiyat seviyeleri birlestirilir`() {
         val a = depth(listOf(100.0 to 2.0), listOf(101.0 to 1.0), "A")
         val b = depth(listOf(100.0 to 3.0), listOf(101.0 to 4.0), "B")
         val agg = DepthAggregator.aggregate(listOf(a, b))!!

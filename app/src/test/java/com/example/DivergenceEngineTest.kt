@@ -71,7 +71,7 @@ class DivergenceEngineTest {
     }
 
     @Test
-    fun `numLayers degisince indeksler turetilir (10 katman)`() {
+    fun `numLayers degisince indeksler turetilir`() {
         // 10 katman: whale 8-9, retail 0-3 (bottomTo = 10*2/5 = 4)
         val layers = listOf(
             layer(0, 0.0, 500.0),

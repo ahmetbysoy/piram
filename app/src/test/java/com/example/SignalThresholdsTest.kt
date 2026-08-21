@@ -17,7 +17,7 @@ class SignalThresholdsTest {
     }
 
     @Test
-    fun `ozel esikler (0.6 - 0.2)`() {
+    fun `ozel esikler`() {
         assertEquals(SignalType.BUY, SignalThresholds.signalFor(0.3, strong = 0.6, weak = 0.2))
         assertEquals(SignalType.STRONG_BUY, SignalThresholds.signalFor(0.7, strong = 0.6, weak = 0.2))
         assertEquals(SignalType.NEUTRAL, SignalThresholds.signalFor(0.1, strong = 0.6, weak = 0.2))
