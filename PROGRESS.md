@@ -11,6 +11,8 @@
 - **Likidasyon**: 100% (fapi forceOrder akışı + LiquidationBanner)
 - **Açık Pozisyon (OI)**: 100% (fapi openInterest + oiState durum makinesi + divergence dipnotu)
 - **Radar**: 100% (miniTicker taraması + 4. sekme + sembol seçimi)
+- **Sinyal Günlüğü**: 100% (Room journal + later15 isabet oranı)
+- **Temizlik**: 100% (şablon artıkları ve kullanılmayan bağımlılıklar kaldırıldı)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

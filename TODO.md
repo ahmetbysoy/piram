@@ -19,3 +19,5 @@
 - [x] Likidasyon akışı (forceOrder)
 - [x] Açık pozisyon (OI) + oiState durum makinesi
 - [x] Radar ekranı (miniTicker taraması)
+- [x] Sinyal günlüğü + isabet oranı (Room)
+- [x] Kod temizliği (gereksiz dosyalar + bağımlılıklar)

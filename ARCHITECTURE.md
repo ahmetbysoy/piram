@@ -54,14 +54,20 @@ HFT Pyramid Terminal is an institutional-grade High-Frequency Trading (HFT) Mark
 ## Core Modules
 1. **`core/`**: Math utilities (logarithmic binning, decay lerp, EWMA, indicators) and Pastel Cyberpunk Material 3 theme.
 2. **`data/`**:
-   - `remote/ws/`: Real-time WebSocket clients for Binance, Bybit, OKX, Kraken, KuCoin.
-   - `local/db/`: Room database (`AppDatabase`, `TradeDao`, `TradeEntity`).
+   - `remote/ws/`: Real-time WebSocket clients for Binance, Bybit, OKX, Kraken, KuCoin, plus futures
+     `!forceOrder@arr` (likidasyon) and `!miniTicker@arr` (radar) clients.
+   - `remote/rest/`: Binance fapi `openInterest` client.
+   - `local/db/`: Room database (`AppDatabase`, `TradeDao`, `TradeEntity`, `JournalDao`, `JournalEntity`).
    - `local/prefs/`: DataStore `UserPreferencesRepository`.
 3. **`domain/`**:
-   - `bucket/`: MicroBucket & MicroBucketManager with smooth display interpolation.
+   - `bucket/`: MicroBucket & MicroBucketManager (USDT notional) with smooth display interpolation.
    - `burst/`: High-frequency cluster detection and trade velocity calculation.
    - `strategy/`: 20 quantitative strategies implementing the `Strategy` interface and `StrategyEngine` consensus evaluator.
+   - `engine/`: `SignalConfig`, `AdaptiveEdges`, `DivergenceEngine`, `WindowLedger`, `DepthAggregator`,
+     `OneMinuteVolumeTracker`.
 4. **`presentation/`**:
-   - `screens/pyramid/`: Hardware-accelerated Canvas pyramid renderer, whale ticker, stats cards.
+   - `screens/pyramid/`: Hardware-accelerated Canvas pyramid renderer, whale ticker, stats cards,
+     `FlowNarrative` (toplama/boşaltma), `LiquidationBanner`, `SignalJournalCard`, `VenueStrip`.
    - `screens/strategies/`: Live strategy monitors with category filtering.
+   - `screens/radar/`: Full-market miniTicker scan with PCT/VOL sorting and symbol pick.
    - `screens/settings/`: Dynamic symbol switcher, exchange toggles, and decay rate calibration.

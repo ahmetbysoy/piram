@@ -19,6 +19,5 @@ An institutional-grade High-Frequency Trading (HFT) and Market Microstructure vi
 - Kotlin & Jetpack Compose
 - Room Database & SQLite
 - AndroidX DataStore Preferences
-- OkHttp WebSocket Streaming
-- Moshi JSON Serialization
+- OkHttp WebSocket Streaming (org.json parsing)
 - Material Design 3 (Pastel Cyberpunk Theme)

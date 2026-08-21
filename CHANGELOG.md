@@ -1,5 +1,19 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.3.0] - Sinyal Günlüğü + Kod Temizliği
+
+### Added
+- Sinyal günlüğü (journal): Room tabanlı `JournalEntity` + `JournalDao`; toplama/boşaltma sinyalleri
+  kaydedilir (60 sn spam koruması), 5/15/60 dakika sonraki fiyatlar işaretlenir.
+- `SignalJournalCard` — isabet oranı (later15) + son sinyaller.
+
+### Removed (temizlik)
+- Şablon artıkları: `metadata.json`, `assets/.aistudio/`, `.env.example`, `ExchangeDtos.kt`.
+- Kullanılmayan bağımlılıklar: Moshi(+codegen), Retrofit, logging-interceptor, Firebase
+  (ai/appcheck/bom + google-services/secrets pluginleri), Roborazzi, Compose UI-test/Espresso/
+  androidTest, kotlinx-coroutines-test, tooling/preview.
+- `gradle/libs.versions.toml` yalnızca kullanılan girişlere indirildi.
+
 ## [1.2.0] - Notional Engine, Anlatı, Likidasyon, OI & Radar
 
 ### Changed

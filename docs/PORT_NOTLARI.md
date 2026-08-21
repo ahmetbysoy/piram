@@ -18,7 +18,9 @@
 | Likidasyon akışı (forceOrder) | ✅ UYGULANDI (`BinanceLiquidationClient` + `LiquidationBanner`) |
 | OI + oiState ("OI yoksa yalan yok") | ✅ UYGULANDI (`OpenInterestClient` + `oiState` + VenueStrip OI hücresi) |
 | Radar ekranı (miniTicker) | ✅ UYGULANDI (`BinanceMiniTickerClient` + `RadarScreen` + 4. sekme) |
-| **Kalan (Phase 8)** | Sinyal günlüğü, tickSize format + sembol arama, 24s istatistik |
+| Sinyal günlüğü + isabet oranı | ✅ UYGULANDI (Room `JournalDao` + `SignalJournalCard` + later5/15/60) |
+| Kod temizliği | ✅ UYGULANDI (şablon artıkları + ölü bağımlılıklar kaldırıldı) |
+| **Kalan (Phase 9)** | tickSize format + sembol arama, 24s istatistik, book heatmap, backtest, push bildirim |
 
 ---
 

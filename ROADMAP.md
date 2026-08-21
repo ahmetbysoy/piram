@@ -44,8 +44,11 @@
 - [x] Açık pozisyon (OI) + `oiState` ("OI yoksa yalan yok") — divergence dipnotu + VenueStrip OI hücresi
 - [x] Radar ekranı (tüm piyasa taraması, `!miniTicker@arr`, PCT/VOL sıralama, sembol seçimi)
 
-## Phase 8: Next (Backlog)
-- [ ] Sinyal günlüğü + isabet oranı (Room tabanlı journal)
+## Phase 8: Sinyal Günlüğü & Temizlik (Completed)
+- [x] Sinyal günlüğü + isabet oranı (Room tabanlı journal, later5/15/60)
+- [x] Kod temizliği: şablon artıkları + kullanılmayan bağımlılıklar (Moshi/Retrofit/Firebase/Roborazzi/UI-test)
+
+## Phase 9: Next (Backlog)
 - [ ] tickSize'a göre fiyat formatı + aranabilir sembol listesi (tohum fallback)
 - [ ] 24h ticker stats (high/low/volume/change) per venue
 - [ ] Aggregated order book heatmap + depth imbalance chart
