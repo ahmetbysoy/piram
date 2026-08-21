@@ -1,5 +1,13 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.19.0] - 24 Saatlik Ticker İstatistikleri
+
+### Added
+- `Ticker24h` + `Ticker24hParser` + `Ticker24hClient` — fapi `ticker/24hr` REST.
+- `TickerStatsCard` — 24H High / Low / Δ% / Hacim (sabit yükseklik, placeholder'lı).
+- ViewModel — 30 sn'de bir 24s ticker poll; MarketSnapshot'ın ölü `high24h/low24h/volume24h/priceChange24h`
+  alanları artık gerçek veriyle besleniyor ("tanımla → besle → göster").
+
 ## [1.18.0] - explainSignal + Redundancy Cezası (15 öneri tamam)
 
 ### Added

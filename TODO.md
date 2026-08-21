@@ -36,3 +36,4 @@
 - [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
 - [x] Push bildirim (whale/burst + izin + Settings toggle)
 - [x] SignalExplainer (#9) + StrategyCorrelation (#8) — 15 önerinin tamamı bitti
+- [x] 24s ticker istatistikleri (High/Low/Δ%/Hacim)

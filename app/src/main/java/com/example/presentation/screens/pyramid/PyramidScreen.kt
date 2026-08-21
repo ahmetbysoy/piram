@@ -160,6 +160,17 @@ fun PyramidScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // 24 saatlik ticker istatistikleri
+            TickerStatsCard(
+                high24h = uiState.high24h,
+                low24h = uiState.low24h,
+                change24h = uiState.priceChange24h,
+                volume24h = uiState.volume24h,
+                priceDecimals = uiState.priceDecimals
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Derinlik ısı haritası (bid/ask duvarları + dengesizlik)
             DepthHeatmap(
                 depth = uiState.depth,

@@ -4,6 +4,7 @@ import com.example.data.local.db.AppDatabase
 import com.example.data.local.db.TradeEntity
 import com.example.data.remote.rest.FundingRateClient
 import com.example.data.remote.rest.OpenInterestClient
+import com.example.data.remote.rest.Ticker24hClient
 import com.example.data.remote.ws.BinanceLiquidationClient
 import com.example.data.remote.ws.BinanceMiniTickerClient
 import com.example.data.remote.ws.BinanceWsClient
@@ -20,6 +21,7 @@ import com.example.domain.model.Liquidation
 import com.example.domain.model.MiniTickerRow
 import com.example.domain.model.OiSnap
 import com.example.domain.model.Order
+import com.example.domain.model.Ticker24h
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -45,6 +47,7 @@ interface MarketDataRepository {
     fun subscribeMiniTickers(): Flow<List<MiniTickerRow>>
     fun fetchOpenInterest(symbol: String): OiSnap?
     fun fetchFundingRate(symbol: String): FundingSnap?
+    fun fetchTicker24h(symbol: String): Ticker24h?
     fun getRecentDbTrades(symbol: String, limit: Int = 100): Flow<List<Order>>
     fun disconnectAll()
 }
@@ -63,6 +66,7 @@ class MarketDataRepositoryImpl(
     private val miniTickerClient = BinanceMiniTickerClient()
     private val openInterestClient = OpenInterestClient()
     private val fundingRateClient = FundingRateClient()
+    private val ticker24hClient = Ticker24hClient()
 
     private val clients = listOf(
         binanceClient,
@@ -161,6 +165,10 @@ class MarketDataRepositoryImpl(
 
     override fun fetchFundingRate(symbol: String): FundingSnap? {
         return fundingRateClient.fetch(symbol)
+    }
+
+    override fun fetchTicker24h(symbol: String): Ticker24h? {
+        return ticker24hClient.fetch(symbol)
     }
 
     override fun getRecentDbTrades(symbol: String, limit: Int): Flow<List<Order>> {

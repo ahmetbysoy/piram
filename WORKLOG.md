@@ -32,3 +32,4 @@
 | Step 26 | Çapraz Zaman + Oyun | MultiTimeframeConsensus (#7) + NextCandleGame (#10), MoodStrip çipleri, NextCandleMtfTest | COMPLETED |
 | Step 27 | Push Bildirim | NotificationHelper, POST_NOTIFICATIONS + runtime izin, Settings toggle, whale/burst bildirim (30sn throttle) | COMPLETED |
 | Step 28 | explainSignal + Redundancy | SignalExplainer (#9) + StrategyCorrelation (#8) + yön geçmişi + ağırlık cezası, ExplainCorrelationTest | COMPLETED |
+| Step 29 | 24s Ticker | Ticker24h + Ticker24hClient + TickerStatsCard + 30sn poll, ölü alanlar besleniyor, Ticker24hParserTest | COMPLETED |

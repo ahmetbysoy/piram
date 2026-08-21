@@ -103,6 +103,10 @@ data class PyramidUiState(
     val oiDelta: Double? = null,
     val oiState: OiState = OiState.BEKLIYOR,
     val fundingRate: Double? = null,
+    val high24h: Double = 0.0,
+    val low24h: Double = 0.0,
+    val volume24h: Double = 0.0,
+    val priceChange24h: Double = 0.0,
     val journal: List<JournalRow> = emptyList(),
     val priceDecimals: Int = -1,   // -1 = otomatik; aksi halde tickSize hanesi
     val timeframe: String = "1M",
@@ -230,6 +234,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
             oiState = OiState.BEKLIYOR
         )
         oiPollingJob = viewModelScope.launch(Dispatchers.IO) {
+            var tickerPollCount = 0
             while (isActive) {
                 val snap = repository.fetchOpenInterest(symbol)
                 val price = _uiState.value.currentPrice
@@ -251,6 +256,20 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                 // Funding rate (squeeze stratejisi için) — OI ile aynı ritimde
                 val funding = repository.fetchFundingRate(symbol)
                 _uiState.value = _uiState.value.copy(fundingRate = funding?.lastFundingRate)
+
+                // 24s ticker istatistikleri (her 3. turda bir — 30 sn)
+                tickerPollCount++
+                if (tickerPollCount % 3 == 0) {
+                    val t = repository.fetchTicker24h(symbol)
+                    if (t != null && t.symbol.equals(symbol, ignoreCase = true)) {
+                        _uiState.value = _uiState.value.copy(
+                            high24h = t.highPrice,
+                            low24h = t.lowPrice,
+                            volume24h = t.quoteVolume,
+                            priceChange24h = t.changePct
+                        )
+                    }
+                }
 
                 delay(10_000L)
             }
@@ -453,6 +472,10 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     val snapshot = MarketSnapshot(
                         symbol = currentSymbol,
                         currentPrice = currentPrice,
+                        high24h = _uiState.value.high24h,
+                        low24h = _uiState.value.low24h,
+                        volume24h = _uiState.value.volume24h,
+                        priceChange24h = _uiState.value.priceChange24h,
                         trades = tradeList,
                         recentPrices = priceList,
                         recentVolumes = tradeList.map { it.volume },

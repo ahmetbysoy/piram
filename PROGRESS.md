@@ -29,6 +29,7 @@
 - **Çapraz Zaman + Oyun**: 100% (MultiTimeframeConsensus #7 + NextCandleGame #10)
 - **Push Bildirim**: 100% (NotificationHelper + izin + Settings toggle + whale/burst bildirim)
 - **15 Öneri Tamamlandı**: 100% (SignalExplainer #9 + StrategyCorrelation #8 — tüm 15 uygulandı)
+- **24s Ticker**: 100% (Ticker24h + TickerStatsCard + ölü alanlar besleniyor)
 - **Persistence**: 100% (Room SQLite DB & DataStore Preferences)
 - **Visuals & UI**: 100% (Canvas 60 FPS Pyramid, Whale Ticker Tape, VenueStrip, Multi-Venue Toggles)
 - **Testing**: 100% (Unit tests passing: bucket, burst, strategy, depth aggregation, volume tracker)

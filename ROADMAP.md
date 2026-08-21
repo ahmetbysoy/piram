@@ -106,6 +106,9 @@
 ## Phase 23: explainSignal + Redundancy (Completed — 15 öneri tamam)
 - [x] SignalExplainer (#9) + StrategyCorrelation (#8, redundancy cezası)
 
-## Phase 24: Next (Backlog)
-- [ ] 24h ticker stats · Trade replay/backtest
+## Phase 24: 24 Saatlik Ticker (Completed)
+- [x] Ticker24h + TickerStatsCard + 30sn poll (ölü alanlar canlandı)
+
+## Phase 25: Next (Backlog)
+- [ ] Trade replay/backtest
 - [ ] Düşük öncelik: #12 ses, #14 animasyon
