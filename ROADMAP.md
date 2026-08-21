@@ -113,5 +113,6 @@
 - [x] SoundController (#12) + Settings toggle
 - [x] PulseBar (#14) + ConsensusHeader güven barı
 
-## Phase 26: Next (Backlog)
-- [ ] Trade replay/backtest
+## ✅ PROJE TAMAMLANDI
+Tüm planlanan fazlar tamamlandı. Backtest/replay bilinçli olarak **kapsam dışı** bırakıldı
+(kullanıcı kararı) — ileride istenirse ayrı bir faz olarak tasarlanabilir.
