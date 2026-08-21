@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.theme.BuyGreen
 import com.example.core.theme.CardDark
+import com.example.core.theme.NeonCyan
 import com.example.core.theme.SellRed
 import com.example.core.theme.SurfaceDark
 import com.example.core.theme.TextMuted
@@ -52,6 +53,8 @@ fun MoodStrip(
     painYazi: String = "",
     calmStormYazi: String = "",
     personalitySummary: String = "",
+    mtfYazi: String = "",
+    nextCandleChip: String = "",
     modifier: Modifier = Modifier
 ) {
     val emoji = MarketMood.emoji(consensusStrength)
@@ -198,6 +201,41 @@ fun MoodStrip(
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Medium,
                         color = TextMuted
+                    )
+                }
+            }
+
+            // Çapraz zaman (#7)
+            if (mtfYazi.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(SurfaceDark)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = mtfYazi,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = WhaleGold
+                    )
+                }
+            }
+
+            // Next-candle oyunu (#10)
+            if (nextCandleChip.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(SurfaceDark)
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = nextCandleChip,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold,
+                        color = NeonCyan
                     )
                 }
             }

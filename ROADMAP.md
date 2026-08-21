@@ -97,7 +97,10 @@
 - [x] FundingRateSqueeze (#2) + FundingRateClient
 - [x] ExchangeLeadLag (#5) + venueTimes
 
-## Phase 21: Next (Backlog)
-- [ ] multiTimeframeConsensus (#7) · correlationMatrix (#8) · explainSignal (#9)
+## Phase 21: Çapraz Zaman + Oyun (Completed)
+- [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
+
+## Phase 22: Next (Backlog)
+- [ ] correlationMatrix (#8) · explainSignal (#9)
 - [ ] 24h ticker stats · Trade replay/backtest · Push bildirim
-- [ ] Düşük öncelik: #12 ses, #14 animasyon, #10 NextCandleGame
+- [ ] Düşük öncelik: #12 ses, #14 animasyon

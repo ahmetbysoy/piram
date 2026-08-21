@@ -94,7 +94,9 @@ fun PyramidScreen(
                 changePct = uiState.changePct,
                 painYazi = uiState.painYazi,
                 calmStormYazi = uiState.calmStormYazi,
-                personalitySummary = uiState.personalitySummary
+                personalitySummary = uiState.personalitySummary,
+                mtfYazi = uiState.mtfYazi,
+                nextCandleChip = uiState.nextCandleChip
             )
 
             // Kurumsal vs perakende skor tablosu (#19)

@@ -59,10 +59,10 @@
 | 4 RoundNumberMagnetStrategy | ✅ YAPILDI (psikolojik seviye çekimi) |
 | 5 ExchangeLeadLagStrategy | ✅ YAPILDI (venueTimes lider tespiti + lead-lag yönü) |
 | 6 conflictResolver | ✅ YAPILDI (kategori ağırlığı: MICRO 1.3 / ARB 1.1 / TREND 0.9 + conflict bayrağı) |
-| 7 multiTimeframeConsensus | ⬜ Backlog |
+| 7 multiTimeframeConsensus | ✅ YAPILDI (60sn vs oturum çapraz zaman cümlesi) |
 | 8 strategyCorrelationMatrix | ⬜ Backlog |
 | 9 explainSignal | ⬜ Backlog |
-| 10 NextCandlePredictionGame | ⬜ Backlog |
+| 10 NextCandlePredictionGame | ✅ YAPILDI (1dk tahmin + doğruluk sayacı) |
 | 11 PainScoreNarrator (#16) | ✅ YAPILDI (LiquidationTracker side'lı + PainScore) |
 | 12 CalmBeforeStormBadge (#18) | ✅ YAPILDI (sıkışma + kitap dengesizliği) |
 | 13 PersonalityHistory | ✅ YAPILDI (günlük "ÇILGIN×3" özeti) |

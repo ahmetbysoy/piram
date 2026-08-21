@@ -18,6 +18,8 @@ import com.example.domain.engine.CalmBeforeStorm
 import com.example.domain.engine.DivergenceKind
 import com.example.domain.engine.LiquidationTracker
 import com.example.domain.engine.MarketPersonality
+import com.example.domain.engine.MultiTimeframeConsensus
+import com.example.domain.engine.NextCandleGame
 import com.example.domain.engine.OneMinuteVolumeTracker
 import com.example.domain.engine.PainScore
 import com.example.domain.engine.PersonalityHistory
@@ -89,6 +91,8 @@ data class PyramidUiState(
     val painYazi: String = "",
     val calmStormYazi: String = "",
     val personalitySummary: String = "",
+    val mtfYazi: String = "",
+    val nextCandleChip: String = "",
     val divergenceYazi: String = "",
     val divergenceKind: DivergenceKind = DivergenceKind.YOK,
     val timeframeBuyNotional: Double = 0.0,
@@ -133,6 +137,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
     private val windowLedger = WindowLedger()
     private val liqTracker = LiquidationTracker()
     private val personalityHistory = PersonalityHistory()
+    private val candleGame = NextCandleGame()
+    private var lastMtfRun = 0L
     private var lastPersonality = ""
     private var sessionOpenPrice = 0.0
     private var lastAdaptRun = 0L
@@ -277,6 +283,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         windowLedger.reset()
         liqTracker.clear()
         personalityHistory.clear()
+        candleGame.clear()
+        lastMtfRun = 0L
         lastPersonality = ""
         sessionOpenPrice = 0.0
         lastAdaptRun = 0L
@@ -334,6 +342,7 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
         tickerAnimationJob?.cancel()
         tickerAnimationJob = viewModelScope.launch(Dispatchers.Default) {
             var lastStrategyRunTime = 0L
+            var mtfYazi = ""
 
             while (isActive) {
                 delay(SignalConfig.ENGINE_TICK_MS) // ~12 fps state update loop for smooth Canvas animation
@@ -455,7 +464,40 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     )
                     val (_, computedConsensus) = strategyEngine.executeAll(snapshot)
                     consensus = computedConsensus
+
+                    // #7 multi-timeframe: 60sn pencerede ayrı konsensüs (1sn'de bir)
+                    if (now - lastMtfRun >= 1000L) {
+                        lastMtfRun = now
+                        val shortTrades = tradeList.filter { now - it.timestamp <= 60_000L }
+                        if (shortTrades.size >= SignalConfig.MIN_PRICES_FOR_STRATEGY) {
+                            val shortSnap = MarketSnapshot(
+                                symbol = currentSymbol,
+                                currentPrice = currentPrice,
+                                trades = shortTrades,
+                                recentPrices = shortTrades.map { it.price },
+                                recentVolumes = shortTrades.map { it.volume },
+                                depth = _uiState.value.depth,
+                                bursts = activeBursts,
+                                orderFlowImbalance = TechnicalIndicators.orderFlowImbalance(shortTrades),
+                                liquidationNotional60s = liqTracker.sum(now),
+                                liquidationCount60s = liqTracker.count(now),
+                                fundingRate = _uiState.value.fundingRate,
+                                oiDelta = _uiState.value.oiDelta,
+                                vwap = TechnicalIndicators.vwap(shortTrades),
+                                exchangePrices = venuePrices.toMap(),
+                                venueTimes = venueTimes.toMap(),
+                                timestamp = now
+                            )
+                            val (_, shortConsensus) = strategyEngine.executeAll(shortSnap)
+                            mtfYazi = MultiTimeframeConsensus.compare(shortConsensus.overallSignal, consensus.overallSignal) ?: ""
+                        }
+                    }
+
+                    // #10 next-candle tahmin oyunu
+                    candleGame.predict(consensus.consensusStrength, currentPrice, now)
                 }
+                candleGame.resolve(currentPrice, now)
+                val nextCandleChip = candleGame.chip()
 
                 _uiState.value = _uiState.value.copy(
                     currentPrice = currentPrice,
@@ -472,6 +514,8 @@ class PyramidViewModel(application: Application) : AndroidViewModel(application)
                     painYazi = painYazi,
                     calmStormYazi = calmStormYazi,
                     personalitySummary = personalitySummary,
+                    mtfYazi = mtfYazi,
+                    nextCandleChip = nextCandleChip,
                     divergenceYazi = divergence.yazi,
                     divergenceKind = divergence.kind,
                     timeframeBuyNotional = winSum.buyNotional,

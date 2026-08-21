@@ -1,5 +1,11 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.16.0] - Çapraz Zaman + Next-Candle Oyunu
+
+### Added
+- `MultiTimeframeConsensus` (#7) — 60sn vs oturum konsensüs çakışması ("⏱ 1dk SATIŞ, açılıştan ALIŞ — karışık zaman") MoodStrip çipi.
+- `NextCandleGame` (#10) — konsensüse göre 1dk tahmin (🟢/🔴), 60sn sonra doğruluk sayacı + seri ("🎯 3/5 🔥2").
+
 ## [1.15.0] - Funding Rate + Exchange Lead-Lag (toplam 25 strateji)
 
 ### Added

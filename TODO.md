@@ -33,3 +33,4 @@
 - [x] Görsel inceleme T5 (rozet wrap, global sıralama, fade, özet, boş bucket)
 - [x] 15 öneri: 3 strateji + conflict + absorption + iceberg + pain/calm/personality
 - [x] FundingRateSqueeze (#2) + ExchangeLeadLag (#5)
+- [x] MultiTimeframeConsensus (#7) + NextCandleGame (#10)
