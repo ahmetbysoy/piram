@@ -144,7 +144,7 @@ private fun AskLevelBar(level: DepthLevel, maxVol: Double, priceDecimals: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(10.dp),
+            .heightIn(min = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -170,7 +170,7 @@ private fun BidLevelBar(level: DepthLevel, maxVol: Double, priceDecimals: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(10.dp),
+            .heightIn(min = 13.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(

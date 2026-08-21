@@ -1,5 +1,15 @@
 # HFT Pyramid Terminal - Changelog
 
+## [1.6.1] - UI Layout Düzeltmeleri
+
+### Fixed
+- `DepthHeatmap` — bar satırı sabit `10.dp` yükseklikte 8sp metni taşıyor, fiyat satırları üst üste
+  biniyordu; `.heightIn(min = 13.dp)` ile düzeltildi.
+- `PyramidCanvas` — `layerHeight` alt sınırı çıplak pikseldi (`16f`), yüksek yoğunluklu ekranda
+  etiketler çorbaya dönüyordu; `28.dp.toPx()` yapıldı.
+- `PyramidScreen` — canvas, üstündeki sabit kartlı `Column` içinde `weight(1f)` ile sıkışıyordu;
+  Column `verticalScroll` + canvas'a sabit `height(280.dp)` verildi.
+
 ## [1.6.0] - Performans & Kalite (Kod Analizi P1+P2)
 
 ### Fixed

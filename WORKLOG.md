@@ -19,3 +19,4 @@
 | Step 13 | Format & Arama | SymbolRegistry + ExchangeInfoClient, tickSize fiyat formatı, aranabilir sembol listesi, Radar/UI tickSize hanesi | COMPLETED |
 | Step 14 | Derinlik Isı Haritası | BookProfile + DepthHeatmap, kitap dengesizliği + duvar fiyatları, unused import temizliği | COMPLETED |
 | Step 15 | Perf & Kalite | BurstDetector O(1) amortized, ölü kod (rsi/bandwidthPct/spreadPct) entegrasyonu, MeanReversion kategori fix, KOD_ANALIZI.md | COMPLETED |
+| Step 16 | UI Layout Fix | DepthHeatmap heightIn(13dp), PyramidCanvas layerHeight 28.dp.toPx, PyramidScreen scroll + canvas 280dp | COMPLETED |

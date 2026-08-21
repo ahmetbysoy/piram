@@ -81,7 +81,7 @@ fun PyramidCanvas(
             val numLayers = layers.size
             if (numLayers == 0) return@Canvas
 
-            val layerHeight = (height / numLayers).coerceAtLeast(16f)
+            val layerHeight = (height / numLayers).coerceAtLeast(28.dp.toPx())
             val padding = 6f
             val usableHeight = layerHeight - padding
             val centerX = width / 2f

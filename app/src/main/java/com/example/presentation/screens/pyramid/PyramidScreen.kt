@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +44,7 @@ fun PyramidScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
             // Top Control Bar: Status Indicator + Timeframe Selector
@@ -115,10 +118,11 @@ fun PyramidScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Central Interactive MicroBucket Pyramid Canvas
+            // (kaydırılabilir kolonda sabit yükseklik; 8 katman × ≥28dp etiket için yeterli alan)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .height(280.dp)
             ) {
                 PyramidCanvas(
                     layers = uiState.layers,

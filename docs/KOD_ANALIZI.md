@@ -53,8 +53,18 @@
 
 | Sıra | İş | Efor | Durum |
 |---|---|---|---|
-| P1 | BurstDetector O(n) → O(1) amortized | Küçük | ✅ BU TUR |
-| P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ BU TUR |
+| P1 | BurstDetector O(n) → O(1) amortized | Küçük | ✅ YAPILDI |
+| P2 | Ölü kod (rsi/bandwidthPct/spreadPct) + kategori fix | Küçük | ✅ YAPILDI |
 | P3 | StrategyPerformanceTracker (#21) + adaptif ağırlık | Orta-Büyük | ⬜ Sıradaki |
 | P4 | Eğlenceli/anlatı katmanı (#11-20) | Orta | ⬜ |
 | — | DRY: ortak SignalThresholds + confidence | Orta | ⬜ |
+
+## UI Bug Düzeltmeleri (kod incelemesi turu 2 — 2026-08-21)
+
+| # | Tespit | Durum |
+|---|---|---|
+| U1 | `DepthHeatmap` bar satırı `height(10.dp)` sabit → 8sp Monospace metin taşıyor, fiyat satırları üst üste biniyor | ✅ YAPILDI (`.heightIn(min = 13.dp)`, iki bar da) |
+| U2 | `PyramidCanvas.layerHeight` alt sınırı çıplak `16f` piksel (dp değil) → yüksek yoğunlukta etiket çorbası | ✅ YAPILDI (`28.dp.toPx()`) |
+| U3 | Canvas, üstündeki 7-8 sabit kartlı `Column` içinde `weight(1f)` ile sıkışıyor | ✅ YAPILDI (Column `verticalScroll` + canvas `height(280.dp)`) |
+| U4 | INSTITUTIONAL %85→%0 1dk içinde — decay'in doğal sonucu ama yanıltıcı UX (smoothing floor düşünülebilir) | ⬜ Backlog (UX kararı) |
+| U5 | Consensus fiyattan çok oynak (BUY+38→SELL-26, fiyat +%0.04) — #21 StrategyPerformanceTracker ihtiyacını doğruluyor | ⬜ P3 ile birlikte |
